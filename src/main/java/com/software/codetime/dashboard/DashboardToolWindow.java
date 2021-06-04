@@ -21,7 +21,7 @@ public class DashboardToolWindow {
     }
 
     public JComponent getContent() {
-        // return browser.getComponent();
-        return new JBCefBrowser("https://app.software.com").getComponent();
+        return browser.getComponent();
+        // return new JBCefBrowser("https://app.software.com").getComponent();
     }
 }

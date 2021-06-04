@@ -9,7 +9,8 @@ import org.cef.misc.StringRef;
 import org.cef.network.CefRequest;
 import org.cef.network.CefResponse;
 
-import java.io.InputStream;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -26,10 +27,42 @@ public class DashboardResourceHandler implements CefResourceHandler {
 //            String api = "/sessions/summary";
 //            ClientResponse resp = OpsHttpClient.softwareGet(api, jwt);
 
-            String pathToResource = url.replace("http://myapp", "dashboard/");
-            URL newUrl = getClass().getClassLoader().getResource(pathToResource);
+            String pathToResource = url.replace("http://myapp", "dashboard");
+            URL resourceUrl = getClass().getClassLoader().getResource(pathToResource);
+            File f = getDashboardFile();
+
+            final String contentToWrite = "<html>\n" +
+                    "<body>\n" +
+                    "<div>\n" +
+                    "    Hey hey heh!\n" +
+                    "</div>\n" +
+                    "</body>\n" +
+                    "</html>";
+
+            Writer output = null;
             try {
-                state = new OpenedConnection(newUrl.openConnection());
+                output = new BufferedWriter(new FileWriter(f, false));  //clears file every time
+                output.append(contentToWrite);
+            } catch (Exception e) {
+                System.out.println("--- write error: " + e.toString());
+            } finally {
+                if (output != null) {
+                    try {
+                        output.close();
+                    } catch (Exception e) {
+                        System.out.println("--- closed output error: " + e.toString());
+                    }
+                }
+            }
+
+            try {
+                resourceUrl = f.toURI().toURL();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                state = new OpenedConnection(resourceUrl.openConnection());
             } catch (Exception e) {
                 //
             }
@@ -37,6 +70,35 @@ public class DashboardResourceHandler implements CefResourceHandler {
             return true;
         }
         return false;
+    }
+
+    private static File getDashboardFile() {
+        String htmlFile = getSoftwareDir(true) + getOsSpecificName("dashboard.html");
+        File f = new File(htmlFile);
+        if (!f.exists()) {
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return f;
+    }
+
+    private static String getOsSpecificName(String fileName) {
+        return File.separator + fileName;
+    }
+
+    public static String getSoftwareDir(boolean autoCreate) {
+        String softwareDataDir = System.getProperty("user.home") + getOsSpecificName(".software");
+
+        File f = new File(softwareDataDir);
+        if (autoCreate && !f.exists()) {
+            // make the directory
+            f.mkdirs();
+        }
+
+        return softwareDataDir;
     }
 
     @Override
