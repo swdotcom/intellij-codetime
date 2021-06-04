@@ -1,19 +1,19 @@
 <idea-plugin>
-    <id>com.github.xavluiz.intellijcodetime</id>
-    <name>intellij-codetime</name>
-    <vendor>xavluiz</vendor>
+    <id>com.software.codetime</id>
+    <name>Code Time</name>
+    <vendor url="https://www.software.com">Software.com</vendor>
 
     <!-- Product and plugin compatibility requirements -->
     <!-- https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.xavluiz.intellijcodetime.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.xavluiz.intellijcodetime.services.MyProjectService"/>
+        <toolWindow id="Dashboard" order="first" secondary="false" icon="AllIcons.General.Modified" anchor="right"
+                    factoryClass="com.software.codetime.dashboard.DashboardWindowFactory"/>
     </extensions>
 
     <applicationListeners>
-        <listener class="com.github.xavluiz.intellijcodetime.listeners.MyProjectManagerListener"
+        <listener class="com.software.codetime.listeners.ProjectActivateListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
 </idea-plugin>
