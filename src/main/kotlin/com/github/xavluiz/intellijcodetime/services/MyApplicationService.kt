@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package com.github.xavluiz.intellijcodetime.services
 
-import org.jetbrains.plugins.template.MyBundle
+import com.github.xavluiz.intellijcodetime.MyBundle
 
 class MyApplicationService {
 
