@@ -3,9 +3,7 @@ package com.software.codetime.toolwindows.codetime;
 import com.software.codetime.toolwindows.WebviewClosedConnection;
 import com.software.codetime.toolwindows.WebviewOpenedConnection;
 import com.software.codetime.toolwindows.WebviewResourceState;
-import com.software.codetime.toolwindows.codetime.components.Header;
-import com.software.codetime.toolwindows.codetime.components.JsDependencies;
-import com.software.codetime.toolwindows.codetime.components.MetadataHeader;
+import com.software.codetime.toolwindows.codetime.components.*;
 import org.apache.commons.lang.StringUtils;
 import org.cef.callback.CefCallback;
 import org.cef.handler.CefResourceHandler;
@@ -91,7 +89,11 @@ public class CodeTimeResourceHandler implements CefResourceHandler {
                 "<html lang=\"en\">\n" +
                 MetadataHeader.getHtml() +
                 "  <body>\n" +
-                Header.getHtml() +
+                GettingStarted.getHtml() +
+                FlowMode.getHtml() +
+                Stats.getHtml() +
+                Account.getHtml() +
+                Teams.getHtml() +
                 JsDependencies.getHtml() +
                 "  </body>\n" +
                 "</html>";

@@ -1,6 +1,6 @@
 package com.software.codetime.toolwindows.codetime.components;
 
-public class Header {
+public class Stats {
     public static String getHtml() {
         return "<div class=\"card\">\n" +
                 "  <div class=\"card-header\">\n" +
