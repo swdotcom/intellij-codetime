@@ -9,7 +9,12 @@ import org.cef.misc.StringRef;
 import org.cef.network.CefRequest;
 import org.cef.network.CefResponse;
 
+import swdc.java.ops.manager.FileUtilManager;
+import swdc.java.ops.http.OpsHttpClient;
+import swdc.java.ops.http.ClientResponse;
+
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -23,32 +28,25 @@ public class DashboardResourceHandler implements CefResourceHandler {
         String url = cefRequest.getURL();
         if (StringUtils.isNotBlank(url)) {
 
-//            String jwt = FileUtilManager.getItem("jwt");
-//            String api = "/sessions/summary";
-//            ClientResponse resp = OpsHttpClient.softwareGet(api, jwt);
-
             String pathToResource = url.replace("http://myapp", "dashboard");
             URL resourceUrl = getClass().getClassLoader().getResource(pathToResource);
+
             File f = getDashboardFile();
-
-            final String contentToWrite = "<html>\n" +
-                    "<body>\n" +
-                    "<div>\n" +
-                    "    Hey hey heh!\n" +
-                    "</div>\n" +
-                    "</body>\n" +
-                    "</html>";
-
-            Writer output = null;
+            Writer writer = null;
             try {
-                output = new BufferedWriter(new FileWriter(f, false));  //clears file every time
-                output.append(contentToWrite);
+                String jwt = FileUtilManager.getItem("jwt");
+                ClientResponse resp = OpsHttpClient.softwareGet("/v1/plugin_dashboard", jwt);
+                String html = resp.getJsonObj().get("html").getAsString();
+
+                writer = new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream(f), StandardCharsets.UTF_8));
+                writer.write(html);
             } catch (Exception e) {
                 System.out.println("--- write error: " + e.toString());
             } finally {
-                if (output != null) {
+                if (writer != null) {
                     try {
-                        output.close();
+                        writer.close();
                     } catch (Exception e) {
                         System.out.println("--- closed output error: " + e.toString());
                     }

@@ -25,9 +25,13 @@ version = properties("pluginVersion")
 // Configure project's dependencies
 repositories {
     mavenCentral()
+    flatDir {
+        dirs("lib")
+    }
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.1")
+    implementation(files("lib/swdc-java-ops-1.1.3.jar"))
 }
 
 // Configure gradle-intellij-plugin plugin.
