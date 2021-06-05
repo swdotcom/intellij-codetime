@@ -9,6 +9,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.software.codetime.managers.KeystrokeUtilManager;
+import com.software.codetime.managers.UserSessionManager;
 import com.software.codetime.models.KeystrokeWrapper;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.manager.AsyncManager;
@@ -35,7 +36,6 @@ public class CodeTimeProcessor {
 
     private EventTrackerManager tracker;
     private KeystrokeWrapper keystrokeMgr;
-    private SoftwareCoSessionManager sessionMgr;
     private AsyncManager asyncManager;
 
     public static CodeTimeProcessor getInstance() {
@@ -47,7 +47,6 @@ public class CodeTimeProcessor {
 
     private CodeTimeProcessor() {
         keystrokeMgr = KeystrokeWrapper.getInstance();
-        sessionMgr = SoftwareCoSessionManager.getInstance();
         tracker = EventTrackerManager.getInstance();
         asyncManager = AsyncManager.getInstance();
 

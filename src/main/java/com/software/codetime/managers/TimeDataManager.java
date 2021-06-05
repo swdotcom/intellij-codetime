@@ -109,7 +109,7 @@ public class TimeDataManager {
     private static List<TimeData> getTimeDataList() {
         JsonArray jsonArr = FileUtilManager.getFileContentAsJsonArray(FileUtilManager.getTimeDataSummaryFile());
         Type listType = new TypeToken<List<TimeData>>() {}.getType();
-        List<TimeData> timeDataList = SoftwareCo.gson.fromJson(jsonArr, listType);
+        List<TimeData> timeDataList = UtilManager.gson.fromJson(jsonArr, listType);
         if (timeDataList == null) {
             timeDataList = new ArrayList<>();
         }

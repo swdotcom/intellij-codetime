@@ -5,6 +5,7 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.http.ClientResponse;
 import swdc.java.ops.http.OpsHttpClient;
@@ -67,7 +68,7 @@ public class UserSessionManager {
         elementEntity.cta_text = "status bar metrics";
         elementEntity.icon_name = "clock";
         EventTrackerManager.getInstance().trackUIInteraction(UIInteractionType.click, elementEntity);
-        CodeTimeToolWindowFactory.openToolWindow();
+        CodeTimeWindowFactory.openToolWindow();
     }
 
     public static void launchLogin(String loginType, UIInteractionType interactionType, boolean switching_account) {
