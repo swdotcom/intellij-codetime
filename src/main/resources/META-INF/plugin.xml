@@ -8,7 +8,8 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Dashboard" order="first" secondary="false" icon="AllIcons.General.Modified" anchor="right"
+        <toolWindow id="Dashboard" order="first" secondary="false" anchor="right"
+                    icon="/assets/paw-grey-rotated.png"
                     factoryClass="com.software.codetime.dashboard.DashboardWindowFactory"/>
     </extensions>
 

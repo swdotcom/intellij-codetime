@@ -42,13 +42,13 @@ public class DashboardResourceHandler implements CefResourceHandler {
                         new FileOutputStream(f), StandardCharsets.UTF_8));
                 writer.write(html);
             } catch (Exception e) {
-                System.out.println("--- write error: " + e.toString());
+                System.out.println("Dashboard write error: " + e.getMessage());
             } finally {
                 if (writer != null) {
                     try {
                         writer.close();
                     } catch (Exception e) {
-                        System.out.println("--- closed output error: " + e.toString());
+                        System.out.println("Writer close error: " + e.getMessage());
                     }
                 }
             }
