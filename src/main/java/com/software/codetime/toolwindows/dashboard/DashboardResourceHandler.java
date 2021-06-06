@@ -35,8 +35,7 @@ public class DashboardResourceHandler implements CefResourceHandler {
             File f = new File(FileUtilManager.getCodeTimeDashboardHtmlFile());
             Writer writer = null;
             try {
-                String jwt = FileUtilManager.getItem("jwt");
-                ClientResponse resp = OpsHttpClient.softwareGet("/v1/plugin_dashboard", jwt);
+                ClientResponse resp = OpsHttpClient.softwareGet("/v1/plugin_dashboard", FileUtilManager.getItem("jwt"));
                 String html = resp.getJsonObj().get("html").getAsString();
 
                 writer = new BufferedWriter(new OutputStreamWriter(

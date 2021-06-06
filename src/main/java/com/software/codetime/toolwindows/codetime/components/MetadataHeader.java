@@ -10,8 +10,9 @@ public class MetadataHeader {
                 "\n" +
                 "    <!-- Bootstrap CSS -->\n" +
                 "    <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css\" integrity=\"sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm\" crossorigin=\"anonymous\">\n" +
+                "    <script src=\"https://kit.fontawesome.com/ef435e26ef.js\" crossorigin=\"anonymous\"></script>\n" +
                 "\n" +
-                "    <style type=\"text/css\"> .borderless > li: { border: 0 none; }</style>\n" +
+                Stylesheet.getStyle() +
                 "    <title>Code Time</title>\n" +
                 "  </head>";
     }
