@@ -8,7 +8,7 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="CodeTime" order="first" secondary="false" anchor="left"
+        <toolWindow id="Code Time" order="first" secondary="false" anchor="left"
                     icon="/assets/paw-grey-rotated.png"
                     factoryClass="com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory"/>
         <toolWindow id="Dashboard" order="first" secondary="false" anchor="right"
