@@ -28,7 +28,7 @@ public class CodeTimeResourceHandler implements CefResourceHandler {
         String url = cefRequest.getURL();
         if (StringUtils.isNotBlank(url)) {
 
-            String pathToResource = url.replace("http://myapp", "codetime");
+            String pathToResource = url.replace("http://codetime", "codetime");
             URL resourceUrl = getClass().getClassLoader().getResource(pathToResource);
 
             File f = new File(FileUtilManager.getCodeTimeViewHtmlFile());
@@ -40,7 +40,7 @@ public class CodeTimeResourceHandler implements CefResourceHandler {
                         new FileOutputStream(f), StandardCharsets.UTF_8));
                 writer.write(html);
             } catch (Exception e) {
-                System.out.println("Dashboard write error: " + e.getMessage());
+                System.out.println("Code time window write error: " + e.getMessage());
             } finally {
                 if (writer != null) {
                     try {

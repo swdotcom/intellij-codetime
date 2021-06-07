@@ -14,6 +14,7 @@ import com.intellij.openapi.wm.WindowManager;
 import com.software.codetime.models.StatusBarKpmIconWidget;
 import com.software.codetime.models.StatusBarKpmTextWidget;
 import com.software.codetime.toolwindows.codetime.CodeTimeToolWindow;
+import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import swdc.java.ops.manager.ConfigManager;
 import swdc.java.ops.manager.EventTrackerManager;
 import swdc.java.ops.snowplow.entities.UIElementEntity;
@@ -37,7 +38,7 @@ public class StatusBarManager {
         WallClockManager.getInstance().dispatchStatusViewUpdate();
 
         // refresh the tree
-        CodeTimeToolWindow.refresh();
+        CodeTimeWindowFactory.refresh(false);
 
         UIElementEntity elementEntity = new UIElementEntity();
         elementEntity.element_name = interactionType == UIInteractionType.click ? "ct_toggle_status_bar_metrics_btn" : "ct_toggle_status_bar_metrics_cmd";

@@ -1,5 +1,8 @@
 package com.software.codetime.toolwindows.dashboard;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.software.codetime.toolwindows.WebviewClosedConnection;
 import com.software.codetime.toolwindows.WebviewOpenedConnection;
 import com.software.codetime.toolwindows.WebviewResourceState;
@@ -11,6 +14,7 @@ import org.cef.misc.StringRef;
 import org.cef.network.CefRequest;
 import org.cef.network.CefResponse;
 
+import swdc.java.ops.manager.AppleScriptManager;
 import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.http.ClientResponse;
@@ -22,22 +26,35 @@ import java.net.URL;
 
 public class DashboardResourceHandler implements CefResourceHandler {
 
+    public final static String config_settings_api = "/users/me/edit_preferences";
+    public final static String dashboard_api = "/v1/plugin_dashboard";
+
     private WebviewResourceState state = new WebviewClosedConnection();
+
+    private static String html_api = dashboard_api;
+
+    public static void updateHtmlApi(String api) {
+        html_api = api;
+    }
 
     @Override
     public boolean processRequest(CefRequest cefRequest, CefCallback cefCallback) {
         String url = cefRequest.getURL();
         if (StringUtils.isNotBlank(url)) {
 
-            String pathToResource = url.replace("http://myapp", "dashboard");
+            String pathToResource = url.replace("http://dashboard", "dashboard");
             URL resourceUrl = getClass().getClassLoader().getResource(pathToResource);
 
             File f = new File(FileUtilManager.getCodeTimeDashboardHtmlFile());
             Writer writer = null;
             try {
-                // settings html
-                // "/users/me/edit_preferences"
-                ClientResponse resp = OpsHttpClient.softwareGet("/v1/plugin_dashboard", FileUtilManager.getItem("jwt"));
+                String api = html_api;
+                if (html_api.equals(config_settings_api)) {
+                    // add the query string
+                    api += "?editor=intellij&isLightMode=" + !AppleScriptManager.isDarkMode();
+                    f = new File(FileUtilManager.getCodeTimeSettingsHtmlFile());
+                }
+                ClientResponse resp = OpsHttpClient.softwareGet(api, FileUtilManager.getItem("jwt"));
                 String html = resp.getJsonObj().get("html").getAsString();
 
                 writer = new BufferedWriter(new OutputStreamWriter(
@@ -63,6 +80,13 @@ public class DashboardResourceHandler implements CefResourceHandler {
 
             try {
                 state = new WebviewOpenedConnection(resourceUrl.openConnection());
+
+                if (DashboardWindowFactory.windowProject != null) {
+                    ToolWindow toolWindow = ToolWindowManager.getInstance(DashboardWindowFactory.windowProject).getToolWindow("Dashboard");
+                    if (toolWindow != null && !toolWindow.isVisible()) {
+                        toolWindow.show();
+                    }
+                }
             } catch (Exception e) {
                 //
             }

@@ -1,5 +1,6 @@
 package com.software.codetime.toolwindows.codetime.html;
 
+import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.model.Team;
 
 import java.util.List;
@@ -11,9 +12,8 @@ public class DomBuilder {
                 "<html lang=\"en\">\n" +
                 getMetaDataHeader() +
                 "  <body>\n" +
-                GettingStarted.getHtml() +
-                FlowMode.getHtml() +
-                Stats.getHtml() +
+                getFlowModeComponent() +
+                getStatsComponent() +
                 getAccountComponent() +
                 getTeamComponent() +
                 getJsDependencies() +
@@ -21,11 +21,41 @@ public class DomBuilder {
                 "</html>";
     }
 
+    private static String getFlowModeComponent() {
+        return "<div class=\"card pb-3\">\n" +
+                "  <div class=\"card-body mb-1 pb-1\">\n" +
+                "    <h6 class=\"card-title mb-1 text-nowrap\">Flow Mode</h6>\n" +
+                "    <p class=\"card-text mb-1 text-muted text-nowrap\">Block out distractions</p>\n" +
+                "    <div class=\"top-right\">\n" +
+                "      <button type=\"button\" class=\"bg-transparent\" data-dismiss=\"modal\" aria-label=\"Settings\">\n" +
+                "        <span aria-hidden=\"true\">\n" +
+                getSettingsSvg() +
+                "        </span>\n" +
+                "      </button>\n" +
+                "    </div>\n" +
+                "    <div class=\"d-grid col-8 mx-auto\">\n" +
+                "      <button class=\"btn btn-primary\" type=\"button\">Enter Flow Mode</button>\n" +
+                "    </div>\n" +
+                "  </div>\n" +
+                "</div>\n";
+    }
+
+    private static String getStatsComponent() {
+        return "<div class=\"card pb-3\">\n" +
+                "  <div class=\"card-body mb-1 pb-1\">\n" +
+                "    <h6 class=\"card-title mb-1 text-nowrap\">Stats</h6>\n" +
+                "    <p class=\"card-text mb-1 text-muted text-nowrap\">Data in your editor</p>\n" +
+                "  </div>\n" +
+                getStatsListItems() +
+                "</div>\n";
+    }
+
     private static String getAccountComponent() {
+        String email = FileUtilManager.getItem("name");
         return "<div class=\"card pb-3\">\n" +
                 "  <div class=\"card-body mb-1 pb-1\">\n" +
                 "    <h6 class=\"card-title mb-1 text-nowrap\">Account</h6>\n" +
-                "    <p class=\"card-text mb-1 text-muted text-nowrap\">xavluiz@gmail.com</p>\n" +
+                "    <p class=\"card-text mb-1 text-muted text-nowrap\">" + email + "</p>\n" +
                 "  </div>\n" +
                 getAccountListItems() +
                 "</div>\n";
@@ -46,14 +76,15 @@ public class DomBuilder {
                 "    .list-group-item { border: 0 none; }\n" +
                 "    button:focus, button:active { outline: none; border-style: none; }\n" +
                 "    .cursor-pointer { cursor: pointer; }\n" +
+                "    .top-right { position: absolute; top: 18px; right: 16px }\n" +
                 "  </style>\n";
     }
 
     private static String getJsDependencies() {
         return "    <!-- jQuery first, then Popper.js, then Bootstrap JS -->\n" +
                 "    <script src=\"https://code.jquery.com/jquery-3.2.1.slim.min.js\" integrity=\"sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN\" crossorigin=\"anonymous\"></script>\n" +
-                "    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js\" integrity=\"sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q\" crossorigin=\"anonymous\"></script>\n" +
-                "    <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js\" integrity=\"sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl\" crossorigin=\"anonymous\"></script>\n" +
+                "    <script src=\"https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js\" integrity=\"sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p\" crossorigin=\"anonymous\"></script>\n" +
+                "    <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js\" integrity=\"sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT\" crossorigin=\"anonymous\"></script>\n" +
                 customJavascript();
     }
 
@@ -86,7 +117,11 @@ public class DomBuilder {
 
     private static String getTeamButtonListItem(String label, String org_name, long team_id) {
         return "     <button id=\"`team_${team_id}`\" type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\" onclick=\"teamClickHandler('" + org_name + "', " + team_id + ")\">\n" +
-                "      <div class=\"md-v-line\"></div><i class=\"fas fa-user-friends mr-2\"></i>" + label + "\n" +
+                "      <div class=\"md-v-line\"></div>\n" +
+                "        <span class=\"mr-2\">\n" +
+                getTeamSvg() +
+                "        </span>\n" +
+                label +
                 "    </button>\n";
     }
 
@@ -122,6 +157,13 @@ public class DomBuilder {
         sb.append(getAccountButtonItem(getReadmeSvg(), "Documentation", "readme"));
         sb.append(getAccountButtonItem(getMessageSvg(), "Submit an issue", "submit_issue"));
         sb.append(getAccountButtonItem(getVisibleSvg(), "Hide code time status", "toggle_status"));
+        return getButtonListItemContainer(sb.toString());
+    }
+
+    private static String getStatsListItems() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getAccountButtonItem(getDashboardSvg(), "Dashboard", "dashboard"));
+        sb.append(getAccountButtonItem(getPawSvg(), "More data at Software.com", "web_dashboard"));
         return getButtonListItemContainer(sb.toString());
     }
 
@@ -164,6 +206,18 @@ public class DomBuilder {
     private static String getVisibleSvg() {
         return "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n" +
                 "<path d=\"M7.97278 11.1663L8.65151 12.136C8.43494 12.1564 8.21754 12.1666 8.00001 12.1667C5.50397 12.1667 3.31316 10.8344 2.13847 8.84101C2.04781 8.68718 2 8.51188 2 8.33332C2 8.15476 2.04781 7.97945 2.13847 7.82562C2.63895 6.97633 3.32416 6.24697 4.13897 5.68943L5.32807 7.38816C5.22368 7.68374 5.16668 8.00181 5.16668 8.33333C5.16668 9.89033 6.41949 11.1517 7.97278 11.1663V11.1663ZM13.8615 8.84101C13.2018 9.96053 12.221 10.8714 11.0454 11.4551L11.0456 11.4554L11.9096 12.6887C12.0679 12.915 12.0129 13.2266 11.7867 13.385L11.5135 13.5762C11.2873 13.7346 10.9756 13.6796 10.8173 13.4533L4.09043 3.97791C3.93209 3.75166 3.98709 3.44 4.21334 3.28166L4.48647 3.09041C4.71272 2.93208 5.02438 2.98708 5.18272 3.21333L6.24601 4.72618C6.80584 4.57866 7.39386 4.5 8.00001 4.5C10.496 4.5 12.6869 5.83227 13.8615 7.82564C13.9522 7.97947 14 8.15477 14 8.33333C14 8.51188 13.9522 8.68718 13.8615 8.84101ZM10.8333 8.33333C10.8333 6.7672 9.56588 5.49999 8.00001 5.49999C7.62628 5.49999 7.26967 5.57235 6.94315 5.70358L7.34522 6.26729C7.88415 6.09706 8.49197 6.13889 9.02022 6.42166H9.01959C8.52688 6.42166 8.12751 6.82104 8.12751 7.31374C8.12751 7.80595 8.5264 8.20583 9.01959 8.20583C9.5123 8.20583 9.91167 7.80645 9.91167 7.31374V7.31312C10.2963 8.03166 10.2515 8.93633 9.7398 9.62458V9.62478L10.1422 10.1886C10.5728 9.69166 10.8333 9.0432 10.8333 8.33333ZM7.45863 10.4318L5.84343 8.12437C5.73897 9.21576 6.45413 10.1734 7.45863 10.4318Z\" fill=\"#00B4EE\"/>\n" +
+                "</svg>\n";
+    }
+
+    private static String getDashboardSvg() {
+        return "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n" +
+                "<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.40003 5.19999H7.60004V4.39999H8.40003V5.19999V5.19999ZM11.5999 7.59991H10.8V8.3999H11.5999V7.59991V7.59991ZM5.99991 5.19997H5.19992V5.99996H5.99991V5.19997V5.19997ZM5.19993 7.59991H4.39994V8.3999H5.19993V7.59991V7.59991ZM14 3.19997L13.6 2.79998L8.40004 6.79994C8.35204 6.78394 7.60005 6.79994 7.60005 6.79994C7.16005 6.79994 6.80006 7.15993 6.80006 7.59993V8.39992C6.80006 8.83991 7.16005 9.19991 7.60005 9.19991H8.40004C8.84004 9.19991 9.20003 8.83991 9.20003 8.39992V7.66393L14 3.19997V3.19997ZM12.7279 6.47195C12.8799 6.95995 12.9679 7.47194 12.9679 7.99993C12.9679 10.7359 10.7439 12.9599 8.00793 12.9599C5.27196 12.9599 3.03999 10.7359 3.03999 7.99993C3.03999 5.26396 5.26396 3.03999 7.99993 3.03999C8.95992 3.03999 9.84791 3.31199 10.6159 3.79198L11.3679 3.03999C10.4159 2.392 9.25592 2 8.00793 2C4.68797 2 2 4.68797 2 7.99993C2 11.3119 4.68797 13.9999 7.99993 13.9999C11.3119 13.9999 13.9999 11.3119 13.9999 7.99993C13.9999 7.17594 13.8399 6.38395 13.5279 5.67196L12.7279 6.47195V6.47195Z\" fill=\"#00B4EE\"/>\n" +
+                "</svg>\n";
+    }
+
+    private static String getTeamSvg() {
+        return "<svg width=\"16\" height=\"16\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 640 512\">\n" +
+                "<path d=\"M192 256c61.9 0 112-50.1 112-112S253.9 32 192 32 80 82.1 80 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C51.6 288 0 339.6 0 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zM480 256c53 0 96-43 96-96s-43-96-96-96-96 43-96 96 43 96 96 96zm48 32h-3.8c-13.9 4.8-28.6 8-44.2 8s-30.3-3.2-44.2-8H432c-20.4 0-39.2 5.9-55.7 15.4 24.4 26.3 39.7 61.2 39.7 99.8v38.4c0 2.2-.5 4.3-.6 6.4H592c26.5 0 48-21.5 48-48 0-61.9-50.1-112-112-112z\" fill=\"#00B4EE\"/>\n" +
                 "</svg>\n";
     }
 }

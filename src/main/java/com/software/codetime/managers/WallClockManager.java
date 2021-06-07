@@ -3,6 +3,7 @@ package com.software.codetime.managers;
 import com.intellij.openapi.application.ApplicationManager;
 import com.software.codetime.listeners.CodeTimeProcessor;
 import com.software.codetime.toolwindows.codetime.CodeTimeToolWindow;
+import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import swdc.java.ops.manager.AsyncManager;
 import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.manager.UtilManager;
@@ -105,7 +106,7 @@ public class WallClockManager {
         ApplicationManager.getApplication().invokeLater(() -> {
             try {
                 // TREE REFRESH
-                CodeTimeToolWindow.refresh();
+                CodeTimeWindowFactory.refresh(false);
             } catch (Exception e) {}
         });
     }

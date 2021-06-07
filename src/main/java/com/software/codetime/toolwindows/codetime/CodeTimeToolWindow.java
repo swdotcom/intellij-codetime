@@ -18,24 +18,19 @@ public class CodeTimeToolWindow {
         browser.getJBCefClient().addDisplayHandler(new CodeTimeDisplayHandler(), browser.getCefBrowser());
         registerAppSchemeHandler();
         Disposer.register(project, browser);
-        browser.loadURL("http://myapp/index.html");
-
+        browser.loadURL("http://codetime/index.html");
     }
 
     private void registerAppSchemeHandler() {
-        CefApp.getInstance().registerSchemeHandlerFactory("http", "myapp", new CodeTimeSchemeHandlerFactory());
+        CefApp.getInstance().registerSchemeHandlerFactory("http", "codetime", new CodeTimeSchemeHandlerFactory());
     }
 
     public JComponent getContent() {
         return browser.getComponent();
     }
 
-    public static void refresh() {
-        //
-    }
-
-    private synchronized void init() {
-        //
+    public void refresh() {
+        browser.loadURL("http://codetime/index.html");
     }
 
 }

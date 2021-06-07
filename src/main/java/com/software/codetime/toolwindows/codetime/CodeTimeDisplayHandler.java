@@ -5,12 +5,13 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.software.codetime.managers.AuthPromptManager;
 import com.software.codetime.managers.ReadmeManager;
 import com.software.codetime.managers.StatusBarManager;
+import com.software.codetime.managers.UserSessionManager;
+import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
 import org.cef.CefSettings;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefDisplayHandler;
 import swdc.java.ops.manager.ConfigManager;
-import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.manager.UtilManager;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 
@@ -63,12 +64,23 @@ public class CodeTimeDisplayHandler implements CefDisplayHandler {
                 });
                 break;
             case "configure":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    DashboardWindowFactory.displayConfigSettings();
+                });
                 break;
             case "submit_issue":
-                StatusBarManager.submitFeedback(UIInteractionType.click);
+                UtilManager.submitIntellijIssue();
                 break;
             case "toggle_status":
                 StatusBarManager.toggleStatusBar(UIInteractionType.click);
+                break;
+            case "dashboard":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    DashboardWindowFactory.displayDashboard();
+                });
+                break;
+            case "web_dashboard":
+                UserSessionManager.launchWebDashboard(UIInteractionType.click);
                 break;
             default:
                 break;
