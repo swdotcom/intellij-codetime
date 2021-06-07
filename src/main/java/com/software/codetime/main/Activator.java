@@ -1,5 +1,7 @@
 package com.software.codetime.main;
 
+import swdc.java.ops.manager.AccountManager;
+
 public class Activator {
 
     private static Activator instance = null;
@@ -17,5 +19,6 @@ public class Activator {
 
     private void init() {
         System.out.println("Initializing the plugin");
+        AccountManager.getUser();
     }
 }

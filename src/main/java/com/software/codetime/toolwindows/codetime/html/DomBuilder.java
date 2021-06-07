@@ -22,27 +22,27 @@ public class DomBuilder {
     }
 
     private static String getFlowModeComponent() {
-        return "<div class=\"card pb-3\">\n" +
-                "  <div class=\"card-body mb-1 pb-1\">\n" +
+        return "<div class=\"card pb-2\">\n" +
+                "  <div class=\"card-body mb-0 pb-1\">\n" +
                 "    <h6 class=\"card-title mb-1 text-nowrap\">Flow Mode</h6>\n" +
                 "    <p class=\"card-text mb-1 text-muted text-nowrap\">Block out distractions</p>\n" +
                 "    <div class=\"top-right\">\n" +
-                "      <button type=\"button\" class=\"bg-transparent\" data-dismiss=\"modal\" aria-label=\"Settings\">\n" +
+                "      <button type=\"button\" class=\"icon-button\" data-dismiss=\"modal\" aria-label=\"Settings\">\n" +
                 "        <span aria-hidden=\"true\">\n" +
                 getSettingsSvg() +
                 "        </span>\n" +
                 "      </button>\n" +
                 "    </div>\n" +
-                "    <div class=\"d-grid col-8 mx-auto\">\n" +
-                "      <button class=\"btn btn-primary\" type=\"button\">Enter Flow Mode</button>\n" +
-                "    </div>\n" +
+                "  </div>\n" +
+                "  <div class=\"d-grid gap-2 col-12 mx-auto\">\n" +
+                "    <button type=\"button\" class=\"btn btn-primary\" onclick=\"onCmdClick('toggle_flow')\">Enter Flow Mode</button>\n" +
                 "  </div>\n" +
                 "</div>\n";
     }
 
     private static String getStatsComponent() {
-        return "<div class=\"card pb-3\">\n" +
-                "  <div class=\"card-body mb-1 pb-1\">\n" +
+        return "<div class=\"card pb-2\">\n" +
+                "  <div class=\"card-body mb-0 pb-1\">\n" +
                 "    <h6 class=\"card-title mb-1 text-nowrap\">Stats</h6>\n" +
                 "    <p class=\"card-text mb-1 text-muted text-nowrap\">Data in your editor</p>\n" +
                 "  </div>\n" +
@@ -52,8 +52,8 @@ public class DomBuilder {
 
     private static String getAccountComponent() {
         String email = FileUtilManager.getItem("name");
-        return "<div class=\"card pb-3\">\n" +
-                "  <div class=\"card-body mb-1 pb-1\">\n" +
+        return "<div class=\"card pb-2\">\n" +
+                "  <div class=\"card-body mb-0 pb-1\">\n" +
                 "    <h6 class=\"card-title mb-1 text-nowrap\">Account</h6>\n" +
                 "    <p class=\"card-text mb-1 text-muted text-nowrap\">" + email + "</p>\n" +
                 "  </div>\n" +
@@ -62,8 +62,8 @@ public class DomBuilder {
     }
 
     private static String getTeamComponent() {
-        return "<div class=\"card pb-3\">\n" +
-                "  <div class=\"card-body mb-1 pb-1\">\n" +
+        return "<div class=\"card pb-2\">\n" +
+                "  <div class=\"card-body mb-0 pb-1\">\n" +
                 "    <h6 class=\"card-title mb-1 text-nowrap\">Teams</h6>\n" +
                 "    <p class=\"card-text mb-1 text-muted text-nowrap\">View your team dashboard</p>\n" +
                 "  </div>\n" +
@@ -73,16 +73,18 @@ public class DomBuilder {
 
     private static String getGlobalStyle() {
         return "  <style type=\"text/css\">\n" +
+                "    body { line-height: 1; font-size: .9rem; }\n" +
                 "    .list-group-item { border: 0 none; }\n" +
                 "    button:focus, button:active { outline: none; border-style: none; }\n" +
                 "    .cursor-pointer { cursor: pointer; }\n" +
                 "    .top-right { position: absolute; top: 18px; right: 16px }\n" +
+                "    .icon-button { padding: 0; background-color: \"transparent\"; border: 0; -webkit-appearance: none; cursor: pointer;}\n" +
+                "    .icon-button:hover { background-color: \"rgba(black, 0.2)\";}\n" +
                 "  </style>\n";
     }
 
     private static String getJsDependencies() {
-        return "    <!-- jQuery first, then Popper.js, then Bootstrap JS -->\n" +
-                "    <script src=\"https://code.jquery.com/jquery-3.2.1.slim.min.js\" integrity=\"sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN\" crossorigin=\"anonymous\"></script>\n" +
+        return "    <!-- Popper.js then Bootstrap JS -->\n" +
                 "    <script src=\"https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js\" integrity=\"sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p\" crossorigin=\"anonymous\"></script>\n" +
                 "    <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js\" integrity=\"sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT\" crossorigin=\"anonymous\"></script>\n" +
                 customJavascript();
@@ -94,7 +96,7 @@ public class DomBuilder {
                 "       function teamClickHandler(org_name, team_id) {\n" +
                 "         console.log(JSON.stringify({cmd: 'launch_team', org_name, team_id}));\n" +
                 "       }\n" +
-                "       function onAccountClick(cmd) {\n" +
+                "       function onCmdClick(cmd) {\n" +
                 "         console.log(JSON.stringify({cmd}));\n" +
                 "       }\n" +
                 "     </script>\n";
@@ -125,8 +127,8 @@ public class DomBuilder {
                 "    </button>\n";
     }
 
-    private static String getAccountButtonItem(String svg, String label, String cmd) {
-        return "     <button id=\"`team_${team_id}`\" type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\" onclick=\"onAccountClick('" + cmd + "')\">\n" +
+    private static String getCommandButtonItem(String svg, String label, String cmd) {
+        return "     <button id=\"`team_${team_id}`\" type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\" onclick=\"onCmdClick('" + cmd + "')\">\n" +
                 "      <div class=\"md-v-line\"></div>\n" +
                 "        <span class=\"mr-2\">\n" +
                 svg +
@@ -152,18 +154,18 @@ public class DomBuilder {
 
     private static String getAccountListItems() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getAccountButtonItem(getPawSvg(), "Switch account", "switch_account"));
-        sb.append(getAccountButtonItem(getSettingsSvg(), "Configure settings", "configure"));
-        sb.append(getAccountButtonItem(getReadmeSvg(), "Documentation", "readme"));
-        sb.append(getAccountButtonItem(getMessageSvg(), "Submit an issue", "submit_issue"));
-        sb.append(getAccountButtonItem(getVisibleSvg(), "Hide code time status", "toggle_status"));
+        sb.append(getCommandButtonItem(getPawSvg(), "Switch account", "switch_account"));
+        sb.append(getCommandButtonItem(getSettingsSvg(), "Configure settings", "configure"));
+        sb.append(getCommandButtonItem(getReadmeSvg(), "Documentation", "readme"));
+        sb.append(getCommandButtonItem(getMessageSvg(), "Submit an issue", "submit_issue"));
+        sb.append(getCommandButtonItem(getVisibleSvg(), "Hide code time status", "toggle_status"));
         return getButtonListItemContainer(sb.toString());
     }
 
     private static String getStatsListItems() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getAccountButtonItem(getDashboardSvg(), "Dashboard", "dashboard"));
-        sb.append(getAccountButtonItem(getPawSvg(), "More data at Software.com", "web_dashboard"));
+        sb.append(getCommandButtonItem(getDashboardSvg(), "Dashboard", "dashboard"));
+        sb.append(getCommandButtonItem(getPawSvg(), "More data at Software.com", "web_dashboard"));
         return getButtonListItemContainer(sb.toString());
     }
 

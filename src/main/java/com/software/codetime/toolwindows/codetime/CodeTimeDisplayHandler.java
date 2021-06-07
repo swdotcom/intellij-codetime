@@ -82,6 +82,8 @@ public class CodeTimeDisplayHandler implements CefDisplayHandler {
             case "web_dashboard":
                 UserSessionManager.launchWebDashboard(UIInteractionType.click);
                 break;
+            case "toggle_flow":
+                break;
             default:
                 break;
         }
