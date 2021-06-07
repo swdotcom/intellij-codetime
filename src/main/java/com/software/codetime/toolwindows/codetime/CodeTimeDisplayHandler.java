@@ -53,7 +53,9 @@ public class CodeTimeDisplayHandler implements CefDisplayHandler {
                 UtilManager.launchUrl(ConfigManager.app_url + "/dashboard?org_name=" + data.get("org_name").getAsString() + "&team_id=" + data.get("team_id").getAsInt());
                 break;
             case "switch_account":
-                AuthPromptManager.initiateSwitchAccountFlow();
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    AuthPromptManager.initiateSwitchAccountFlow();
+                });
                 break;
             case "readme":
                 ApplicationManager.getApplication().invokeLater(() -> {
