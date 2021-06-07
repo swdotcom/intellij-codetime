@@ -1,8 +1,11 @@
 package com.software.codetime.toolwindows.codetime;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.jcef.JBCefBrowser;
 import org.cef.CefApp;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -10,10 +13,13 @@ public class CodeTimeToolWindow {
 
     private JBCefBrowser browser;
 
-    public CodeTimeToolWindow(ToolWindow toolWindow) {
+    public CodeTimeToolWindow(@NotNull ToolWindow toolWindow, @NotNull Project project) {
         browser = new JBCefBrowser();
+        browser.getJBCefClient().addDisplayHandler(new CodeTimeDisplayHandler(), browser.getCefBrowser());
         registerAppSchemeHandler();
+        Disposer.register(project, browser);
         browser.loadURL("http://myapp/index.html");
+
     }
 
     private void registerAppSchemeHandler() {
@@ -31,4 +37,5 @@ public class CodeTimeToolWindow {
     private synchronized void init() {
         //
     }
+
 }

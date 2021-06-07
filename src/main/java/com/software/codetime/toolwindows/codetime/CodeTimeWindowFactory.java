@@ -14,7 +14,7 @@ public class CodeTimeWindowFactory implements ToolWindowFactory {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        CodeTimeToolWindow ctWindow = new CodeTimeToolWindow(toolWindow);
+        CodeTimeToolWindow ctWindow = new CodeTimeToolWindow(toolWindow, project);
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(ctWindow.getContent(), "", false);
         toolWindow.getContentManager().addContent(content);
