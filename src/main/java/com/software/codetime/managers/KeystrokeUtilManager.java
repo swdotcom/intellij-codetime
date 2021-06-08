@@ -67,9 +67,6 @@ public class KeystrokeUtilManager {
                 // send the event to the event tracker
                 EventTrackerManager.getInstance().trackCodeTimeEvent(keystrokeCountInfo);
 
-                // refresh the code time tree view
-                WallClockManager.getInstance().dispatchStatusViewUpdate();
-
                 UtilManager.TimesData timesData = UtilManager.getTimesData();
                 // set the latest payload timestamp utc so help with session time calculations
                 FileUtilManager.setNumericItem("latestPayloadTimestampEndUtc", timesData.now);

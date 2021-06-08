@@ -1,5 +1,6 @@
 package com.software.codetime.models;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
@@ -10,12 +11,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
-import java.util.logging.Logger;
 
 public class StatusBarKpmIconWidget implements StatusBarWidget {
-    public static final Logger log = Logger.getLogger("SoftwareCoStatusBarKpmIconWidget");
 
     public static final String KPM_ICON_ID = "software.kpm.icon";
+    public static final String FLOW_ICON_ID = "software.flow.icon";
 
     private UserSessionManager sessionMgr = UserSessionManager.getInstance();
 
@@ -26,12 +26,16 @@ public class StatusBarKpmIconWidget implements StatusBarWidget {
     private final IconPresentation presentation = new IconPresentation();
     private Consumer<MouseEvent> eventHandler;
 
-    public StatusBarKpmIconWidget(String id) {
+    public StatusBarKpmIconWidget(String id, final Runnable callback) {
         this.id = id;
         eventHandler = new Consumer<MouseEvent>() {
             @Override
             public void consume(MouseEvent mouseEvent) {
-                sessionMgr.statusBarClickHandler();
+                if (callback != null) {
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                        callback.run();
+                    });
+                }
             }
         };
     }
@@ -41,7 +45,7 @@ public class StatusBarKpmIconWidget implements StatusBarWidget {
     }
 
     public void updateIcon(String iconName) {
-        Icon icon = IconLoader.findIcon("/com/softwareco/intellij/plugin/assets/" + iconName);
+        Icon icon = IconLoader.findIcon("/assets/" + iconName);
         this.setIcon(icon);
     }
 

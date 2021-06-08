@@ -1,6 +1,7 @@
 package com.software.codetime.managers;
 
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import jdk.internal.org.jline.utils.Status;
 import swdc.java.ops.event.SlackStateChangeModel;
 import swdc.java.ops.http.FlowModeClient;
 import swdc.java.ops.manager.*;
@@ -64,6 +65,7 @@ public class FlowManager {
         SlackManager.clearSlackCache();
 
         CodeTimeWindowFactory.refresh(false);
+        StatusBarManager.updateStatusBar();
 
         enabledFlow = true;
     }
@@ -76,6 +78,7 @@ public class FlowManager {
         SlackManager.clearSlackCache();
 
         CodeTimeWindowFactory.refresh(false);
+        StatusBarManager.updateStatusBar();
 
         enabledFlow = false;
     }

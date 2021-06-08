@@ -1,5 +1,6 @@
 package com.software.codetime.models;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.util.Consumer;
@@ -9,12 +10,11 @@ import org.jetbrains.annotations.Nullable;
 import swdc.java.ops.manager.FileUtilManager;
 
 import java.awt.event.MouseEvent;
-import java.util.logging.Logger;
 
 public class StatusBarKpmTextWidget implements StatusBarWidget {
-    public static final Logger log = Logger.getLogger("SoftwareCoStatusBarKpmTextWidget");
 
     public static final String KPM_TEXT_ID = "software.kpm.text";
+    public static final String FLOW_TEXT_ID = "software.flow.text";
 
     private String msg = "";
     private String tooltip = "";
@@ -26,12 +26,16 @@ public class StatusBarKpmTextWidget implements StatusBarWidget {
 
     private final TextPresentation presentation = new StatusPresentation();
 
-    public StatusBarKpmTextWidget(String id) {
+    public StatusBarKpmTextWidget(String id, final Runnable callback) {
         this.id = id;
         eventHandler = new Consumer<MouseEvent>() {
             @Override
             public void consume(MouseEvent mouseEvent) {
-                sessionMgr.statusBarClickHandler();
+                if (callback != null) {
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                        callback.run();
+                    });
+                }
             }
         };
     }
@@ -64,12 +68,6 @@ public class StatusBarKpmTextWidget implements StatusBarWidget {
         @Override
         public String getText() {
             return StatusBarKpmTextWidget.this.msg;
-        }
-
-        @NotNull
-        @Override
-        public String getMaxPossibleText() {
-            return "";
         }
 
         @Override

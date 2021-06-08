@@ -9,6 +9,7 @@ import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefDisplayHandler;
 import swdc.java.ops.manager.ConfigManager;
+import swdc.java.ops.manager.SlackManager;
 import swdc.java.ops.manager.UtilManager;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 
@@ -81,6 +82,13 @@ public class CodeTimeDisplayHandler implements CefDisplayHandler {
                 break;
             case "toggle_flow":
                 FlowManager.toggleFlowMode(false);
+                break;
+            case "add_workspace":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    SlackManager.connectSlackWorkspace(() -> {
+                        CodeTimeWindowFactory.refresh(false);
+                    });
+                });
                 break;
             default:
                 break;

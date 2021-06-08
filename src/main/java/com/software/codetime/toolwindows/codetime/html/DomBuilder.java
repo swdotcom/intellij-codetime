@@ -1,9 +1,13 @@
 package com.software.codetime.toolwindows.codetime.html;
 
+import com.intellij.openapi.wm.StatusBar;
+import com.software.codetime.managers.StatusBarManager;
 import org.apache.commons.lang3.StringUtils;
 import swdc.java.ops.http.FlowModeClient;
 import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.manager.FileUtilManager;
+import swdc.java.ops.manager.SlackManager;
+import swdc.java.ops.model.Integration;
 import swdc.java.ops.model.Org;
 import swdc.java.ops.model.Team;
 
@@ -28,10 +32,10 @@ public class DomBuilder {
 
     private static String getFlowModeComponent() {
         String flowModeLabel = "Enter Flow Mode";
-        String flowModeIcon = getFlowModeOffFontAwesomeIcon();
-        if (!FlowModeClient.isFlowModeOn()) {
-            flowModeLabel = "Enter Flow Mode";
-            flowModeIcon = getFlowModeOnFontAwesomeIcon();
+        String flowModeIcon = getFlowModeOffFaIcon();
+        if (FlowModeClient.isFlowModeOn()) {
+            flowModeLabel = "Exit Flow Mode";
+            flowModeIcon = getFlowModeOnFaIcon();
         }
         return "<div class=\"card pb-2\">\n" +
                 "  <div class=\"card-body mb-0 pb-1\">\n" +
@@ -91,12 +95,14 @@ public class DomBuilder {
                 "    .card { border-radius: 0 }\n" +
                 "    .list-group-item { border: 0 none; }\n" +
                 "    .accordion-item { border: 0 none; background-color: \"transparent\" }\n" +
+                "    .accordion-button { font-size: inherit; }\n" +
+                "    .accordion-body { padding: 1px }\n" +
                 "    .card > .list-group { border-style: none; }\n" +
                 "    button:focus, button:active { outline: none; border-style: none; }\n" +
                 "    .cursor-pointer { cursor: pointer; }\n" +
                 "    .top-right { position: absolute; top: 18px; right: 16px }\n" +
                 "    .icon-button { padding: 0; background-color: \"transparent\"; border: 0; -webkit-appearance: none; cursor: pointer;}\n" +
-                "    .icon-button:hover { background-color: \"rgba(black, 0.2)\";}\n" +
+                "    .icon-button:hover { background-color: rgba(black, 0.4);}\n" +
                 "  </style>\n";
     }
 
@@ -113,6 +119,9 @@ public class DomBuilder {
                 "       const windowFeatures = \"menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes\";\n" +
                 "       function teamClickHandler(org_name, team_id) {\n" +
                 "         console.log(JSON.stringify({cmd: 'launch_team', org_name, team_id}));\n" +
+                "       }\n" +
+                "       function workspaceClickHandler(id) {\n" +
+                "         console.log(JSON.stringify({cmd: 'edit_workspace', id}));\n" +
                 "       }\n" +
                 "       function onCmdClick(cmd) {\n" +
                 "         console.log(JSON.stringify({cmd}));\n" +
@@ -136,37 +145,43 @@ public class DomBuilder {
 
     private static String getTeamButtonListItem(String label, String org_name, long team_id) {
         return "     <button id=\"`team_${team_id}`\" type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\" onclick=\"teamClickHandler('" + org_name + "', " + team_id + ")\">\n" +
-                "      <div class=\"md-v-line\"></div>\n" +
-                "        <span class=\"mr-2\">\n" +
+                "        <span style=\"padding-right: 4px\">\n" +
                 getTeamSvg() +
                 "        </span>\n" +
                 label +
                 "    </button>\n";
     }
 
+    private static String getWorkspaceButtonListItem(String team_name, String team_domain, long id) {
+        return "     <button id=\"`team_${team_id}`\" type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\" onclick=\"workspaceClickHandler(" + id + ")\">\n" +
+                "        <span style=\"padding-right: 4px\">\n" +
+                getTeamSvg() +
+                "        </span>\n" +
+                team_name +
+                "    </button>\n";
+    }
+
     private static String getCommandButtonItem(String svg, String label, String cmd) {
         return "     <button type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\" onclick=\"onCmdClick('" + cmd + "')\">\n" +
-                "      <div class=\"md-v-line\"></div>\n" +
-                "        <span class=\"mr-2\">\n" +
+                "        <span style=\"padding-right: 4px\">\n" +
                 svg +
                 "        </span>\n" +
                 label +
                 "    </button>\n";
     }
 
-    private static String getCollapseButtonItem(String svg, String label) {
+    private static String getCollapseButtonItem(String svg, String label, String accordionChildrenItems) {
         return "<div class=\"accordion accordion-flush\" id=\"workspaceItems\">\n" +
                 "  <div class=\"accordion-item\">\n" +
                 "     <button type=\"button\" class=\"accordion-button collapsed shadow-none text-nowrap p-2\" data-bs-toggle=\"collapse\" data-bs-target=\"#workspacesBody\" aria-expanded=\"false\" aria-controls=\"workspacesBody\">\n" +
-                "      <div class=\"md-v-line\"></div>\n" +
-                "        <span class=\"mr-2\">\n" +
+                "        <span style=\"padding-right: 4px\">\n" +
                 svg +
                 "        </span>\n" +
                 label +
                 "    </button>\n" +
                 "    <div id=\"workspacesBody\" class=\"accordion-collapse collapse\" aria-labelledby=\"headingOne\" data-bs-parent=\"#workspaceItems\">\n" +
                 "      <div class=\"accordion-body\">\n" +
-                "        <strong>This is the first item's accordion body</strong>\n" +
+                accordionChildrenItems +
                 "      </div>\n" +
                 "    </div>\n" +
                 "  </div>\n" +
@@ -206,14 +221,27 @@ public class DomBuilder {
         return getButtonListItemContainer(sb.toString());
     }
 
+    private static String getWorkspaceListItems() {
+        List<Integration> workspaces = SlackManager.getSlackWorkspaces();
+
+        StringBuilder sb = new StringBuilder();
+        for (Integration workspace : workspaces) {
+            sb.append(getWorkspaceButtonListItem(workspace.team_name, workspace.team_domain, workspace.id));
+        }
+        sb.append(getCommandButtonItem(getPlusCircleFaIcon(), "Add workspace", "add_workspace"));
+        return getButtonListItemContainer(sb.toString());
+    }
+
     private static String getAccountListItems() {
+        String toggleStatusLabel = StatusBarManager.showingStatusText() ? "Hide Code Time status" : "Show Code Time status";
+
         StringBuilder sb = new StringBuilder();
         sb.append(getCommandButtonItem(getPawSvg(), "Switch account", "switch_account"));
         sb.append(getCommandButtonItem(getSettingsSvg(), "Configure settings", "configure"));
         sb.append(getCommandButtonItem(getReadmeSvg(), "Documentation", "readme"));
         sb.append(getCommandButtonItem(getMessageSvg(), "Submit an issue", "submit_issue"));
-        sb.append(getCommandButtonItem(getVisibleSvg(), "Hide code time status", "toggle_status"));
-        sb.append(getCollapseButtonItem(getSlackSvg(), "Workspaces"));
+        sb.append(getCommandButtonItem(getVisibleSvg(), toggleStatusLabel, "toggle_status"));
+        sb.append(getCollapseButtonItem(getSlackSvg(), "Workspaces", getWorkspaceListItems()));
         return getButtonListItemContainer(sb.toString());
     }
 
@@ -278,17 +306,21 @@ public class DomBuilder {
                 "</svg>\n";
     }
 
-    private static String getFlowModeOffFontAwesomeIcon() {
-        return "<span class=\"fas fa-circle\"></span>\n";
+    private static String getFlowModeOnFaIcon() {
+        return "<i class=\"fas fa-circle\"></i>\n";
     }
 
-    private static String getFlowModeOnFontAwesomeIcon() {
-        return "<span class=\"far fa-circle\"></span>\n";
+    private static String getFlowModeOffFaIcon() {
+        return "<i class=\"far fa-circle\"></i>\n";
+    }
+
+    private static String getPlusCircleFaIcon() {
+        return "<i class=\"fas fa-plus-circle\" style=\"color: #00B4EE\"></i>\n";
     }
 
     private static String getSlackSvg() {
         return "<svg aria-hidden=\"true\" focusable=\"false\" data-prefix=\"fab\" data-icon=\"slack\" class=\"svg-inline--fa fa-slack fa-w-14\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\" width=\"16\" height=\"16\">\n" +
-                "<path fill=\"#2196F3\" d=\"M94.12 315.1c0 25.9-21.16 47.06-47.06 47.06S0 341 0 315.1c0-25.9 21.16-47.06 47.06-47.06h47.06v47.06zm23.72 0c0-25.9 21.16-47.06 47.06-47.06s47.06 21.16 47.06 47.06v117.84c0 25.9-21.16 47.06-47.06 47.06s-47.06-21.16-47.06-47.06V315.1zm47.06-188.98c-25.9 0-47.06-21.16-47.06-47.06S139 32 164.9 32s47.06 21.16 47.06 47.06v47.06H164.9zm0 23.72c25.9 0 47.06 21.16 47.06 47.06s-21.16 47.06-47.06 47.06H47.06C21.16 243.96 0 222.8 0 196.9s21.16-47.06 47.06-47.06H164.9zm188.98 47.06c0-25.9 21.16-47.06 47.06-47.06 25.9 0 47.06 21.16 47.06 47.06s-21.16 47.06-47.06 47.06h-47.06V196.9zm-23.72 0c0 25.9-21.16 47.06-47.06 47.06-25.9 0-47.06-21.16-47.06-47.06V79.06c0-25.9 21.16-47.06 47.06-47.06 25.9 0 47.06 21.16 47.06 47.06V196.9zM283.1 385.88c25.9 0 47.06 21.16 47.06 47.06 0 25.9-21.16 47.06-47.06 47.06-25.9 0-47.06-21.16-47.06-47.06v-47.06h47.06zm0-23.72c-25.9 0-47.06-21.16-47.06-47.06 0-25.9 21.16-47.06 47.06-47.06h117.84c25.9 0 47.06 21.16 47.06 47.06 0 25.9-21.16 47.06-47.06 47.06H283.1z\"></path>\n" +
+                "<path fill=\"#00B4EE\" d=\"M94.12 315.1c0 25.9-21.16 47.06-47.06 47.06S0 341 0 315.1c0-25.9 21.16-47.06 47.06-47.06h47.06v47.06zm23.72 0c0-25.9 21.16-47.06 47.06-47.06s47.06 21.16 47.06 47.06v117.84c0 25.9-21.16 47.06-47.06 47.06s-47.06-21.16-47.06-47.06V315.1zm47.06-188.98c-25.9 0-47.06-21.16-47.06-47.06S139 32 164.9 32s47.06 21.16 47.06 47.06v47.06H164.9zm0 23.72c25.9 0 47.06 21.16 47.06 47.06s-21.16 47.06-47.06 47.06H47.06C21.16 243.96 0 222.8 0 196.9s21.16-47.06 47.06-47.06H164.9zm188.98 47.06c0-25.9 21.16-47.06 47.06-47.06 25.9 0 47.06 21.16 47.06 47.06s-21.16 47.06-47.06 47.06h-47.06V196.9zm-23.72 0c0 25.9-21.16 47.06-47.06 47.06-25.9 0-47.06-21.16-47.06-47.06V79.06c0-25.9 21.16-47.06 47.06-47.06 25.9 0 47.06 21.16 47.06 47.06V196.9zM283.1 385.88c25.9 0 47.06 21.16 47.06 47.06 0 25.9-21.16 47.06-47.06 47.06-25.9 0-47.06-21.16-47.06-47.06v-47.06h47.06zm0-23.72c-25.9 0-47.06-21.16-47.06-47.06 0-25.9 21.16-47.06 47.06-47.06h117.84c25.9 0 47.06 21.16 47.06 47.06 0 25.9-21.16 47.06-47.06 47.06H283.1z\"></path>\n" +
                 "</svg>\n";
     }
 }

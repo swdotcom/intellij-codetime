@@ -44,7 +44,7 @@ public class SessionDataManager {
         }
     }
 
-    private static void updateSessionSummaryFromServer() {
+    public static void updateSessionSummaryFromServer() {
         SessionSummary summary = SessionDataManager.getSessionSummaryData();
 
         String jwt = FileUtilManager.getItem("jwt");
@@ -65,7 +65,7 @@ public class SessionDataManager {
             FileUtilManager.writeData(FileUtilManager.getSessionDataSummaryFile(), summary);
         }
 
-        WallClockManager.getInstance().dispatchStatusViewUpdate();
+        StatusBarManager.updateStatusBar();
     }
 
     public static SessionSummary getSessionSummaryData() {

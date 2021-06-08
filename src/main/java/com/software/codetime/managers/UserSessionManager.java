@@ -5,6 +5,7 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.ui.Messages;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.http.ClientResponse;
@@ -184,6 +185,17 @@ public class UserSessionManager {
         elementEntity.cta_text = "See advanced metrics";
         elementEntity.icon_name = interactionType == UIInteractionType.click ? "paw" : null;
         EventTrackerManager.getInstance().trackUIInteraction(interactionType, elementEntity);
+    }
+
+    public static void showOfflinePrompt(boolean isTenMinuteReconnect) {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            public void run() {
+                String infoMsg = "Our service is temporarily unavailable.\n" +
+                        "Your status bar will not update at this time.";
+                // ask to download the PM
+                Messages.showInfoMessage(infoMsg, ConfigManager.plugin_name);
+            }
+        });
     }
 }
 

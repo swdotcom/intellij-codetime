@@ -2,14 +2,9 @@ package com.software.codetime.managers;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.software.codetime.listeners.CodeTimeProcessor;
-import com.software.codetime.toolwindows.codetime.CodeTimeToolWindow;
-import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
-import swdc.java.ops.manager.AsyncManager;
 import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.manager.UtilManager;
-import swdc.java.ops.model.CodeTimeSummary;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class WallClockManager {
@@ -17,10 +12,8 @@ public class WallClockManager {
     public static final Logger LOG = Logger.getLogger("WallClockManager");
 
     private static final int SECONDS_INCREMENT = 30;
-    private static final int DAY_CHECK_TIMER_INTERVAL = 60;
 
     private static WallClockManager instance = null;
-    private AsyncManager asyncManager;
 
     public static WallClockManager getInstance() {
         if (instance == null) {
@@ -34,26 +27,11 @@ public class WallClockManager {
     }
 
     private WallClockManager() {
-        asyncManager = AsyncManager.getInstance();
-        // initialize the timer
-        this.init();
-    }
 
-    private void init() {
-        final Runnable wallClockTimer = () -> updateWallClockTime();
-        asyncManager.scheduleService(
-                wallClockTimer, "wallClockTimer", 0, SECONDS_INCREMENT);
-
-        final Runnable newDayCheckerTimer = () -> newDayChecker();
-        asyncManager.scheduleService(
-                newDayCheckerTimer, "newDayCheckerTimer", 30, DAY_CHECK_TIMER_INTERVAL);
-
-        dispatchStatusViewUpdate();
     }
 
     public void newDayChecker() {
         if (UtilManager.isNewDay()) {
-
             // clear the wc time and the session summary and the file change info summary
             clearWcTime();
             SessionDataManager.clearSessionSummaryData();
@@ -81,33 +59,6 @@ public class WallClockManager {
                 // update the json time data file
                 TimeDataManager.incrementEditorSeconds(SECONDS_INCREMENT);
             }
-            dispatchStatusViewUpdate();
-        });
-    }
-
-    public void refreshSessionDataAndTree() {
-
-    }
-
-    public synchronized void dispatchStatusViewUpdate() {
-        try {
-            CodeTimeSummary ctSummary = TimeDataManager.getCodeTimeSummary();
-
-            String icon = StatusBarManager.showingStatusText() ? "paw-grey.png" : "status-clock.svg";
-            String currentDayTimeStr = UtilManager.humanizeMinutes(ctSummary.activeCodeTimeMinutes);
-
-            // STATUS BAR REFRESH
-            StatusBarManager.updateStatusBar(
-                    icon, currentDayTimeStr, "Code time today. Click to see more from Code Time.");
-        } catch (Exception e) {
-            LOG.log(Level.WARNING, "Status bar update error: " + e.getMessage());
-        }
-
-        ApplicationManager.getApplication().invokeLater(() -> {
-            try {
-                // TREE REFRESH
-                CodeTimeWindowFactory.refresh(false);
-            } catch (Exception e) {}
         });
     }
 
