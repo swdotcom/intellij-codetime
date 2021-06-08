@@ -1,8 +1,13 @@
 package com.software.codetime.toolwindows.codetime.html;
 
+import org.apache.commons.lang3.StringUtils;
+import swdc.java.ops.http.FlowModeClient;
+import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.manager.FileUtilManager;
+import swdc.java.ops.model.Org;
 import swdc.java.ops.model.Team;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DomBuilder {
@@ -22,6 +27,12 @@ public class DomBuilder {
     }
 
     private static String getFlowModeComponent() {
+        String flowModeLabel = "Enter Flow Mode";
+        String flowModeIcon = getFlowModeOffSvg();
+        if (!FlowModeClient.isFlowModeOn()) {
+            flowModeLabel = "Enter Flow Mode";
+            flowModeIcon = getFlowModeOnSvg();
+        }
         return "<div class=\"card pb-2\">\n" +
                 "  <div class=\"card-body mb-0 pb-1\">\n" +
                 "    <h6 class=\"card-title mb-1 text-nowrap\">Flow Mode</h6>\n" +
@@ -34,8 +45,13 @@ public class DomBuilder {
                 "      </button>\n" +
                 "    </div>\n" +
                 "  </div>\n" +
-                "  <div class=\"d-grid gap-2 col-12 mx-auto\">\n" +
-                "    <button type=\"button\" class=\"btn btn-primary\" onclick=\"onCmdClick('toggle_flow')\">Enter Flow Mode</button>\n" +
+                "  <div class=\"d-grid gap-2 col-8 mx-auto\">\n" +
+                "    <button type=\"button\" class=\"btn btn-primary\" onclick=\"onCmdClick('toggle_flow')\">\n" +
+                "        <span class=\"mr-6 pb-1\">\n" +
+                flowModeIcon +
+                "        </span>\n" +
+                flowModeLabel + "\n" +
+                "    </button>\n" +
                 "  </div>\n" +
                 "</div>\n";
     }
@@ -74,7 +90,9 @@ public class DomBuilder {
     private static String getGlobalStyle() {
         return "  <style type=\"text/css\">\n" +
                 "    body { line-height: 1; font-size: .9rem; }\n" +
+                "    .card { border-radius: 0 }\n" +
                 "    .list-group-item { border: 0 none; }\n" +
+                "    .card > .list-group { border-style: none; }\n" +
                 "    button:focus, button:active { outline: none; border-style: none; }\n" +
                 "    .cursor-pointer { cursor: pointer; }\n" +
                 "    .top-right { position: absolute; top: 18px; right: 16px }\n" +
@@ -109,8 +127,7 @@ public class DomBuilder {
                 "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">\n" +
                 "\n" +
                 "    <!-- Bootstrap CSS -->\n" +
-                "    <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css\" integrity=\"sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm\" crossorigin=\"anonymous\">\n" +
-                "    <script src=\"https://kit.fontawesome.com/ef435e26ef.js\" crossorigin=\"anonymous\"></script>\n" +
+                "    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x\" crossorigin=\"anonymous\">\n" +
                 "\n" +
                 DomBuilder.getGlobalStyle() +
                 "    <title>Code Time</title>\n" +
@@ -143,8 +160,26 @@ public class DomBuilder {
                 "</div>\n";
     }
 
+    private static List<Team> getTeams() {
+        List<Team> teams = new ArrayList<>();
+        List<Org> orgs = OpsHttpClient.getOrganizations(FileUtilManager.getItem("jwt"));
+        if (orgs != null && orgs.size() > 0) {
+            for (Org org : orgs) {
+                if (org.teams != null && org.teams.size() > 0) {
+                    for (Team team : org.teams) {
+                        if (StringUtils.isBlank(team.org_name)) {
+                            team.org_name = org.name;
+                        }
+                        teams.add(team);
+                    }
+                }
+            }
+        }
+        return teams;
+    }
+
     private static String getTeamListItems() {
-        List<Team> teams = Teams.getTeams();
+        List<Team> teams = getTeams();
         StringBuilder sb = new StringBuilder();
         for (Team team : teams) {
             sb.append(getTeamButtonListItem(team.name, team.org_name, team.id));
@@ -212,14 +247,60 @@ public class DomBuilder {
     }
 
     private static String getDashboardSvg() {
-        return "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n" +
-                "<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.40003 5.19999H7.60004V4.39999H8.40003V5.19999V5.19999ZM11.5999 7.59991H10.8V8.3999H11.5999V7.59991V7.59991ZM5.99991 5.19997H5.19992V5.99996H5.99991V5.19997V5.19997ZM5.19993 7.59991H4.39994V8.3999H5.19993V7.59991V7.59991ZM14 3.19997L13.6 2.79998L8.40004 6.79994C8.35204 6.78394 7.60005 6.79994 7.60005 6.79994C7.16005 6.79994 6.80006 7.15993 6.80006 7.59993V8.39992C6.80006 8.83991 7.16005 9.19991 7.60005 9.19991H8.40004C8.84004 9.19991 9.20003 8.83991 9.20003 8.39992V7.66393L14 3.19997V3.19997ZM12.7279 6.47195C12.8799 6.95995 12.9679 7.47194 12.9679 7.99993C12.9679 10.7359 10.7439 12.9599 8.00793 12.9599C5.27196 12.9599 3.03999 10.7359 3.03999 7.99993C3.03999 5.26396 5.26396 3.03999 7.99993 3.03999C8.95992 3.03999 9.84791 3.31199 10.6159 3.79198L11.3679 3.03999C10.4159 2.392 9.25592 2 8.00793 2C4.68797 2 2 4.68797 2 7.99993C2 11.3119 4.68797 13.9999 7.99993 13.9999C11.3119 13.9999 13.9999 11.3119 13.9999 7.99993C13.9999 7.17594 13.8399 6.38395 13.5279 5.67196L12.7279 6.47195V6.47195Z\" fill=\"#00B4EE\"/>\n" +
+        return "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" class=\"bi bi-bar-chart-line-fill\" viewBox=\"0 0 16 16\">\n" +
+                "  <path d=\"M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2z\" fill=\"#00B4EE\"/>\n" +
                 "</svg>\n";
     }
 
     private static String getTeamSvg() {
         return "<svg width=\"16\" height=\"16\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 640 512\">\n" +
                 "<path d=\"M192 256c61.9 0 112-50.1 112-112S253.9 32 192 32 80 82.1 80 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C51.6 288 0 339.6 0 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zM480 256c53 0 96-43 96-96s-43-96-96-96-96 43-96 96 43 96 96 96zm48 32h-3.8c-13.9 4.8-28.6 8-44.2 8s-30.3-3.2-44.2-8H432c-20.4 0-39.2 5.9-55.7 15.4 24.4 26.3 39.7 61.2 39.7 99.8v38.4c0 2.2-.5 4.3-.6 6.4H592c26.5 0 48-21.5 48-48 0-61.9-50.1-112-112-112z\" fill=\"#00B4EE\"/>\n" +
+                "</svg>\n";
+    }
+
+    private static String getFlowModeOnSvg() {
+        return "<svg width=\"16\" height=\"16\" version=\"1.1\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n" +
+                " viewBox=\"0 0 300 300\" style=\"enable-background:new 0 0 300 300;\" xml:space=\"preserve\">\n" +
+                "<path d=\"M150,0C67.29,0,0,67.29,0,150s67.29,150,150,150s150-67.29,150-150S232.71,0,150,0z M150,270c-66.169,0-120-53.832-120-120\n" +
+                " S83.831,30,150,30s120,53.832,120,120S216.168,270,150,270z\" fill=\"#ffffff\"/>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "<g>\n" +
+                "</g>\n" +
+                "</svg>\n";
+    }
+
+    private static String getFlowModeOffSvg() {
+        return "<svg width=\"16\" height=\"16\" version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 122.88 122.88\" enable-background=\"new 0 0 122.88 122.88\" xml:space=\"preserve\">\n" +
+                "<g>\n" +
+                "<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M61.438,0c33.93,0,61.441,27.512,61.441,61.441 c0,33.929-27.512,61.438-61.441,61.438C27.512,122.88,0,95.37,0,61.441C0,27.512,27.512,0,61.438,0L61.438,0z\" fill=\"#ffffff\"/>\n" +
+                "</g>\n" +
                 "</svg>\n";
     }
 }

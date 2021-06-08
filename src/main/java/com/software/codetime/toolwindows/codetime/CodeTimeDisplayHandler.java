@@ -2,10 +2,7 @@ package com.software.codetime.toolwindows.codetime;
 
 import com.google.gson.JsonObject;
 import com.intellij.openapi.application.ApplicationManager;
-import com.software.codetime.managers.AuthPromptManager;
-import com.software.codetime.managers.ReadmeManager;
-import com.software.codetime.managers.StatusBarManager;
-import com.software.codetime.managers.UserSessionManager;
+import com.software.codetime.managers.*;
 import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
 import org.cef.CefSettings;
 import org.cef.browser.CefBrowser;
@@ -83,6 +80,7 @@ public class CodeTimeDisplayHandler implements CefDisplayHandler {
                 UserSessionManager.launchWebDashboard(UIInteractionType.click);
                 break;
             case "toggle_flow":
+                FlowManager.toggleFlowMode(false);
                 break;
             default:
                 break;

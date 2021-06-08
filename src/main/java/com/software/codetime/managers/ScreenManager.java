@@ -35,7 +35,10 @@ public class ScreenManager {
                 @Override
                 public void windowStateChanged(WindowEvent e) {
                     ApplicationManager.getApplication().invokeLater(() -> {
-                        FlowManager.checkToDisableFlow();
+                        if (FlowManager.isInFlowMode()) {
+                            // show the code time view as a reminder flow mode is still on
+                            CodeTimeWindowFactory.openToolWindow();
+                        }
                     });
                 }
             });

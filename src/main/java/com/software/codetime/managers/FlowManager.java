@@ -1,63 +1,61 @@
 package com.software.codetime.managers;
 
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
-import org.apache.commons.lang.StringUtils;
-import swdc.java.ops.manager.ConfigManager;
-import swdc.java.ops.manager.SlackManager;
-import swdc.java.ops.model.ConfigSettings;
-import swdc.java.ops.model.SlackDndInfo;
-import swdc.java.ops.model.SlackUserPresence;
-import swdc.java.ops.model.SlackUserProfile;
+import swdc.java.ops.event.SlackStateChangeModel;
+import swdc.java.ops.http.FlowModeClient;
+import swdc.java.ops.manager.*;
+import swdc.java.ops.model.*;
+
+import javax.swing.*;
 
 public class FlowManager {
     public static boolean enabledFlow = false;
 
-    private static boolean enablingFlow = false;
-    private static boolean useSlackSettings = true;
-
-    public static void checkToDisableFlow() {
-        ScreenManager.isFullScreen();
-        if (!enabledFlow || enablingFlow) {
-            return;
-        } else if (!useSlackSettings && !isScreenStateInFlow()) {
-            // slack isn't connected but the screen state changed out of flow
-            pauseFlowInitiate();
-            return;
-        }
-
-        if (enabledFlow && !isInFlowMode()) {
-            // disable it
-            pauseFlowInitiate();
+    public static void toggleFlowMode(boolean automated) {
+        if (!enabledFlow) {
+            enterFlowMode(automated);
+        } else {
+            exitFlowMode();
         }
     }
 
-    public static void initiateFlow(boolean automated, boolean skipSlackCheck) {
-        boolean isRegistered = SlackManager.checkRegistration(false, null);
+    public static void enterFlowMode(boolean automated) {
+        boolean isRegistered = AccountManager.checkRegistration(false, null);
         if (!isRegistered) {
             // show the flow mode prompt
-            SlackManager.showModalSignupPrompt("To use Flow Mode, please first sign up or login.", () -> { CodeTimeWindowFactory.refresh(true);});
+            AccountManager.showModalSignupPrompt("To use Flow Mode, please first sign up or login.", () -> { CodeTimeWindowFactory.refresh(true);});
             return;
         }
-        enablingFlow = true;
 
-        ConfigSettings configSettings = ConfigManager.getConfigSettings();
+        boolean intellij_CtskipSlackConnect = FileUtilManager.getBooleanItem("intellij_CtskipSlackConnect");
+        boolean workspaces = SlackManager.hasSlackWorkspaces();
+        if (!workspaces && !intellij_CtskipSlackConnect) {
+            String msg = "Connect a Slack workspace to pause notifications and update your status?";
 
-        // set slack status to away
-        if (configSettings.slackAwayStatus) {
-            SlackManager.setSlackPresence("away");
+            Object[] options = {"Connect", "Skip"};
+            SwingUtilities.invokeLater(() -> {
+                int choice = JOptionPane.showOptionDialog(
+                        null, msg, "Slack connect", JOptionPane.OK_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+                if (choice == 0) {
+                    SlackStateChangeModel changeModel = new SlackStateChangeModel();
+                    SlackManager.connectSlackWorkspace(() -> {
+                        CodeTimeWindowFactory.refresh(true);
+                    });
+                } else {
+                    FileUtilManager.setBooleanItem("intellij_CtskipSlackConnect", true);
+                    FlowManager.enterFlowMode(automated);
+                }
+            });
+            return;
         }
 
-        // set the status text to what the user set in the settings
-        boolean clearStatusText = StringUtils.isBlank(configSettings.slackAwayStatusText) ? true : false;
-        SlackManager.updateSlackStatusText(configSettings.slackAwayStatusText, ":large_purple_circle:", clearStatusText);
+        FlowModeClient.enterFlowMode(automated);
 
+        FlowMode flowMode = UtilManager.gson.fromJson(FileUtilManager.getItem("flowMode"), FlowMode.class);
 
-        // pause slack notifications
-        if (configSettings.pauseSlackNotifications) {
-            SlackManager.pauseSlackNotifications();
-        }
-
-        if (configSettings.screenMode.contains("Full Screen")) {
+        if (flowMode.editor.intellij.screenMode.contains("Full Screen")) {
             ScreenManager.enterFullScreen();
         } else {
             ScreenManager.exitFullScreen();
@@ -68,15 +66,11 @@ public class FlowManager {
         CodeTimeWindowFactory.refresh(false);
 
         enabledFlow = true;
-        enablingFlow = false;
     }
 
-    public static void pauseFlowInitiate() {
-        ConfigSettings configSettings = ConfigManager.getConfigSettings();
+    public static void exitFlowMode() {
+        FlowModeClient.exitFlowMode();
 
-        SlackManager.enableSlackNotifications();
-        SlackManager.setSlackPresence("auto");
-        SlackManager.updateSlackStatusText("", "", true);
         ScreenManager.exitFullScreen();
 
         SlackManager.clearSlackCache();
@@ -84,53 +78,14 @@ public class FlowManager {
         CodeTimeWindowFactory.refresh(false);
 
         enabledFlow = false;
-        enablingFlow = false;
     }
 
     public static boolean isInFlowMode() {
-        if (enablingFlow) {
-            return true;
-        } else if (!enabledFlow) {
+        if (!enabledFlow) {
             return false;
         }
 
-        ConfigSettings settings = ConfigManager.getConfigSettings();
-
-        useSlackSettings = SlackManager.hasSlackWorkspaces();
-
-        boolean screenInFlowState = isScreenStateInFlow();
-
-        SlackUserProfile slackUserProfile = SlackManager.getSlackStatus();
-        SlackDndInfo slackDndInfo = SlackManager.getSlackDnDInfo();
-        SlackUserPresence slackUserPresence = SlackManager.getSlackUserPresence();
-
-        boolean pauseSlackNotificationsInFlowState = false;
-        if (!useSlackSettings) {
-            pauseSlackNotificationsInFlowState = true;
-        } else if (settings.pauseSlackNotifications && slackDndInfo.snooze_enabled) {
-            pauseSlackNotificationsInFlowState = true;
-        } else if (!settings.pauseSlackNotifications && !slackDndInfo.snooze_enabled) {
-            pauseSlackNotificationsInFlowState = true;
-        }
-
-        // determine if the slack away status text is in flow
-        boolean slackAwayStatusMsgInFlowState = false;
-        if (!useSlackSettings) {
-            slackAwayStatusMsgInFlowState = true;
-        } else if (settings.slackAwayStatusText.equals(slackUserProfile.status_text)) {
-            slackAwayStatusMsgInFlowState = true;
-        }
-
-        boolean slackAwayPresenceInFlowState = false;
-        if (!useSlackSettings) {
-            slackAwayPresenceInFlowState = true;
-        } else if (settings.slackAwayStatus && slackUserPresence.presence.equals("")) {
-            slackAwayPresenceInFlowState = true;
-        } else if (!settings.slackAwayStatus && slackUserPresence.presence.equals("active")) {
-            slackAwayPresenceInFlowState = true;
-        }
-
-        return screenInFlowState && pauseSlackNotificationsInFlowState && slackAwayStatusMsgInFlowState && slackAwayPresenceInFlowState;
+        return FlowModeClient.isFlowModeOn();
     }
 
     public static boolean isScreenStateInFlow() {
