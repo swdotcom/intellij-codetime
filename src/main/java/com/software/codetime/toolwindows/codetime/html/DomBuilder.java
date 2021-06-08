@@ -155,18 +155,18 @@ public class DomBuilder {
     }
 
     private static String getCollapseButtonItem(String svg, String label) {
-        return "<div class=\"accordion\" id=\"accordionExample\">\n" +
+        return "<div class=\"accordion accordion-flush\" id=\"workspaceItems\">\n" +
                 "  <div class=\"accordion-item\">\n" +
-                "     <button type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\">\n" +
+                "     <button type=\"button\" class=\"accordion-button collapsed shadow-none text-nowrap p-2\" data-bs-toggle=\"collapse\" data-bs-target=\"#workspacesBody\" aria-expanded=\"false\" aria-controls=\"workspacesBody\">\n" +
                 "      <div class=\"md-v-line\"></div>\n" +
                 "        <span class=\"mr-2\">\n" +
                 svg +
                 "        </span>\n" +
                 label +
                 "    </button>\n" +
-                "    <div id=\"collapseOne\" class=\"accordion-collapse collapse\" aria-labelledby=\"headingOne\" data-bs-parent=\"#accordionExample\">\n" +
+                "    <div id=\"workspacesBody\" class=\"accordion-collapse collapse\" aria-labelledby=\"headingOne\" data-bs-parent=\"#workspaceItems\">\n" +
                 "      <div class=\"accordion-body\">\n" +
-                "        <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.\n" +
+                "        <strong>This is the first item's accordion body</strong>\n" +
                 "      </div>\n" +
                 "    </div>\n" +
                 "  </div>\n" +
