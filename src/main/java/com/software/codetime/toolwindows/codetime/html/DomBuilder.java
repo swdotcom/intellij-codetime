@@ -28,17 +28,17 @@ public class DomBuilder {
 
     private static String getFlowModeComponent() {
         String flowModeLabel = "Enter Flow Mode";
-        String flowModeIcon = getFlowModeOffSvg();
+        String flowModeIcon = getFlowModeOffFontAwesomeIcon();
         if (!FlowModeClient.isFlowModeOn()) {
             flowModeLabel = "Enter Flow Mode";
-            flowModeIcon = getFlowModeOnSvg();
+            flowModeIcon = getFlowModeOnFontAwesomeIcon();
         }
         return "<div class=\"card pb-2\">\n" +
                 "  <div class=\"card-body mb-0 pb-1\">\n" +
                 "    <h6 class=\"card-title mb-1 text-nowrap\">Flow Mode</h6>\n" +
                 "    <p class=\"card-text mb-1 text-muted text-nowrap\">Block out distractions</p>\n" +
                 "    <div class=\"top-right\">\n" +
-                "      <button type=\"button\" class=\"icon-button\" data-dismiss=\"modal\" aria-label=\"Settings\">\n" +
+                "      <button type=\"button\" class=\"icon-button\" data-dismiss=\"modal\" aria-label=\"Settings\" onclick=\"onCmdClick('configure')\">\n" +
                 "        <span aria-hidden=\"true\">\n" +
                 getSettingsSvg() +
                 "        </span>\n" +
@@ -47,9 +47,7 @@ public class DomBuilder {
                 "  </div>\n" +
                 "  <div class=\"d-grid gap-2 col-8 mx-auto\">\n" +
                 "    <button type=\"button\" class=\"btn btn-primary\" onclick=\"onCmdClick('toggle_flow')\">\n" +
-                "        <span class=\"mr-6 pb-1\">\n" +
-                flowModeIcon +
-                "        </span>\n" +
+                flowModeIcon + "\n" +
                 flowModeLabel + "\n" +
                 "    </button>\n" +
                 "  </div>\n" +
@@ -92,6 +90,7 @@ public class DomBuilder {
                 "    body { line-height: 1; font-size: .9rem; }\n" +
                 "    .card { border-radius: 0 }\n" +
                 "    .list-group-item { border: 0 none; }\n" +
+                "    .accordion-item { border: 0 none; background-color: \"transparent\" }\n" +
                 "    .card > .list-group { border-style: none; }\n" +
                 "    button:focus, button:active { outline: none; border-style: none; }\n" +
                 "    .cursor-pointer { cursor: pointer; }\n" +
@@ -103,6 +102,7 @@ public class DomBuilder {
 
     private static String getJsDependencies() {
         return "    <!-- Popper.js then Bootstrap JS -->\n" +
+                "    <script src=\"https://kit.fontawesome.com/ef435e26ef.js\" crossorigin=\"anonymous\"></script>\n" +
                 "    <script src=\"https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js\" integrity=\"sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p\" crossorigin=\"anonymous\"></script>\n" +
                 "    <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js\" integrity=\"sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT\" crossorigin=\"anonymous\"></script>\n" +
                 customJavascript();
@@ -145,13 +145,32 @@ public class DomBuilder {
     }
 
     private static String getCommandButtonItem(String svg, String label, String cmd) {
-        return "     <button id=\"`team_${team_id}`\" type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\" onclick=\"onCmdClick('" + cmd + "')\">\n" +
+        return "     <button type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\" onclick=\"onCmdClick('" + cmd + "')\">\n" +
                 "      <div class=\"md-v-line\"></div>\n" +
                 "        <span class=\"mr-2\">\n" +
                 svg +
                 "        </span>\n" +
                 label +
                 "    </button>\n";
+    }
+
+    private static String getCollapseButtonItem(String svg, String label) {
+        return "<div class=\"accordion\" id=\"accordionExample\">\n" +
+                "  <div class=\"accordion-item\">\n" +
+                "     <button type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\">\n" +
+                "      <div class=\"md-v-line\"></div>\n" +
+                "        <span class=\"mr-2\">\n" +
+                svg +
+                "        </span>\n" +
+                label +
+                "    </button>\n" +
+                "    <div id=\"collapseOne\" class=\"accordion-collapse collapse\" aria-labelledby=\"headingOne\" data-bs-parent=\"#accordionExample\">\n" +
+                "      <div class=\"accordion-body\">\n" +
+                "        <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.\n" +
+                "      </div>\n" +
+                "    </div>\n" +
+                "  </div>\n" +
+                "</div>\n";
     }
 
     private static String getButtonListItemContainer(String listItems) {
@@ -194,6 +213,7 @@ public class DomBuilder {
         sb.append(getCommandButtonItem(getReadmeSvg(), "Documentation", "readme"));
         sb.append(getCommandButtonItem(getMessageSvg(), "Submit an issue", "submit_issue"));
         sb.append(getCommandButtonItem(getVisibleSvg(), "Hide code time status", "toggle_status"));
+        sb.append(getCollapseButtonItem(getSlackSvg(), "Workspaces"));
         return getButtonListItemContainer(sb.toString());
     }
 
@@ -258,49 +278,17 @@ public class DomBuilder {
                 "</svg>\n";
     }
 
-    private static String getFlowModeOnSvg() {
-        return "<svg width=\"16\" height=\"16\" version=\"1.1\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n" +
-                " viewBox=\"0 0 300 300\" style=\"enable-background:new 0 0 300 300;\" xml:space=\"preserve\">\n" +
-                "<path d=\"M150,0C67.29,0,0,67.29,0,150s67.29,150,150,150s150-67.29,150-150S232.71,0,150,0z M150,270c-66.169,0-120-53.832-120-120\n" +
-                " S83.831,30,150,30s120,53.832,120,120S216.168,270,150,270z\" fill=\"#ffffff\"/>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "<g>\n" +
-                "</g>\n" +
-                "</svg>\n";
+    private static String getFlowModeOffFontAwesomeIcon() {
+        return "<span class=\"fas fa-circle\"></span>\n";
     }
 
-    private static String getFlowModeOffSvg() {
-        return "<svg width=\"16\" height=\"16\" version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 122.88 122.88\" enable-background=\"new 0 0 122.88 122.88\" xml:space=\"preserve\">\n" +
-                "<g>\n" +
-                "<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M61.438,0c33.93,0,61.441,27.512,61.441,61.441 c0,33.929-27.512,61.438-61.441,61.438C27.512,122.88,0,95.37,0,61.441C0,27.512,27.512,0,61.438,0L61.438,0z\" fill=\"#ffffff\"/>\n" +
-                "</g>\n" +
+    private static String getFlowModeOnFontAwesomeIcon() {
+        return "<span class=\"far fa-circle\"></span>\n";
+    }
+
+    private static String getSlackSvg() {
+        return "<svg aria-hidden=\"true\" focusable=\"false\" data-prefix=\"fab\" data-icon=\"slack\" class=\"svg-inline--fa fa-slack fa-w-14\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\" width=\"16\" height=\"16\">\n" +
+                "<path fill=\"#2196F3\" d=\"M94.12 315.1c0 25.9-21.16 47.06-47.06 47.06S0 341 0 315.1c0-25.9 21.16-47.06 47.06-47.06h47.06v47.06zm23.72 0c0-25.9 21.16-47.06 47.06-47.06s47.06 21.16 47.06 47.06v117.84c0 25.9-21.16 47.06-47.06 47.06s-47.06-21.16-47.06-47.06V315.1zm47.06-188.98c-25.9 0-47.06-21.16-47.06-47.06S139 32 164.9 32s47.06 21.16 47.06 47.06v47.06H164.9zm0 23.72c25.9 0 47.06 21.16 47.06 47.06s-21.16 47.06-47.06 47.06H47.06C21.16 243.96 0 222.8 0 196.9s21.16-47.06 47.06-47.06H164.9zm188.98 47.06c0-25.9 21.16-47.06 47.06-47.06 25.9 0 47.06 21.16 47.06 47.06s-21.16 47.06-47.06 47.06h-47.06V196.9zm-23.72 0c0 25.9-21.16 47.06-47.06 47.06-25.9 0-47.06-21.16-47.06-47.06V79.06c0-25.9 21.16-47.06 47.06-47.06 25.9 0 47.06 21.16 47.06 47.06V196.9zM283.1 385.88c25.9 0 47.06 21.16 47.06 47.06 0 25.9-21.16 47.06-47.06 47.06-25.9 0-47.06-21.16-47.06-47.06v-47.06h47.06zm0-23.72c-25.9 0-47.06-21.16-47.06-47.06 0-25.9 21.16-47.06 47.06-47.06h117.84c25.9 0 47.06 21.16 47.06 47.06 0 25.9-21.16 47.06-47.06 47.06H283.1z\"></path>\n" +
                 "</svg>\n";
     }
 }
