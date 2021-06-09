@@ -8,10 +8,10 @@ import com.intellij.util.PlatformUtils;
 public class PluginInfo {
 
     // set the api endpoint to use
-    public final static String api_endpoint = "http://localhost:5000";//"https://api.software.com";
+    public final static String api_endpoint = "https://api.software.com";
     // set the launch url to use
-    public final static String launch_url = "http://localhost:3000";//"https://app.software.com";
-    public final static String software_dir = ".software-local";//".software";
+    public final static String launch_url = "https://app.software.com";
+    public final static String software_dir = ".software";
 
     public static String IDE_NAME = "";
     public static String IDE_VERSION = "";
