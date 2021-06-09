@@ -1,8 +1,6 @@
 package com.software.codetime.toolwindows.dashboard;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.software.codetime.toolwindows.WebviewClosedConnection;
 import com.software.codetime.toolwindows.WebviewOpenedConnection;
 import com.software.codetime.toolwindows.WebviewResourceState;
@@ -45,51 +43,16 @@ public class DashboardResourceHandler implements CefResourceHandler {
             String pathToResource = url.replace("http://dashboard", "dashboard");
             URL resourceUrl = getClass().getClassLoader().getResource(pathToResource);
 
+            // load the fetched html
             File f = new File(FileUtilManager.getCodeTimeDashboardHtmlFile());
-            Writer writer = null;
-            try {
-                String api = html_api;
-                if (html_api.equals(config_settings_api)) {
-                    // add the query string
-                    api += "?editor=intellij&isLightMode=" + !AppleScriptManager.isDarkMode();
-                    f = new File(FileUtilManager.getCodeTimeSettingsHtmlFile());
-                }
-                ClientResponse resp = OpsHttpClient.softwareGet(api, FileUtilManager.getItem("jwt"));
-                String html = resp.getJsonObj().get("html").getAsString();
-
-                writer = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(f), StandardCharsets.UTF_8));
-                writer.write(html);
-            } catch (Exception e) {
-                System.out.println("Dashboard write error: " + e.getMessage());
-            } finally {
-                if (writer != null) {
-                    try {
-                        writer.close();
-                    } catch (Exception e) {
-                        System.out.println("Writer close error: " + e.getMessage());
-                    }
-                }
+            String api = html_api;
+            if (html_api.equals(config_settings_api)) {
+                // add the query string
+                api += "?editor=intellij&isLightMode=" + !AppleScriptManager.isDarkMode();
+                f = new File(FileUtilManager.getCodeTimeSettingsHtmlFile());
             }
+            loadApiHtml(resourceUrl, f, api);
 
-            try {
-                resourceUrl = f.toURI().toURL();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                state = new WebviewOpenedConnection(resourceUrl.openConnection());
-
-                if (DashboardWindowFactory.windowProject != null) {
-                    ToolWindow toolWindow = ToolWindowManager.getInstance(DashboardWindowFactory.windowProject).getToolWindow("Dashboard");
-                    if (toolWindow != null && !toolWindow.isVisible()) {
-                        toolWindow.show();
-                    }
-                }
-            } catch (Exception e) {
-                //
-            }
             cefCallback.Continue();
             return true;
         }
@@ -110,6 +73,40 @@ public class DashboardResourceHandler implements CefResourceHandler {
     public void cancel() {
         state.close();
         state = new WebviewClosedConnection();
+    }
+
+    private void loadApiHtml(URL resourceUrl, File htmlFile, String api) {
+        Writer writer = null;
+        try {
+            ClientResponse resp = OpsHttpClient.softwareGet(api, FileUtilManager.getItem("jwt"));
+            String html = resp.getJsonObj().get("html").getAsString();
+
+            writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(htmlFile), StandardCharsets.UTF_8));
+            writer.write(html);
+        } catch (Exception e) {
+            System.out.println("Dashboard write error: " + e.getMessage());
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (Exception e) {
+                    System.out.println("Writer close error: " + e.getMessage());
+                }
+            }
+        }
+
+        try {
+            resourceUrl = htmlFile.toURI().toURL();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            state = new WebviewOpenedConnection(resourceUrl.openConnection());
+        } catch (Exception e) {
+            //
+        }
     }
 
 }

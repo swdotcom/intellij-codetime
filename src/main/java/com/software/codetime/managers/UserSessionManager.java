@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.IconLoader;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.http.ClientResponse;
@@ -164,9 +165,10 @@ public class UserSessionManager {
                 String msg = "Sign up or log in to see more data visualizations.";
 
                 Object[] options = {"Sign up"};
+                Icon icon = IconLoader.getIcon("/assets/app-icon-blue.png");
                 int choice = JOptionPane.showOptionDialog(
                         null, msg, "Sign up", JOptionPane.OK_OPTION,
-                        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                        JOptionPane.QUESTION_MESSAGE, icon, options, options[0]);
 
                 if (choice == 0) {
                     AuthPromptManager.initiateSignupFlow();

@@ -1,5 +1,6 @@
 package com.software.codetime.managers;
 
+import com.intellij.openapi.util.IconLoader;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import jdk.internal.org.jline.utils.Status;
 import swdc.java.ops.event.SlackStateChangeModel;
@@ -31,13 +32,14 @@ public class FlowManager {
         boolean intellij_CtskipSlackConnect = FileUtilManager.getBooleanItem("intellij_CtskipSlackConnect");
         boolean workspaces = SlackManager.hasSlackWorkspaces();
         if (!workspaces && !intellij_CtskipSlackConnect) {
-            String msg = "Connect a Slack workspace to pause notifications and update your status?";
+            String msg = "Connect a Slack workspace to pause\nnotifications and update your status?";
 
             Object[] options = {"Connect", "Skip"};
+            Icon icon = IconLoader.getIcon("/assets/app-icon-blue.png");
             SwingUtilities.invokeLater(() -> {
                 int choice = JOptionPane.showOptionDialog(
                         null, msg, "Slack connect", JOptionPane.OK_OPTION,
-                        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                        JOptionPane.QUESTION_MESSAGE, icon, options, options[0]);
 
                 if (choice == 0) {
                     SlackStateChangeModel changeModel = new SlackStateChangeModel();

@@ -15,7 +15,7 @@ public class DashboardToolWindow {
         browser = new JBCefBrowser();
         browser.getJBCefClient().addDisplayHandler(new SettingsDisplayHandler(), browser.getCefBrowser());
         registerAppSchemeHandler();
-        browser.loadURL("http://dashboard/index.html");
+        browser.loadURL("http://dashboard/loading.html");
     }
 
     private void registerAppSchemeHandler() {

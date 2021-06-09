@@ -22,7 +22,7 @@ public class AuthPromptManager {
 
     private static void initiateAuthFlow(String title, String message) {
         String[] options = new String[]{ "Google", "GitHub", "Email" };
-        Icon icon = IconLoader.getIcon("/assets/paw-grey.png");
+        Icon icon = IconLoader.getIcon("/assets/app-icon-blue.png");
         String input = (String) JOptionPane.showInputDialog(
                 null,
                 message,

@@ -82,6 +82,9 @@ public class Activator {
 
         // add the editor listeners
         setupEditorListeners();
+
+        // set the end of the day notification
+        EndOfDayManager.setEndOfDayNotification();
     }
 
     private void anonCheck() {

@@ -10,6 +10,8 @@ import com.software.codetime.listeners.ProjectActivateListener;
 import com.software.codetime.managers.IntellijProjectManager;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+
 
 public class CodeTimeWindowFactory implements ToolWindowFactory {
 
@@ -56,6 +58,16 @@ public class CodeTimeWindowFactory implements ToolWindowFactory {
     public static void openToolWindow() {
         checkIfInitialized();
         if (windowProject != null) {
+            if (!SwingUtilities.isEventDispatchThread()) {
+                try {
+                    SwingUtilities.invokeAndWait(() -> {
+                        openToolWindow();
+                    });
+                } catch (Exception e) {
+                    //
+                }
+                return;
+            }
             ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Code Time");
             if (toolWindow != null) {
                 toolWindow.show();
