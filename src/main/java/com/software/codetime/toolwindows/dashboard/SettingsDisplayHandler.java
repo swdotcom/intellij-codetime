@@ -2,10 +2,13 @@ package com.software.codetime.toolwindows.dashboard;
 
 import com.google.gson.JsonObject;
 import com.intellij.openapi.application.ApplicationManager;
+import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import org.cef.CefSettings;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefDisplayHandler;
+import swdc.java.ops.http.PreferencesClient;
+import swdc.java.ops.manager.AsyncManager;
 import swdc.java.ops.manager.UtilManager;
 
 public class SettingsDisplayHandler implements CefDisplayHandler {
@@ -50,6 +53,15 @@ public class SettingsDisplayHandler implements CefDisplayHandler {
                 });
                 break;
             case "submit_settings":
+                // post to /users/me/preferences
+                // i.e. {notifications: {endOfDayNotification: true}, flowMode: {durationMinutes: 120, editor: {autoEnterFlowMode: true...}
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    boolean updated = PreferencesClient.updatePreferences(data);
+                    if (updated) {
+                        // close the tool window
+                        AsyncManager.getInstance().executeOnceInSeconds(() -> {DashboardWindowFactory.closeToolWindow();}, 3);
+                    }
+                });
                 break;
             default:
                 break;

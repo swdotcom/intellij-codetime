@@ -20,25 +20,6 @@ public class TimeDataManager {
         FileUtilManager.writeData(FileUtilManager.getTimeDataSummaryFile(), new JsonArray());
     }
 
-    public static void incrementEditorSeconds(long editorSeconds) {
-        UtilManager.TimesData timesData = UtilManager.getTimesData();
-        swdc.java.ops.model.Project p = IntellijProjectManager.getFirstActiveCodeTimeProject();
-        if (p != null) {
-            TimeData td = getTodayTimeDataSummary(p);
-            if (td != null) {
-                // increment the editor seconds
-                td.setEditor_seconds(td.getEditor_seconds() + editorSeconds);
-                td.setTimestamp_local(timesData.local_now);
-
-                td.setEditor_seconds(Math.max(
-                        td.getEditor_seconds(),
-                        td.getSession_seconds()));
-
-                saveTimeDataSummaryToDisk(td);
-            }
-        }
-    }
-
     public static TimeData incrementSessionAndFileSeconds(swdc.java.ops.model.Project project, long sessionSeconds) {
 
         TimeData td = getTodayTimeDataSummary(project);

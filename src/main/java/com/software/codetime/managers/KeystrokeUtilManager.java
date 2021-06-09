@@ -9,19 +9,10 @@ import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.manager.UtilManager;
 import swdc.java.ops.model.*;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class KeystrokeUtilManager {
 
-    // TODO: backend driven, we should look at getting a list of types at some point
-    private String type = "Events";
-
-    public int keystrokes = 0;
-    // start and end are in seconds
-
-    public long cumulative_editor_seconds = 0;
     public static long elapsed_seconds = 0;
     public static String project_null_error = "";
 
@@ -60,9 +51,6 @@ public class KeystrokeUtilManager {
 
                 // end the file end times.
                 preProcessKeystrokeData(keystrokeCountInfo, eTime.sessionSeconds, eTime.elapsedSeconds);
-
-                // update the file aggregate info
-                updateAggregates(keystrokeCountInfo, eTime.sessionSeconds);
 
                 // send the event to the event tracker
                 EventTrackerManager.getInstance().trackCodeTimeEvent(keystrokeCountInfo);
@@ -126,47 +114,5 @@ public class KeystrokeUtilManager {
                 fileInfoData.local_end = timesData.local_now;
             }
         }
-    }
-
-    private static void updateAggregates(CodeTime keystrokeCountInfo, long sessionSeconds) {
-        Map<String, FileChangeInfo> fileChangeInfoMap = FileAggregateDataManager.getFileChangeInfo();
-        KeystrokeAggregate aggregate = new KeystrokeAggregate();
-        if (keystrokeCountInfo.getProject() != null) {
-            aggregate.directory = keystrokeCountInfo.getProject().getDirectory();
-        } else {
-            aggregate.directory = "Untitled";
-        }
-        for (String key : keystrokeCountInfo.getSource().keySet()) {
-            CodeTime.FileInfo fileInfo = keystrokeCountInfo.getSource().get(key);
-            fileInfo.duration_seconds = fileInfo.end - fileInfo.start;
-            fileInfo.fsPath = key;
-            try {
-                Path path = Paths.get(key);
-                if (path != null) {
-                    Path fileName = path.getFileName();
-                    if (fileName != null) {
-                        fileInfo.name = fileName.toString();
-                    }
-                }
-
-                aggregate.aggregate(fileInfo);
-
-                FileChangeInfo existingFileInfo = fileChangeInfoMap.get(key);
-                if (existingFileInfo == null) {
-                    existingFileInfo = new FileChangeInfo();
-                    fileChangeInfoMap.put(key, existingFileInfo);
-                }
-                existingFileInfo.aggregate(fileInfo);
-                existingFileInfo.kpm = existingFileInfo.keystrokes / existingFileInfo.update_count;
-            } catch (Exception e) {
-                // error getting the path
-            }
-        }
-
-        // update the aggregate info
-        SessionDataManager.incrementSessionSummary(aggregate, sessionSeconds);
-
-        // update the file info map
-        FileAggregateDataManager.updateFileChangeInfo(fileChangeInfoMap);
     }
 }

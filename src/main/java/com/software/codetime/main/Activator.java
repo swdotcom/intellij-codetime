@@ -1,17 +1,21 @@
 package com.software.codetime.main;
 
 
-import com.software.codetime.managers.ReadmeManager;
-import com.software.codetime.managers.SessionDataManager;
-import com.software.codetime.managers.UserSessionManager;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.software.codetime.listeners.DocumentChangeListener;
+import com.software.codetime.listeners.DocumentSaveListener;
+import com.software.codetime.listeners.FileEditorListener;
+import com.software.codetime.listeners.ProjectActivateListener;
+import com.software.codetime.managers.*;
 import com.software.codetime.models.IntellijProject;
+import com.software.codetime.models.KeystrokeWrapper;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
-import jdk.tools.jlink.plugin.Plugin;
 import org.apache.commons.lang.StringUtils;
-import swdc.java.ops.manager.AccountManager;
-import swdc.java.ops.manager.ConfigManager;
-import swdc.java.ops.manager.EventTrackerManager;
-import swdc.java.ops.manager.FileUtilManager;
+import swdc.java.ops.manager.*;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 import swdc.java.ops.websockets.WebsocketClient;
 
@@ -22,6 +26,7 @@ public class Activator {
 
     public static final Logger log = Logger.getLogger("Activator");
     private static Activator instance = null;
+    private final AsyncManager asyncManager = AsyncManager.getInstance();
 
     public static Activator getInstance() {
         if (instance == null) {
@@ -49,22 +54,17 @@ public class Activator {
                 ConfigManager.IdeType.intellij);
 
         log.log(Level.INFO, ConfigManager.plugin_name + ": Loaded v" + ConfigManager.plugin_id);
-        // create anon user if no user exists
-        String jwt = FileUtilManager.getItem("jwt");
-        if (StringUtils.isBlank(jwt)) {
-            jwt = AccountManager.createAnonymousUser(false);
-            if (StringUtils.isBlank(jwt)) {
-                boolean serverIsOnline = UserSessionManager.isServerOnline();
-                if (!serverIsOnline) {
-                    UserSessionManager.showOfflinePrompt(true);
-                }
-            }
-        }
 
+        // create anon user if no user exists
+        anonCheck();
+
+        // fetch the user and preferences
         AccountManager.getUser();
 
+        // update the session summary and status bar
         SessionDataManager.updateSessionSummaryFromServer();
 
+        // connect the websocket
         try {
             WebsocketClient.connect();
         } catch (Exception e) {
@@ -77,11 +77,90 @@ public class Activator {
         // send the activate event
         EventTrackerManager.getInstance().trackEditorAction("editor", "activate");
 
+        // show the readme on install
+        readmeCheck();
+
+        // add the editor listeners
+        setupEditorListeners();
+    }
+
+    private void anonCheck() {
+        // create anon user if no user exists
+        String jwt = FileUtilManager.getItem("jwt");
+        if (StringUtils.isBlank(jwt)) {
+            jwt = AccountManager.createAnonymousUser(false);
+            if (StringUtils.isBlank(jwt)) {
+                boolean serverIsOnline = UserSessionManager.isServerOnline();
+                if (!serverIsOnline) {
+                    UserSessionManager.showOfflinePrompt(true);
+                }
+            }
+        }
+    }
+
+    private void readmeCheck() {
         String readmeDisplayed = FileUtilManager.getItem("intellij_CtReadme");
         if (readmeDisplayed == null || Boolean.valueOf(readmeDisplayed) == false) {
-            // send an initial plugin payload
-            ReadmeManager.openReadmeFile(UIInteractionType.keyboard);
-            FileUtilManager.setItem("intellij_CtReadme", "true");
+            ApplicationManager.getApplication().invokeLater(() -> {
+                // send an initial plugin payload
+                ReadmeManager.openReadmeFile(UIInteractionType.keyboard);
+                FileUtilManager.setItem("intellij_CtReadme", "true");
+            });
         }
+    }
+
+    private void setupEditorListeners() {
+        ApplicationManager.getApplication().invokeLater(() -> {
+            try {
+                // edit document
+                EditorFactory.getInstance().getEventMulticaster().addDocumentListener(
+                        new DocumentChangeListener(), this::disposeComponent);
+            } catch (Exception e) {
+                log.log(Level.WARNING, "Error initializing document listener: " + e.getMessage());
+            }
+
+            Project p = ProjectActivateListener.getCurrentProject();
+            if (p == null) {
+                p = IntellijProjectManager.getFirstActiveProject();
+            }
+            if (p != null) {
+                try {
+                    // file open,close,selection listener
+                    p.getMessageBus().connect().subscribe(
+                            FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorListener());
+                } catch (Exception e) {
+                    // error trying to subscribe to the message bus
+                    log.log(Level.WARNING, "Error initializing file editor listener: " + e.getMessage());
+                }
+
+                try {
+                    // file save
+                    p.getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, new DocumentSaveListener());
+                } catch (Exception e) {
+                    // error trying to subscribe to the message bus
+                    log.log(Level.WARNING, "Error initializing file save listener: " + e.getMessage());
+                }
+
+                GitEventsManager gitEvtMgr = new GitEventsManager();
+                try {
+                    gitEvtMgr.setUpGitFileListener(p.getBasePath());
+                } catch (Exception e) {
+                    log.log(Level.WARNING, "Error initializing git file listener: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    public void disposeComponent() {
+        // process any remaining updates
+        KeystrokeWrapper keystrokeManager = KeystrokeWrapper.getInstance();
+        if (keystrokeManager.getKeystrokeCount() != null) {
+            KeystrokeUtilManager.processKeystrokes(keystrokeManager.getKeystrokeCount());
+        }
+
+        // store the activate event
+        EventTrackerManager.getInstance().trackEditorAction("editor", "deactivate");
+
+        asyncManager.destroyServices();
     }
 }
