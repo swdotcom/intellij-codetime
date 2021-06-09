@@ -1,6 +1,5 @@
 package com.software.codetime.toolwindows.codetime.html;
 
-import com.intellij.openapi.wm.StatusBar;
 import com.software.codetime.managers.StatusBarManager;
 import org.apache.commons.lang3.StringUtils;
 import swdc.java.ops.http.FlowModeClient;
@@ -17,17 +16,74 @@ import java.util.List;
 public class DomBuilder {
 
     public static String getMainHtml() {
+
         return "<!doctype html>\n" +
                 "<html lang=\"en\">\n" +
                 getMetaDataHeader() +
                 "  <body>\n" +
-                getFlowModeComponent() +
+                getFlowComponent() +
                 getStatsComponent() +
                 getAccountComponent() +
                 getTeamComponent() +
                 getJsDependencies() +
                 "  </body>\n" +
                 "</html>";
+    }
+
+    private static String getFlowComponent() {
+        // if not registered, get the getting started comp
+        if (StringUtils.isBlank(FileUtilManager.getItem("name"))) {
+            return getFlowModeGettingStartedComponent();
+        }
+        return getFlowModeComponent();
+    }
+
+    private static String getTeamComponent() {
+        List<Team> teams = getTeams();
+        if (teams == null || teams.size() == 0) {
+            return getTeamGettingStartedComponent();
+        }
+        return getTeamListComponent();
+    }
+
+    private static String getTeamGettingStartedComponent() {
+        return "<div class=\"card rounded pb-2 m-3 bg-dark bg-gradient text-white\">\n" +
+                "  <div class=\"card-body\">\n" +
+                "    <h6 class=\"card-title text-nowrap\">\n" +
+                "      <span class=\"right-padding-4\">\n" +
+                getRocketFaIcon() +
+                "       </span>\n" +
+                "       Software Teams</h6>\n" +
+                "    <p class=\"card-text text-muted fs-7\">Discover your team's best day for coding, and more.</p>\n" +
+                "  </div>\n" +
+                "  <div class=\"d-grid gap-2 col-8 mx-auto\">\n" +
+                "    <button type=\"button\" class=\"btn btn-primary\" onclick=\"onCmdClick('create_team')\">\n" +
+                "      Create a team\n" +
+                "    </button>\n" +
+                "  </div>\n" +
+                "  <div class=\"card-body\">\n" +
+                "    <p class=\"card-text fs-7\">Trust and data privacy matter. Your individual data is always private.</p>\n" +
+                "  </div>\n" +
+                "</div>\n";
+    }
+
+    private static String getFlowModeGettingStartedComponent() {
+        return "<div class=\"card pb-2\" style=\"background-color: #2196f3; color: #ffffff\">\n" +
+                "  <div class=\"card-body mb-2\">\n" +
+                "    <h6 class=\"card-title mb-4 text-nowrap\">Getting Started</h6>\n" +
+                "    <div class=\"progress\" style=\"height: 6px; background-color: #a1cbf5\">\n" +
+                "      <div class=\"progress-bar\" role=\"progressbar\" style=\"width: 40%; background-color: #ffffff\" aria-valuenow=\"25\" aria-valuemin=\"0\" aria-valuemax=\"100\"></div>\n" +
+                "    </div>\n" +
+                "  </div>\n" +
+                "  <div class=\"d-grid gap-2 col-6 mx-auto mb-2\">\n" +
+                "    <button type=\"button\" class=\"btn btn-primary\" style=\"background-color: #ffffff; color: #2196f3\" onclick=\"onCmdClick('register')\">\n" +
+                "      Register your account\n" +
+                "    </button>\n" +
+                "  </div>\n" +
+                "  <div class=\"card-body mb-0 fs-7\">\n" +
+                "    <p>Already have an account?<span><a href=\"#\" class=\"white-link\" style=\"padding-left: 5px\" onclick=\"onCmdClick('login')\">Log in</a></span></p>\n" +
+                "  </div>\n" +
+                "</div>\n";
     }
 
     private static String getFlowModeComponent() {
@@ -79,7 +135,7 @@ public class DomBuilder {
                 "</div>\n";
     }
 
-    private static String getTeamComponent() {
+    private static String getTeamListComponent() {
         return "<div class=\"card pb-2\">\n" +
                 "  <div class=\"card-body mb-0 pb-1\">\n" +
                 "    <h6 class=\"card-title mb-1 text-nowrap\">Teams</h6>\n" +
@@ -92,6 +148,7 @@ public class DomBuilder {
     private static String getGlobalStyle() {
         return "  <style type=\"text/css\">\n" +
                 "    body { line-height: 1; font-size: .9rem; }\n" +
+                "    .right-padding-4 { padding-right: 4px; }\n" +
                 "    .card { border-radius: 0 }\n" +
                 "    .list-group-item { border: 0 none; }\n" +
                 "    .accordion-item { border: 0 none; background-color: \"transparent\" }\n" +
@@ -99,10 +156,12 @@ public class DomBuilder {
                 "    .accordion-body { padding: 1px }\n" +
                 "    .card > .list-group { border-style: none; }\n" +
                 "    button:focus, button:active { outline: none; border-style: none; }\n" +
+                "    a.white-link, a.white-link:active, a.white-link:hover {color: #ffffff; text-decoration: none; font-weight: bold}\n" +
                 "    .cursor-pointer { cursor: pointer; }\n" +
                 "    .top-right { position: absolute; top: 18px; right: 16px }\n" +
                 "    .icon-button { padding: 0; background-color: \"transparent\"; border: 0; -webkit-appearance: none; cursor: pointer;}\n" +
                 "    .icon-button:hover { background-color: rgba(black, 0.4);}\n" +
+                "    .fs-7 { font-size: .8rem !important; line-height: normal; }\n" +
                 "  </style>\n";
     }
 
@@ -120,11 +179,11 @@ public class DomBuilder {
                 "       function teamClickHandler(org_name, team_id) {\n" +
                 "         console.log(JSON.stringify({cmd: 'launch_team', org_name, team_id}));\n" +
                 "       }\n" +
-                "       function workspaceClickHandler(id) {\n" +
-                "         console.log(JSON.stringify({cmd: 'edit_workspace', id}));\n" +
-                "       }\n" +
                 "       function onCmdClick(cmd) {\n" +
                 "         console.log(JSON.stringify({cmd}));\n" +
+                "       }\n" +
+                "       function workspaceRemoveClickHandler(id) {\n" +
+                "         console.log(JSON.stringify({cmd: 'remove_workspace', id}));\n" +
                 "       }\n" +
                 "     </script>\n";
     }
@@ -145,7 +204,7 @@ public class DomBuilder {
 
     private static String getTeamButtonListItem(String label, String org_name, long team_id) {
         return "     <button id=\"`team_${team_id}`\" type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\" onclick=\"teamClickHandler('" + org_name + "', " + team_id + ")\">\n" +
-                "        <span style=\"padding-right: 4px\">\n" +
+                "        <span class=\"right-padding-4\">\n" +
                 getTeamSvg() +
                 "        </span>\n" +
                 label +
@@ -153,17 +212,31 @@ public class DomBuilder {
     }
 
     private static String getWorkspaceButtonListItem(String team_name, String team_domain, long id) {
-        return "     <button id=\"`team_${team_id}`\" type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\" onclick=\"workspaceClickHandler(" + id + ")\">\n" +
-                "        <span style=\"padding-right: 4px\">\n" +
-                getTeamSvg() +
-                "        </span>\n" +
-                team_name +
-                "    </button>\n";
+        return "<div class=\"row\">\n" +
+                "  <div class=\"col\">\n" +
+                "    <button id=\"`team_${team_id}`\" type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\">\n" +
+                "      <span class=\"right-padding-4\">\n" +
+                getSlackFaIcon() +
+                "       </span>\n" +
+                team_domain + " - " + team_name +
+                "    </button>\n" +
+                "  </div>\n" +
+                "  <div class=\"col\">\n" +
+                "    <div class=\"float-end pt-2\">\n" +
+                "        <button type=\"button\" class=\"icon-button\" data-dismiss=\"modal\" aria-label=\"Settings\" onclick=\"workspaceRemoveClickHandler(" + id + ")\">\n" +
+                "          <span aria-hidden=\"true\">\n" +
+                getMinusCircleFaIcon() +
+                "          </span>\n" +
+                "        </button>\n" +
+                "    </div>\n" +
+                "  </div>\n" +
+                "</div>\n";
+
     }
 
     private static String getCommandButtonItem(String svg, String label, String cmd) {
         return "     <button type=\"button\" class=\"list-group-item list-group-item-action shadow-none text-nowrap p-2 cursor-pointer\" onclick=\"onCmdClick('" + cmd + "')\">\n" +
-                "        <span style=\"padding-right: 4px\">\n" +
+                "        <span class=\"right-padding-4\">\n" +
                 svg +
                 "        </span>\n" +
                 label +
@@ -174,7 +247,7 @@ public class DomBuilder {
         return "<div class=\"accordion accordion-flush\" id=\"workspaceItems\">\n" +
                 "  <div class=\"accordion-item\">\n" +
                 "     <button type=\"button\" class=\"accordion-button collapsed shadow-none text-nowrap p-2\" data-bs-toggle=\"collapse\" data-bs-target=\"#workspacesBody\" aria-expanded=\"false\" aria-controls=\"workspacesBody\">\n" +
-                "        <span style=\"padding-right: 4px\">\n" +
+                "        <span class=\"right-padding-4\">\n" +
                 svg +
                 "        </span>\n" +
                 label +
@@ -318,9 +391,21 @@ public class DomBuilder {
         return "<i class=\"fas fa-plus-circle\" style=\"color: #00B4EE\"></i>\n";
     }
 
+    private static String getMinusCircleFaIcon() {
+        return "<i class=\"fas fa-minus-circle\" style=\"color: #00B4EE\"></i>\n";
+    }
+
+    private static String getSlackFaIcon() {
+        return "<i class=\"fab fa-slack\" style=\"color: #00B4EE\"></i>\n";
+    }
+
     private static String getSlackSvg() {
         return "<svg aria-hidden=\"true\" focusable=\"false\" data-prefix=\"fab\" data-icon=\"slack\" class=\"svg-inline--fa fa-slack fa-w-14\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\" width=\"16\" height=\"16\">\n" +
                 "<path fill=\"#00B4EE\" d=\"M94.12 315.1c0 25.9-21.16 47.06-47.06 47.06S0 341 0 315.1c0-25.9 21.16-47.06 47.06-47.06h47.06v47.06zm23.72 0c0-25.9 21.16-47.06 47.06-47.06s47.06 21.16 47.06 47.06v117.84c0 25.9-21.16 47.06-47.06 47.06s-47.06-21.16-47.06-47.06V315.1zm47.06-188.98c-25.9 0-47.06-21.16-47.06-47.06S139 32 164.9 32s47.06 21.16 47.06 47.06v47.06H164.9zm0 23.72c25.9 0 47.06 21.16 47.06 47.06s-21.16 47.06-47.06 47.06H47.06C21.16 243.96 0 222.8 0 196.9s21.16-47.06 47.06-47.06H164.9zm188.98 47.06c0-25.9 21.16-47.06 47.06-47.06 25.9 0 47.06 21.16 47.06 47.06s-21.16 47.06-47.06 47.06h-47.06V196.9zm-23.72 0c0 25.9-21.16 47.06-47.06 47.06-25.9 0-47.06-21.16-47.06-47.06V79.06c0-25.9 21.16-47.06 47.06-47.06 25.9 0 47.06 21.16 47.06 47.06V196.9zM283.1 385.88c25.9 0 47.06 21.16 47.06 47.06 0 25.9-21.16 47.06-47.06 47.06-25.9 0-47.06-21.16-47.06-47.06v-47.06h47.06zm0-23.72c-25.9 0-47.06-21.16-47.06-47.06 0-25.9 21.16-47.06 47.06-47.06h117.84c25.9 0 47.06 21.16 47.06 47.06 0 25.9-21.16 47.06-47.06 47.06H283.1z\"></path>\n" +
                 "</svg>\n";
+    }
+
+    private static String getRocketFaIcon() {
+        return "<i class=\"fas fa-rocket\" style=\"color: #00B4EE\"></i>\n";
     }
 }

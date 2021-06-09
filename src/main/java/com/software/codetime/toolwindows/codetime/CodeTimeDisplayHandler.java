@@ -11,6 +11,7 @@ import org.cef.handler.CefDisplayHandler;
 import swdc.java.ops.manager.ConfigManager;
 import swdc.java.ops.manager.SlackManager;
 import swdc.java.ops.manager.UtilManager;
+import swdc.java.ops.model.Integration;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 
 public class CodeTimeDisplayHandler implements CefDisplayHandler {
@@ -88,6 +89,28 @@ public class CodeTimeDisplayHandler implements CefDisplayHandler {
                     SlackManager.connectSlackWorkspace(() -> {
                         CodeTimeWindowFactory.refresh(false);
                     });
+                });
+                break;
+            case "remove_workspace":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    long id = data.get("id").getAsLong();
+                    Integration integration = SlackManager.getSlackWorkspaceById(id);
+                    SlackManager.disconnectSlackAuth(integration, () -> {CodeTimeWindowFactory.refresh(false);});
+                });
+                break;
+            case "register":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    AuthPromptManager.initiateSignupFlow();
+                });
+                break;
+            case "login":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    AuthPromptManager.initiateLoginFlow();
+                });
+                break;
+            case "create_team":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    UtilManager.launchUrl(ConfigManager.create_team_url);
                 });
                 break;
             default:
