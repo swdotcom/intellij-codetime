@@ -6,6 +6,7 @@ import com.software.codetime.managers.SessionDataManager;
 import com.software.codetime.managers.UserSessionManager;
 import com.software.codetime.models.IntellijProject;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import jdk.tools.jlink.plugin.Plugin;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.manager.AccountManager;
 import swdc.java.ops.manager.ConfigManager;
@@ -42,6 +43,7 @@ public class Activator {
                 PluginInfo.getVersion(),
                 PluginInfo.IDE_NAME,
                 PluginInfo.IDE_VERSION,
+                PluginInfo.software_dir,
                 () -> CodeTimeWindowFactory.refresh(false),
                 new SessionDataManager(),
                 ConfigManager.IdeType.intellij);

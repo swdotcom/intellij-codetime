@@ -71,4 +71,14 @@ public class DashboardWindowFactory implements ToolWindowFactory {
             }
         }
     }
+
+    public static void closeToolWindow() {
+        checkIfInitialized();
+        if (windowProject != null) {
+            ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Dashboard");
+            if (toolWindow != null) {
+                toolWindow.hide();
+            }
+        }
+    }
 }
