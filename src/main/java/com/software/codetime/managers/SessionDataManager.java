@@ -11,11 +11,22 @@ import swdc.java.ops.manager.UtilManager;
 import swdc.java.ops.model.ElapsedTime;
 import swdc.java.ops.model.KeystrokeAggregate;
 import swdc.java.ops.model.SessionSummary;
+import swdc.java.ops.websockets.SessionSummaryHandler;
 
 import java.lang.reflect.Type;
 
-public class SessionDataManager {
+public class SessionDataManager implements SessionSummaryHandler {
 
+    private static boolean statusUpdated = false;
+
+    public static boolean hasStatusUpdated() {
+        if (statusUpdated) {
+            // reset
+            statusUpdated = false;
+            return true;
+        }
+        return false;
+    }
 
     public static void clearSessionSummaryData() {
         SessionSummary summary = new SessionSummary();
@@ -58,14 +69,9 @@ public class SessionDataManager {
 
             // clone all
             summary.clone(fetchedSummary);
-
-            TimeDataManager.updateSessionFromSummaryApi(fetchedSummary.getCurrentDayMinutes());
-
-            // save the file
-            FileUtilManager.writeData(FileUtilManager.getSessionDataSummaryFile(), summary);
         }
 
-        StatusBarManager.updateStatusBar();
+        updateFileSummaryAndStatsBar(summary);
     }
 
     public static SessionSummary getSessionSummaryData() {
@@ -133,5 +139,23 @@ public class SessionDataManager {
         eTime.elapsedSeconds = elapsedSeconds;
 
         return eTime;
+    }
+
+    @Override
+    public void updateEditorStatus(SessionSummary sessionSummary) {
+        updateFileSummaryAndStatsBar(sessionSummary);
+    }
+
+    private static void updateFileSummaryAndStatsBar(SessionSummary sessionSummary) {
+        if (sessionSummary != null) {
+            TimeDataManager.updateSessionFromSummaryApi(sessionSummary.getCurrentDayMinutes());
+
+            // save the file
+            FileUtilManager.writeData(FileUtilManager.getSessionDataSummaryFile(), sessionSummary);
+
+            StatusBarManager.updateStatusBar();
+
+            statusUpdated = true;
+        }
     }
 }

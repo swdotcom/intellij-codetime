@@ -9,6 +9,7 @@ import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefDisplayHandler;
 import swdc.java.ops.manager.ConfigManager;
+import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.manager.SlackManager;
 import swdc.java.ops.manager.UtilManager;
 import swdc.java.ops.model.Integration;
@@ -50,7 +51,9 @@ public class CodeTimeDisplayHandler implements CefDisplayHandler {
     private void executeJavascriptCommands(String cmd, JsonObject data) {
         switch (cmd) {
             case "launch_team":
-                UtilManager.launchUrl(ConfigManager.app_url + "/dashboard?org_name=" + data.get("org_name").getAsString() + "&team_id=" + data.get("team_id").getAsInt());
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    UtilManager.launchUrl(ConfigManager.app_url + "/dashboard?org_name=" + data.get("org_name").getAsString() + "&team_id=" + data.get("team_id").getAsInt());
+                });
                 break;
             case "switch_account":
                 ApplicationManager.getApplication().invokeLater(() -> {
@@ -68,10 +71,14 @@ public class CodeTimeDisplayHandler implements CefDisplayHandler {
                 });
                 break;
             case "submit_issue":
-                UtilManager.submitIntellijIssue();
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    UtilManager.submitIntellijIssue();
+                });
                 break;
             case "toggle_status":
-                StatusBarManager.toggleStatusBar(UIInteractionType.click);
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    StatusBarManager.toggleStatusBar(UIInteractionType.click);
+                });
                 break;
             case "dashboard":
                 ApplicationManager.getApplication().invokeLater(() -> {
@@ -79,10 +86,14 @@ public class CodeTimeDisplayHandler implements CefDisplayHandler {
                 });
                 break;
             case "web_dashboard":
-                UserSessionManager.launchWebDashboard(UIInteractionType.click);
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    UserSessionManager.launchWebDashboard(UIInteractionType.click);
+                });
                 break;
             case "toggle_flow":
-                FlowManager.toggleFlowMode(false);
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    FlowManager.toggleFlowMode(false);
+                });
                 break;
             case "add_workspace":
                 ApplicationManager.getApplication().invokeLater(() -> {
@@ -111,6 +122,12 @@ public class CodeTimeDisplayHandler implements CefDisplayHandler {
             case "create_team":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     UtilManager.launchUrl(ConfigManager.create_team_url);
+                });
+                break;
+            case "skip_slack_connect":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    FileUtilManager.setBooleanItem("intellij_CtskipSlackConnect", true);
+                    CodeTimeWindowFactory.refresh(false);
                 });
                 break;
             default:

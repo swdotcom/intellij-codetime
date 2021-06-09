@@ -43,6 +43,7 @@ public class Activator {
                 PluginInfo.IDE_NAME,
                 PluginInfo.IDE_VERSION,
                 () -> CodeTimeWindowFactory.refresh(false),
+                new SessionDataManager(),
                 ConfigManager.IdeType.intellij);
 
         log.log(Level.INFO, ConfigManager.plugin_name + ": Loaded v" + ConfigManager.plugin_id);
