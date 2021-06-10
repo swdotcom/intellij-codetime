@@ -8,6 +8,7 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="com.software.codetime.main.PostStartupActivity"/>
         <toolWindow id="Code Time" order="first" secondary="false" anchor="left"
                     icon="/assets/paw-grey-rotated.png"
                     factoryClass="com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory"/>
