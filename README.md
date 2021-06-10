@@ -10,7 +10,7 @@
 </p>
 
 <!-- Plugin description -->
-<p><a href="https://www.software.com"><img alt="Software.com" src="https://assets.software.com/readme/software-logo-light.png" width="100px"></a></p>
+<p><a href="https://www.software.com"><img alt="Software.com" src="https://assets.software.com/readme/software-logo-light.png" width="100px" style="background-color: white; padding: 2px 8px 2px 3px; border-radius: 2px; border-style: none;"></a></p>
 
 [Code Time](https://www.software.com/code-time) is an open source plugin for automatic programming metrics and time tracking in IntelliJ and JetBrains IDEs. Track your productivity, protect valuable code time, and stay in flow.
 
