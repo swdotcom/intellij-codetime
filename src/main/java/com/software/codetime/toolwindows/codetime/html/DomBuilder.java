@@ -9,9 +9,12 @@ import swdc.java.ops.manager.SlackManager;
 import swdc.java.ops.model.Integration;
 import swdc.java.ops.model.Org;
 import swdc.java.ops.model.Team;
+import swdc.java.ops.model.TeamMember;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DomBuilder {
 
@@ -247,12 +250,18 @@ public class DomBuilder {
     }
 
     private static List<Team> getTeams() {
+        String email = FileUtilManager.getItem("name");
         List<Team> teams = new ArrayList<>();
         List<Org> orgs = OpsHttpClient.getOrganizations(FileUtilManager.getItem("jwt"));
         if (orgs != null && orgs.size() > 0) {
             for (Org org : orgs) {
                 if (org.teams != null && org.teams.size() > 0) {
+
                     for (Team team : org.teams) {
+                        List<TeamMember> members = team.team_members.stream().filter((TeamMember n) -> n.email.equals(email)).collect(Collectors.toList());
+                        if (members == null || members.size() == 0) {
+                            continue;
+                        }
                         if (StringUtils.isBlank(team.org_name)) {
                             team.org_name = org.name;
                         }

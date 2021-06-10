@@ -9,6 +9,7 @@
   </a>
 </p>
 
+<!-- Plugin description -->
 <p><a href="https://www.software.com"><img alt="Software.com" src="https://assets.software.com/readme/software-logo-light.png" width="100px"></a></p>
 
 [Code Time](https://www.software.com/code-time) is an open source plugin for automatic programming metrics and time tracking in IntelliJ and JetBrains IDEs. Track your productivity, protect valuable code time, and stay in flow.
@@ -92,3 +93,4 @@ Enjoying Code Time? Let us know how it’s going by tweeting or following us at 
 We're also the creators behind Music Time for IntelliJ, an extension that helps you find your most productive songs for coding. You can learn more [here](https://www.software.com/music-time).
 
 Have any questions? Create an issue in the [Code Time project](https://github.com/swdotcom/swdc-intellij) on GitHub or send us an email at [support@software.com](mailto:support@software.com) and we’ll get back to you as soon as we can.
+<!-- Plugin description end -->

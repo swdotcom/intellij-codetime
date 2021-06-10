@@ -38,7 +38,8 @@ public class EndOfDayManager {
             } catch (Exception e) {
                 // the work hours may come in this format as well
                 // [[118800,147600],[205200,234000],[291600,320400],[378000,406800],[464400,493200]]
-                workHours = resp.getJsonObj().get("work_hours").getAsJsonArray();
+                // just give a default of 5pm
+                secondsUntilEndOfTheDay = HOUR_IN_SEC * 17;
             }
 
             if (secondsUntilEndOfTheDay > 0) {
