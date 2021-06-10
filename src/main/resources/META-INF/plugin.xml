@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin require-restart="true">
     <id>com.softwareco.intellij.plugin</id>
     <name>Code Time</name>
     <vendor url="https://www.software.com">Software.com</vendor>

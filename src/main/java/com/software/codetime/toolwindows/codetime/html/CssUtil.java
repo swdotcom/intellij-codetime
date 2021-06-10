@@ -10,7 +10,7 @@ public class CssUtil {
                 "    .right-padding-4 { padding-right: 4px; }\n" +
                 "    .card { border-radius: 0; }\n" +
                 "    .list-group-item { border: 0 none; }\n" +
-                "    .accordion-item { border: 0 none; background-color: \"transparent\"; }\n" +
+                "    .accordion-item { border: 0 none; background-color: transparent; }\n" +
                 "    .accordion-button { font-size: inherit; }\n" +
                 "    .accordion-body { padding: 1px }\n" +
                 "    .card > .list-group { border-style: none; }\n" +
@@ -23,8 +23,7 @@ public class CssUtil {
                 "    a.white-link, a.white-link:active, a.white-link:hover {color: #ffffff; text-decoration: none; font-weight: bold; }\n" +
                 "    .cursor-pointer { cursor: pointer; }\n" +
                 "    .top-right { position: absolute; top: 18px; right: 16px; }\n" +
-                "    .icon-button { padding: 0; background-color: \"transparent\"; border: 0; -webkit-appearance: none; cursor: pointer; }\n" +
-                "    .icon-button:hover { background-color: rgba(black, 0.4); }\n" +
+                "    .icon-button { padding: 0; background-color: transparent; border: 0; -webkit-appearance: none; cursor: pointer; }\n" +
                 "    .fs-7 { font-size: .8rem !important; line-height: normal; }\n" +
                 "  </style>\n";
     }

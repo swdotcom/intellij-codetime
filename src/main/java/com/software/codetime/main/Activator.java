@@ -61,8 +61,10 @@ public class Activator {
         // fetch the user and preferences
         AccountManager.getUser();
 
-        // update the session summary and status bar
-        SessionDataManager.updateSessionSummaryFromServer();
+        ApplicationManager.getApplication().invokeLater(() -> {
+            // update the session summary and status bar
+            SessionDataManager.updateSessionSummaryFromServer();
+        });
 
         // connect the websocket
         try {
