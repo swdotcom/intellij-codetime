@@ -3,13 +3,11 @@ package com.software.codetime.main;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.software.codetime.listeners.DocumentChangeListener;
-import com.software.codetime.listeners.DocumentSaveListener;
-import com.software.codetime.listeners.FileEditorListener;
-import com.software.codetime.listeners.ProjectActivateListener;
+import com.software.codetime.listeners.*;
 import com.software.codetime.managers.*;
 import com.software.codetime.models.IntellijProject;
 import com.software.codetime.models.KeystrokeWrapper;
@@ -25,6 +23,7 @@ import java.util.logging.Logger;
 public class Activator {
 
     public static final Logger log = Logger.getLogger("Activator");
+
     private static Activator instance = null;
     private final AsyncManager asyncManager = AsyncManager.getInstance();
 
@@ -147,6 +146,13 @@ public class Activator {
                 } catch (Exception e) {
                     // error trying to subscribe to the message bus
                     log.log(Level.WARNING, "Error initializing file save listener: " + e.getMessage());
+                }
+
+                try {
+                    p.getMessageBus().connect().subscribe(EditorColorsManager.TOPIC, new ThemeColorChangeListener());
+                } catch (Exception e) {
+                    // error trying to subscribe to the message bus
+                    log.log(Level.WARNING, "Error initializing editor color listener: " + e.getMessage());
                 }
 
                 GitEventsManager gitEvtMgr = new GitEventsManager();

@@ -1,6 +1,7 @@
 package com.software.codetime.toolwindows.dashboard;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.software.codetime.toolwindows.WebviewClosedConnection;
 import com.software.codetime.toolwindows.WebviewOpenedConnection;
 import com.software.codetime.toolwindows.WebviewResourceState;
@@ -48,7 +49,7 @@ public class DashboardResourceHandler implements CefResourceHandler {
             String api = html_api;
             if (html_api.equals(config_settings_api)) {
                 // add the query string
-                api += "?editor=intellij&isLightMode=" + !AppleScriptManager.isDarkMode();
+                api += "?editor=intellij&isLightMode=" + !EditorColorsManager.getInstance().isDarkEditor();
                 f = new File(FileUtilManager.getCodeTimeSettingsHtmlFile());
             }
             loadApiHtml(resourceUrl, f, api);

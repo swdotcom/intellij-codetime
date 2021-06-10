@@ -7,17 +7,13 @@ import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.openapi.wm.impl.IdeRootPane;
 import com.software.codetime.listeners.ProjectActivateListener;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
-import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
 import swdc.java.ops.manager.AsyncManager;
 
 import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
-import java.util.logging.Logger;
 
 public class ScreenManager {
-
-    public static final Logger log = Logger.getLogger("ScreenManager");
 
     private static IdeFrameImpl ideFrame = null;
     private static double fullScreenHeight = 0;
@@ -37,6 +33,7 @@ public class ScreenManager {
                 public void windowStateChanged(WindowEvent e) {
                     ApplicationManager.getApplication().invokeLater(() -> {
                         if (FlowManager.isFlowModeEnabled()) {
+                            // flow mode is enabled
                             AsyncManager.getInstance().executeOnceInSeconds(() -> {
                                 if (!isFullScreen() && FlowManager.fullScreeConfigured()) {
                                     // turn off flow mode
