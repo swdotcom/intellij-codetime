@@ -87,6 +87,9 @@ public class Activator {
 
         // set the end of the day notification
         EndOfDayManager.setEndOfDayNotification();
+
+        // screen manager init
+        ScreenManager.init();
     }
 
     private void anonCheck() {

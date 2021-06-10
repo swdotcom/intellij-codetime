@@ -4,7 +4,7 @@ public class CssUtil {
 
     public static String getGlobalStyle() {
         return "  <style type=\"text/css\">\n" +
-                "    body { background: transparent; line-height: 1; font-size: .9rem; margin: 0; padding: 0; }\n" +
+                "    body { line-height: 1; font-size: .9rem; margin: 0; padding: 0; }\n" +
                 "    canvas { display: block; position: relative; zindex: 1; pointer-events: none; }\n" +
                 "    #content { position: absolute; top: 0; bottom: 0; width: 100%; height: 100%; }\n" +
                 "    .right-padding-4 { padding-right: 4px; }\n" +

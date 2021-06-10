@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.openapi.wm.impl.IdeRootPane;
+import com.software.codetime.listeners.ProjectActivateListener;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import swdc.java.ops.manager.AsyncManager;
 
@@ -20,15 +21,14 @@ public class ScreenManager {
     private static IdeFrameImpl ideFrame = null;
     private static double fullScreenHeight = 0;
     private static double fullScreenWidth = 0;
+    private static IdeRootPane rootPane;
 
-    private static IdeFrameImpl getIdeWindow() {
-        // Retrieve the AWT window
-        Project p = IntellijProjectManager.getOpenProject();
+    public static void init() {
+        Project p = ProjectActivateListener.getCurrentProject();
         if (p == null) {
-            return null;
+            p = IntellijProjectManager.getFirstActiveProject();
         }
-
-        IdeRootPane rootPane = (IdeRootPane) WindowManager.getInstance().getFrame(p).getRootPane();
+        rootPane = (IdeRootPane) WindowManager.getInstance().getFrame(p).getRootPane();
         if (rootPane != null && ideFrame == null) {
             ideFrame = (IdeFrameImpl) rootPane.getParent();
             ideFrame.addWindowStateListener(new WindowStateListener() {
@@ -43,6 +43,16 @@ public class ScreenManager {
                 }
             });
         }
+    }
+
+    private static IdeFrameImpl getIdeWindow() {
+        // Retrieve the AWT window
+        Project p = IntellijProjectManager.getOpenProject();
+        if (p == null) {
+            return null;
+        }
+
+        init();
 
         return ideFrame;
     }

@@ -30,7 +30,7 @@ public class DomBuilder {
                 getAccountComponent() +
                 getTeamComponent() +
                 "    </div>\n" +
-                "  <canvas id=\"canvas\"></canvas>/n" +
+                "  <canvas id=\"canvas\"></canvas>\n" +
                 JsUtil.getJsDependencies() +
                 "  </body>\n" +
                 "</html>";
