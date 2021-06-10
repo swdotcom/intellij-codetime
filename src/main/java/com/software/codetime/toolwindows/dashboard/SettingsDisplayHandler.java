@@ -8,6 +8,7 @@ import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefDisplayHandler;
 import swdc.java.ops.http.PreferencesClient;
+import swdc.java.ops.manager.AccountManager;
 import swdc.java.ops.manager.AsyncManager;
 import swdc.java.ops.manager.UtilManager;
 
@@ -58,8 +59,14 @@ public class SettingsDisplayHandler implements CefDisplayHandler {
                 ApplicationManager.getApplication().invokeLater(() -> {
                     boolean updated = PreferencesClient.updatePreferences(data);
                     if (updated) {
+                        AsyncManager.getInstance().executeOnceInSeconds(() -> {
+                            AccountManager.getUser();
+                        }, 0);
+
                         // close the tool window
-                        AsyncManager.getInstance().executeOnceInSeconds(() -> {DashboardWindowFactory.closeToolWindow();}, 3);
+                        AsyncManager.getInstance().executeOnceInSeconds(() -> {
+                            DashboardWindowFactory.closeToolWindow();
+                            }, 3);
                     }
                 });
                 break;

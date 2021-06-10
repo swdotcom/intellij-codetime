@@ -1,5 +1,6 @@
 package com.software.codetime.toolwindows.codetime;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -58,20 +59,12 @@ public class CodeTimeWindowFactory implements ToolWindowFactory {
     public static void openToolWindow() {
         checkIfInitialized();
         if (windowProject != null) {
-            if (!SwingUtilities.isEventDispatchThread()) {
-                try {
-                    SwingUtilities.invokeAndWait(() -> {
-                        openToolWindow();
-                    });
-                } catch (Exception e) {
-                    //
+            ApplicationManager.getApplication().invokeLater(() -> {
+                ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Code Time");
+                if (toolWindow != null) {
+                    toolWindow.show();
                 }
-                return;
-            }
-            ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Code Time");
-            if (toolWindow != null) {
-                toolWindow.show();
-            }
+            });
         }
     }
 }

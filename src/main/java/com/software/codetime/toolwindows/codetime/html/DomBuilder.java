@@ -1,5 +1,6 @@
 package com.software.codetime.toolwindows.codetime.html;
 
+import com.software.codetime.managers.FlowManager;
 import com.software.codetime.managers.StatusBarManager;
 import org.apache.commons.lang3.StringUtils;
 import swdc.java.ops.http.FlowModeClient;
@@ -139,6 +140,7 @@ public class DomBuilder {
         String flowModeLabel = "Enter Flow Mode";
         String flowModeIcon = IconUtil.getFlowModeOffFaIcon();
         if (FlowModeClient.isFlowModeOn()) {
+            FlowManager.initFlowStatus(true);
             flowModeLabel = "Exit Flow Mode";
             flowModeIcon = IconUtil.getFlowModeOnFaIcon();
         }

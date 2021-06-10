@@ -12,6 +12,10 @@ import javax.swing.*;
 public class FlowManager {
     public static boolean enabledFlow = false;
 
+    public static void initFlowStatus(boolean enabled) {
+        enabledFlow = enabled;
+    }
+
     public static void toggleFlowMode(boolean automated) {
         if (!enabledFlow) {
             enterFlowMode(automated);
@@ -55,9 +59,7 @@ public class FlowManager {
 
         FlowModeClient.enterFlowMode(automated);
 
-        FlowMode flowMode = UtilManager.gson.fromJson(FileUtilManager.getItem("flowMode"), FlowMode.class);
-
-        if (flowMode.editor.intellij.screenMode.contains("Full Screen")) {
+        if (fullScreeConfigured()) {
             ScreenManager.enterFullScreen();
         } else {
             ScreenManager.exitFullScreen();
@@ -84,23 +86,13 @@ public class FlowManager {
         enabledFlow = false;
     }
 
-    public static boolean isInFlowMode() {
-        if (!enabledFlow) {
-            return false;
-        }
-
-        return FlowModeClient.isFlowModeOn();
+    public static boolean isFlowModeEnabled() {
+        return enabledFlow;
     }
 
-    public static boolean isScreenStateInFlow() {
-        ConfigSettings settings = ConfigManager.getConfigSettings();
-        boolean screenInFlowState = false;
-        if (settings.screenMode.contains("Full Screen") && ScreenManager.isFullScreen()) {
-            screenInFlowState = true;
-        } else if (settings.screenMode.contains("None") && !ScreenManager.isFullScreen()) {
-            screenInFlowState = true;
-        }
+    public static boolean fullScreeConfigured() {
+        FlowMode flowMode = UtilManager.gson.fromJson(FileUtilManager.getItem("flowMode"), FlowMode.class);
 
-        return screenInFlowState;
+        return flowMode.editor.intellij.screenMode.contains("Full Screen") ? true : false;
     }
 }

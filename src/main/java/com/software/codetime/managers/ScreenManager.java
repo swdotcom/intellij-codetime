@@ -7,6 +7,7 @@ import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.openapi.wm.impl.IdeRootPane;
 import com.software.codetime.listeners.ProjectActivateListener;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
 import swdc.java.ops.manager.AsyncManager;
 
 import javax.swing.*;
@@ -35,9 +36,13 @@ public class ScreenManager {
                 @Override
                 public void windowStateChanged(WindowEvent e) {
                     ApplicationManager.getApplication().invokeLater(() -> {
-                        if (FlowManager.isInFlowMode()) {
-                            // show the code time view as a reminder flow mode is still on
-                            CodeTimeWindowFactory.openToolWindow();
+                        if (FlowManager.isFlowModeEnabled()) {
+                            AsyncManager.getInstance().executeOnceInSeconds(() -> {
+                                if (!isFullScreen() && FlowManager.fullScreeConfigured()) {
+                                    // turn off flow mode
+                                    FlowManager.exitFlowMode();
+                                }
+                            }, 3);
                         }
                     });
                 }

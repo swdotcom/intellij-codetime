@@ -1,5 +1,6 @@
 package com.software.codetime.toolwindows.dashboard;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -67,42 +68,24 @@ public class DashboardWindowFactory implements ToolWindowFactory {
     public static void openToolWindow() {
         checkIfInitialized();
         if (windowProject != null) {
-            if (!SwingUtilities.isEventDispatchThread()) {
-                try {
-                    SwingUtilities.invokeAndWait(() -> {
-                        openToolWindow();
-                    });
-                } catch (Exception e) {
-                    //
+            ApplicationManager.getApplication().invokeLater(() -> {
+                ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Dashboard");
+                if (toolWindow != null) {
+                    toolWindow.show();
                 }
-                return;
-            }
-
-            ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Dashboard");
-            if (toolWindow != null) {
-                toolWindow.show();
-            }
+            });
         }
     }
 
     public static void closeToolWindow() {
         checkIfInitialized();
         if (windowProject != null) {
-            if (!SwingUtilities.isEventDispatchThread()) {
-                try {
-                    SwingUtilities.invokeAndWait(() -> {
-                        closeToolWindow();
-                    });
-                } catch (Exception e) {
-                    //
+            ApplicationManager.getApplication().invokeLater(() -> {
+                ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Dashboard");
+                if (toolWindow != null) {
+                    toolWindow.hide();
                 }
-                return;
-            }
-
-            ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Dashboard");
-            if (toolWindow != null) {
-                toolWindow.hide();
-            }
+            });
         }
     }
 }
