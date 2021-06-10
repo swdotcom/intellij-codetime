@@ -77,7 +77,7 @@ public class DomBuilder {
     }
 
     private static String getTeamGettingStartedComponent() {
-        return "<div class=\"card rounded mb-0 pb-2 bg-dark bg-gradient text-white\">\n" +
+        return "<div class=\"card m-3 bg-dark bg-gradient text-white\" style=\"border-radius: 4px;\">\n" +
                 "  <div class=\"card-body\">\n" +
                 "    <h6 class=\"card-title text-nowrap\">\n" +
                 "      <span class=\"right-padding-4\">\n" +
@@ -166,10 +166,11 @@ public class DomBuilder {
 
     private static String getAccountComponent() {
         String email = FileUtilManager.getItem("name");
+        String emailDiv = (StringUtils.isNotBlank(email)) ? "    <p class=\"card-text mb-1 text-muted text-nowrap\">" + email + "</p>\n" : "\n";
         return "<div class=\"card mb-0 pb-2\">\n" +
                 "  <div class=\"card-body mb-0 pb-1\">\n" +
                 "    <h6 class=\"card-title mb-1 text-nowrap\">Account</h6>\n" +
-                "    <p class=\"card-text mb-1 text-muted text-nowrap\">" + email + "</p>\n" +
+                emailDiv +
                 "  </div>\n" +
                 getAccountListItems() +
                 "</div>\n";
@@ -295,11 +296,16 @@ public class DomBuilder {
     }
 
     private static String getAccountListItems() {
+        String email = FileUtilManager.getItem("name");
+        boolean isRegistered = (StringUtils.isNotBlank(email)) ? true : false;
         String toggleStatusLabel = StatusBarManager.showingStatusText() ? "Hide Code Time status" : "Show Code Time status";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(getCommandButtonItem(IconUtil.getPawSvg(), "Switch account", "switch_account"));
-        sb.append(getCommandButtonItem(IconUtil.getSettingsSvg(), "Configure settings", "configure"));
+
+        if (isRegistered) {
+            sb.append(getCommandButtonItem(IconUtil.getPawSvg(), "Switch account", "switch_account"));
+            sb.append(getCommandButtonItem(IconUtil.getSettingsSvg(), "Configure settings", "configure"));
+        }
         sb.append(getCommandButtonItem(IconUtil.getReadmeSvg(), "Documentation", "readme"));
         sb.append(getCommandButtonItem(IconUtil.getMessageSvg(), "Submit an issue", "submit_issue"));
         sb.append(getCommandButtonItem(IconUtil.getVisibleSvg(), toggleStatusLabel, "toggle_status"));

@@ -13,7 +13,7 @@ public class CssUtil {
 
     private static String getDarkStyle() {
         return "  <style type=\"text/css\">\n" +
-                "    body { color: #fafafa; line-height: 1; font-size: .9rem; margin: 0; padding: 0; }\n" +
+                "    body { background-color: #2e2e2e; color: #fafafa; line-height: 1; font-size: .9rem; margin: 0; padding: 0; }\n" +
                 "    canvas { display: block; position: relative; zindex: 1; pointer-events: none; }\n" +
                 "    #content { background-color: #2e2e2e; position: absolute; top: 0; bottom: 0; width: 100%; height: 100%; }\n" +
                 "    .right-padding-4 { padding-right: 4px; }\n" +
@@ -33,7 +33,7 @@ public class CssUtil {
                 "    .getting-started-button { background-color: #fafafa; color: #2196f3; }\n" +
                 "    .pg-track-bg { height: 6px; background-color: #a1cbf5; }\n" +
                 "    .pg-track { background-color: #fafafa; }\n" +
-                "    button:focus, button:active { outline: none; border-style: none; }\n" +
+                "    button:focus, button:active { outline: none; border-style: none; background-color: #2e2e2e }\n" +
                 "    a.white-link, a.white-link:active, a.white-link:hover {color: #fafafa; text-decoration: none; font-weight: bold; }\n" +
                 "    .cursor-pointer { cursor: pointer; }\n" +
                 "    .top-right { position: absolute; top: 18px; right: 16px; }\n" +

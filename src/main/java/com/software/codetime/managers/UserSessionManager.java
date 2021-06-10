@@ -39,9 +39,9 @@ public class UserSessionManager {
     public static String getReadmeFile() {
         String file = FileUtilManager.getSoftwareDir(true);
         if (UtilManager.isWindows()) {
-            file += "\\jetbrainsCt_README.txt";
+            file += "\\jetbrainsCt_README.md";
         } else {
-            file += "/jetbrainsCt_README.txt";
+            file += "/jetbrainsCt_README.md";
         }
         return file;
     }
