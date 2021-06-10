@@ -116,7 +116,7 @@ public class StatusBarManager {
         StatusBarKpmIconWidget kpmIconWidget = (StatusBarKpmIconWidget) statusBar.getWidget(widgetId);
         if (kpmIconWidget == null) {
             kpmIconWidget = buildStatusBarIconWidget(icon, tooltip, widgetId, callback);
-            statusBar.addWidget(kpmIconWidget, widgetId);
+            statusBar.addWidget(kpmIconWidget, widgetId, statusBar);
         } else {
             kpmIconWidget.updateIcon(icon);
             kpmIconWidget.setTooltip(tooltip);
@@ -129,7 +129,7 @@ public class StatusBarManager {
         if (showStatusText || widgetId.equals(flowmsgId)) {
             if (kpmMsgWidget == null) {
                 kpmMsgWidget = buildStatusBarTextWidget(msg, tooltip, widgetId, callback);
-                statusBar.addWidget(kpmMsgWidget, widgetId);
+                statusBar.addWidget(kpmMsgWidget, widgetId, statusBar);
             } else {
                 kpmMsgWidget.setText(msg);
                 kpmMsgWidget.setTooltip(tooltip);

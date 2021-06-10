@@ -9,7 +9,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.software.codetime.managers.KeystrokeUtilManager;
-import com.software.codetime.managers.UserSessionManager;
 import com.software.codetime.models.KeystrokeWrapper;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.manager.AsyncManager;
