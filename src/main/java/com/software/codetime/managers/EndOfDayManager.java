@@ -20,7 +20,6 @@ import java.util.List;
 
 public class EndOfDayManager {
 
-    private static final String eod_msg = "It's the end of your work day! Would you like to see your code time stats for today?";
     private static final int MIN_IN_SEC = 60;
     private static final int HOUR_IN_SEC = MIN_IN_SEC * 60;
 
@@ -39,7 +38,7 @@ public class EndOfDayManager {
                 // the work hours may come in this format as well
                 // [[118800,147600],[205200,234000],[291600,320400],[378000,406800],[464400,493200]]
                 // just give a default of 5pm
-                secondsUntilEndOfTheDay = HOUR_IN_SEC * 17;
+                secondsUntilEndOfTheDay = getSecondsUntilEndOfTheDay(new Date(), HOUR_IN_SEC * 17);
             }
 
             if (secondsUntilEndOfTheDay > 0) {
