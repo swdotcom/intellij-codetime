@@ -15,7 +15,9 @@ public class JsUtil {
     }
 
     private static String getButtonFunctionsJs() {
-        String onloadFunctionCall = SessionDataManager.hasStatusUpdated() ? "fireworks();" : "// noupdate";
+        // this would start the fireworks when the window loads and would be
+        // added after the workspaceRemoveClickHandler function if we wanted to use it.
+        // String onloadFn = "      window.onload = function(e) { fireworks(); }\n";
         return "      <script language=\"javascript\">\n" +
                 "       const windowFeatures = \"menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes\";\n" +
                 "       function teamClickHandler(org_name, team_id) {\n" +
@@ -28,8 +30,11 @@ public class JsUtil {
                 "       function workspaceRemoveClickHandler(id) {\n" +
                 "         console.log(JSON.stringify({cmd: 'remove_workspace', id}));\n" +
                 "       }\n" +
-                "       window.onload = function(e){ \n" +
-                "         " + onloadFunctionCall + "\n" +
+                "       window.onload = function(e) {\n" +
+                "         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle=\"tooltip\"]'))\n" +
+                "         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {\n" +
+                "           return new bootstrap.Tooltip(tooltipTriggerEl)\n" +
+                "         })\n" +
                 "       }\n" +
                 "     </script>\n";
     }

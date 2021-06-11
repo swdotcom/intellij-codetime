@@ -1,6 +1,7 @@
 package com.software.codetime.toolwindows.codetime.html;
 
 import com.software.codetime.managers.FlowManager;
+import com.software.codetime.managers.SessionDataManager;
 import com.software.codetime.managers.StatusBarManager;
 import org.apache.commons.lang3.StringUtils;
 import swdc.java.ops.http.FlowModeClient;
@@ -59,13 +60,25 @@ public class DomBuilder {
     }
 
     private static String getStatsComponent() {
+        String inFlowIndicator = SessionDataManager.isCloseToOrAboveAverage() ? getInFlowIndicator() : "\n";
         return "<div class=\"card mb-0 pb-2\">\n" +
                 "  <div class=\"card-body mb-0 pb-1\">\n" +
                 "    <h6 class=\"card-title mb-1 text-nowrap\">Stats</h6>\n" +
                 "    <p class=\"card-text mb-1 text-muted text-nowrap\">Data in your editor</p>\n" +
+                inFlowIndicator +
                 "  </div>\n" +
                 getStatsListItems() +
                 "</div>\n";
+    }
+
+    private static String getInFlowIndicator() {
+        return "    <div class=\"top-right\">\n" +
+                "      <button type=\"button\" class=\"icon-button\" aria-label=\"In flow!\" onclick=\"fireworks()\" data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html=\"true\" title=\"<div>Great job!</div><div>Active code time is above average.</div>\">\n" +
+                "        <span aria-hidden=\"false\">\n" +
+                IconUtil.getRocketFaIcon() +
+                "        </span>\n" +
+                "      </button>\n" +
+                "    </div>\n";
     }
 
     private static String getTeamComponent() {
@@ -148,8 +161,8 @@ public class DomBuilder {
                 "    <h6 class=\"card-title mb-1 text-nowrap\">Flow Mode</h6>\n" +
                 "    <p class=\"card-text mb-1 text-muted text-nowrap\">Block out distractions</p>\n" +
                 "    <div class=\"top-right\">\n" +
-                "      <button type=\"button\" class=\"icon-button\" data-dismiss=\"modal\" aria-label=\"Settings\" onclick=\"onCmdClick('configure')\">\n" +
-                "        <span aria-hidden=\"true\">\n" +
+                "      <button type=\"button\" class=\"icon-button\" aria-label=\"Settings\" onclick=\"onCmdClick('configure')\" data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html=\"true\" title=\"<div>Configure settings</div>\">\n" +
+                "        <span aria-hidden=\"false\">\n" +
                 IconUtil.getSettingsSvg() +
                 "        </span>\n" +
                 "      </button>\n" +

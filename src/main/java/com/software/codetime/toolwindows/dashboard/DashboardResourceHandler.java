@@ -26,7 +26,6 @@ public class DashboardResourceHandler implements CefResourceHandler {
 
     public final static String config_settings_api = "/users/me/edit_preferences";
     public final static String dashboard_api = "/v1/plugin_dashboard";
-    public final static String none = "none";
 
     private WebviewResourceState state = new WebviewClosedConnection();
 
@@ -44,16 +43,14 @@ public class DashboardResourceHandler implements CefResourceHandler {
             URL resourceUrl = getClass().getClassLoader().getResource(pathToResource);
 
             // load the fetched html
-            if (!html_api.equals(none)) {
-                File f = new File(FileUtilManager.getCodeTimeDashboardHtmlFile());
-                String api = html_api;
-                if (html_api.equals(config_settings_api)) {
-                    // add the query string
-                    api += "?isLightMode=" + !EditorColorsManager.getInstance().isDarkEditor();
-                    f = new File(FileUtilManager.getCodeTimeSettingsHtmlFile());
-                }
-                resourceUrl = loadApiHtml(resourceUrl, f, api);
+            File f = new File(FileUtilManager.getCodeTimeDashboardHtmlFile());
+            String api = html_api;
+            if (html_api.equals(config_settings_api)) {
+                // add the query string
+                api += "?isLightMode=" + !EditorColorsManager.getInstance().isDarkEditor();
+                f = new File(FileUtilManager.getCodeTimeSettingsHtmlFile());
             }
+            resourceUrl = loadApiHtml(resourceUrl, f, api);
 
             try {
                 state = new WebviewOpenedConnection(resourceUrl.openConnection());
@@ -88,9 +85,6 @@ public class DashboardResourceHandler implements CefResourceHandler {
         try {
             ClientResponse resp = OpsHttpClient.softwareGet(api, FileUtilManager.getItem("jwt"));
             String html = resp.getJsonObj().get("html").getAsString();
-
-            // temporary fix
-            html = html.replaceAll("backgound", "background").replaceAll("transparent", "#FFFFFF");
 
             writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(htmlFile), StandardCharsets.UTF_8));

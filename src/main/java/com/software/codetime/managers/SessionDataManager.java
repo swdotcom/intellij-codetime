@@ -17,17 +17,6 @@ import java.lang.reflect.Type;
 
 public class SessionDataManager implements SessionSummaryHandler {
 
-    private static boolean statusUpdated = false;
-
-    public static boolean hasStatusUpdated() {
-        if (statusUpdated) {
-            // reset
-            statusUpdated = false;
-            return true;
-        }
-        return false;
-    }
-
     public static void clearSessionSummaryData() {
         SessionSummary summary = new SessionSummary();
         FileUtilManager.writeData(FileUtilManager.getSessionDataSummaryFile(), summary);
@@ -118,11 +107,18 @@ public class SessionDataManager implements SessionSummaryHandler {
 
             StatusBarManager.updateStatusBar();
 
-            statusUpdated = true;
-
             ApplicationManager.getApplication().invokeLater(() -> {
                 CodeTimeWindowFactory.refresh(false);
             });
         }
+    }
+
+    public static boolean isCloseToOrAboveAverage() {
+        SessionSummary summary = SessionDataManager.getSessionSummaryData();
+        double threshold = summary.getAverageDailyMinutes() - (summary.getAverageDailyMinutes() * .15);
+        if (summary.getCurrentDayMinutes() >= threshold || summary.getCurrentDayKeystrokes() >= summary.getAverageDailyKeystrokes()) {
+            return true;
+        }
+        return false;
     }
 }
