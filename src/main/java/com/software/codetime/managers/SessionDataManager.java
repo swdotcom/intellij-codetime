@@ -40,13 +40,12 @@ public class SessionDataManager implements SessionSummaryHandler {
         String api = "/sessions/summary";
         ClientResponse resp = OpsHttpClient.softwareGet(api, jwt);
         if (resp.isOk()) {
-            JsonObject jsonObj = resp.getJsonObj();
-
-            Type type = new TypeToken<SessionSummary>() {}.getType();
-            SessionSummary fetchedSummary = UtilManager.gson.fromJson(jsonObj, type);
-
-            // clone all
-            summary.clone(fetchedSummary);
+            try {
+                Type type = new TypeToken<SessionSummary>() {}.getType();
+                summary = UtilManager.gson.fromJson(resp.getJsonObj(), type);
+            } catch (Exception e) {
+                //
+            }
         }
 
         updateFileSummaryAndStatsBar(summary);
