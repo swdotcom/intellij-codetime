@@ -118,21 +118,22 @@ public class UserSessionManager {
         EventTrackerManager.getInstance().trackUIInteraction(interactionType, elementEntity);
 
         AsyncManager.getInstance().executeOnceInSeconds(() -> {
-            checkAuthCompletion(10);}, 15);
+            checkAuthCompletion(10);}, 20);
     }
 
     private static void checkAuthCompletion(int tries) {
         if (tries < 0) {
             return;
         }
+        String authCallbackState = FileUtilManager.getAuthCallbackState(false);
         UserState userState = AccountManager.getUserLoginState(false /*isIntegrationRequest*/);
-        if (!userState.loggedIn) {
+        if (StringUtils.isNotBlank(authCallbackState) && (userState.user == null || userState.user.registered == 0)) {
             tries--;
             final int newTryCount = tries;
             AsyncManager.getInstance().executeOnceInSeconds(() -> {
                 checkAuthCompletion(newTryCount);
             }, 15);
-        } else {
+        } else if (StringUtils.isNotBlank(authCallbackState)) {
             AuthenticatedPluginUser.handleAuthenticatedPluginUser(userState.user);
         }
     }

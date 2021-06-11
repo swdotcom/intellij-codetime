@@ -86,6 +86,8 @@ public class DashboardResourceHandler implements CefResourceHandler {
             ClientResponse resp = OpsHttpClient.softwareGet(api, FileUtilManager.getItem("jwt"));
             String html = resp.getJsonObj().get("html").getAsString();
 
+            html = html.replaceAll("backgound", "background");
+
             writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(htmlFile), StandardCharsets.UTF_8));
             writer.write(html);

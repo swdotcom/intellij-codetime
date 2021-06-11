@@ -116,7 +116,8 @@ public class SessionDataManager implements SessionSummaryHandler {
     public static boolean isCloseToOrAboveAverage() {
         SessionSummary summary = SessionDataManager.getSessionSummaryData();
         double threshold = summary.getAverageDailyMinutes() - (summary.getAverageDailyMinutes() * .15);
-        if (summary.getCurrentDayMinutes() >= threshold || summary.getCurrentDayKeystrokes() >= summary.getAverageDailyKeystrokes()) {
+        if (summary.getCurrentDayKeystrokes() > 0 && threshold > 0 &&
+                (summary.getCurrentDayMinutes() >= threshold || summary.getCurrentDayKeystrokes() >= summary.getAverageDailyKeystrokes())) {
             return true;
         }
         return false;
