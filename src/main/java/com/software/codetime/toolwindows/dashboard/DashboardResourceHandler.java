@@ -1,6 +1,6 @@
 package com.software.codetime.toolwindows.dashboard;
 
-import com.intellij.openapi.application.ApplicationManager;
+
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.software.codetime.toolwindows.WebviewClosedConnection;
 import com.software.codetime.toolwindows.WebviewOpenedConnection;
@@ -13,7 +13,6 @@ import org.cef.misc.StringRef;
 import org.cef.network.CefRequest;
 import org.cef.network.CefResponse;
 
-import swdc.java.ops.manager.AppleScriptManager;
 import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.http.ClientResponse;
@@ -27,6 +26,7 @@ public class DashboardResourceHandler implements CefResourceHandler {
 
     public final static String config_settings_api = "/users/me/edit_preferences";
     public final static String dashboard_api = "/v1/plugin_dashboard";
+    public final static String none = "none";
 
     private WebviewResourceState state = new WebviewClosedConnection();
 
@@ -40,19 +40,26 @@ public class DashboardResourceHandler implements CefResourceHandler {
     public boolean processRequest(CefRequest cefRequest, CefCallback cefCallback) {
         String url = cefRequest.getURL();
         if (StringUtils.isNotBlank(url)) {
-
             String pathToResource = url.replace("http://dashboard", "dashboard");
             URL resourceUrl = getClass().getClassLoader().getResource(pathToResource);
 
             // load the fetched html
-            File f = new File(FileUtilManager.getCodeTimeDashboardHtmlFile());
-            String api = html_api;
-            if (html_api.equals(config_settings_api)) {
-                // add the query string
-                api += "?editor=intellij&isLightMode=" + !EditorColorsManager.getInstance().isDarkEditor();
-                f = new File(FileUtilManager.getCodeTimeSettingsHtmlFile());
+            if (!html_api.equals(none)) {
+                File f = new File(FileUtilManager.getCodeTimeDashboardHtmlFile());
+                String api = html_api;
+                if (html_api.equals(config_settings_api)) {
+                    // add the query string
+                    api += "?isLightMode=" + !EditorColorsManager.getInstance().isDarkEditor();
+                    f = new File(FileUtilManager.getCodeTimeSettingsHtmlFile());
+                }
+                resourceUrl = loadApiHtml(resourceUrl, f, api);
             }
-            loadApiHtml(resourceUrl, f, api);
+
+            try {
+                state = new WebviewOpenedConnection(resourceUrl.openConnection());
+            } catch (Exception e) {
+                //
+            }
 
             cefCallback.Continue();
             return true;
@@ -76,11 +83,14 @@ public class DashboardResourceHandler implements CefResourceHandler {
         state = new WebviewClosedConnection();
     }
 
-    private void loadApiHtml(URL resourceUrl, File htmlFile, String api) {
+    private URL loadApiHtml(URL resourceUrl, File htmlFile, String api) {
         Writer writer = null;
         try {
             ClientResponse resp = OpsHttpClient.softwareGet(api, FileUtilManager.getItem("jwt"));
             String html = resp.getJsonObj().get("html").getAsString();
+
+            // temporary fix
+            html = html.replaceAll("backgound", "background").replaceAll("transparent", "#FFFFFF");
 
             writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(htmlFile), StandardCharsets.UTF_8));
@@ -103,11 +113,7 @@ public class DashboardResourceHandler implements CefResourceHandler {
             e.printStackTrace();
         }
 
-        try {
-            state = new WebviewOpenedConnection(resourceUrl.openConnection());
-        } catch (Exception e) {
-            //
-        }
+        return resourceUrl;
     }
 
 }

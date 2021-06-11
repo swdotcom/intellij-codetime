@@ -12,8 +12,8 @@
         <toolWindow id="Code Time" order="first" secondary="false" anchor="left"
                     icon="/assets/paw-grey-rotated.png"
                     factoryClass="com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory"/>
-        <toolWindow id="Dashboard" order="first" secondary="false" anchor="right"
-                    icon="/assets/paw-grey-rotated.png"
+        <toolWindow id="Code Time Dashboard" order="first" secondary="false" anchor="right" doNotActivateOnStart="true"
+                    icon="/assets/paw-grey.png"
                     factoryClass="com.software.codetime.toolwindows.dashboard.DashboardWindowFactory"/>
     </extensions>
 

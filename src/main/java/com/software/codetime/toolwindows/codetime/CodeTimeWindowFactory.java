@@ -11,8 +11,6 @@ import com.software.codetime.listeners.ProjectActivateListener;
 import com.software.codetime.managers.IntellijProjectManager;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
 
 public class CodeTimeWindowFactory implements ToolWindowFactory {
 

@@ -11,8 +11,6 @@ import com.software.codetime.listeners.ProjectActivateListener;
 import com.software.codetime.managers.IntellijProjectManager;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
 public class DashboardWindowFactory implements ToolWindowFactory {
     private static DashboardToolWindow dashboardToolWindow;
     public static Project windowProject;
@@ -22,7 +20,7 @@ public class DashboardWindowFactory implements ToolWindowFactory {
         init(project, toolWindow);
     }
 
-    private void init(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+    private static void init(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         dashboardToolWindow = new DashboardToolWindow(toolWindow);
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(dashboardToolWindow.getContent(), "", false);
@@ -37,7 +35,7 @@ public class DashboardWindowFactory implements ToolWindowFactory {
                 p = IntellijProjectManager.getFirstActiveProject();
             }
             if (p != null) {
-                ToolWindow toolWindow = ToolWindowManager.getInstance(p).getToolWindow("Dashboard");
+                ToolWindow toolWindow = ToolWindowManager.getInstance(p).getToolWindow("Code Time Dashboard");
                 new DashboardWindowFactory().createToolWindowContent(p, toolWindow);
             }
         }
@@ -69,7 +67,7 @@ public class DashboardWindowFactory implements ToolWindowFactory {
         checkIfInitialized();
         if (windowProject != null) {
             ApplicationManager.getApplication().invokeLater(() -> {
-                ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Dashboard");
+                ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Code Time Dashboard");
                 if (toolWindow != null) {
                     toolWindow.show();
                 }
@@ -81,7 +79,7 @@ public class DashboardWindowFactory implements ToolWindowFactory {
         checkIfInitialized();
         if (windowProject != null) {
             ApplicationManager.getApplication().invokeLater(() -> {
-                ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Dashboard");
+                ToolWindow toolWindow = ToolWindowManager.getInstance(windowProject).getToolWindow("Code Time Dashboard");
                 if (toolWindow != null) {
                     toolWindow.hide();
                 }
