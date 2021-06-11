@@ -4,12 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.intellij.openapi.application.ApplicationManager;
+import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import swdc.java.ops.http.ClientResponse;
 import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.manager.UtilManager;
 import swdc.java.ops.model.ElapsedTime;
-import swdc.java.ops.model.KeystrokeAggregate;
 import swdc.java.ops.model.SessionSummary;
 import swdc.java.ops.websockets.SessionSummaryHandler;
 
@@ -31,28 +31,6 @@ public class SessionDataManager implements SessionSummaryHandler {
     public static void clearSessionSummaryData() {
         SessionSummary summary = new SessionSummary();
         FileUtilManager.writeData(FileUtilManager.getSessionDataSummaryFile(), summary);
-    }
-
-    public static void refreshSessionDataAndTree() {
-        SessionDataManager.clearSessionSummaryData();
-        TimeDataManager.clearTimeDataSummary();
-
-        // prompt they've completed the setup
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            public void run() {
-                // this will fetch the session summary data and refresh the tree
-                SessionDataManager.treeDataUpdateCheck(true);
-            }
-        });
-    }
-
-    public static void treeDataUpdateCheck(boolean isNewUser) {
-        String day = UtilManager.getTodayInStandardFormat();
-        String currentDay = FileUtilManager.getItem("updatedTreeDate", "");
-        if (!currentDay.equals(day) || isNewUser) {
-            updateSessionSummaryFromServer();
-            FileUtilManager.setItem("updatedTreeDate", day);
-        }
     }
 
     public static void updateSessionSummaryFromServer() {
@@ -103,20 +81,6 @@ public class SessionDataManager implements SessionSummaryHandler {
         return summary;
     }
 
-    public static void incrementSessionSummary(KeystrokeAggregate aggregate, long sessionSeconds) {
-        SessionSummary summary = getSessionSummaryData();
-
-        long sessionMinutes = sessionSeconds / 60;
-        summary.setCurrentDayMinutes(summary.getCurrentDayMinutes() + sessionMinutes);
-
-        summary.setCurrentDayKeystrokes(summary.getCurrentDayKeystrokes() + aggregate.keystrokes);
-        summary.setCurrentDayLinesAdded(summary.getCurrentDayLinesAdded() + aggregate.linesAdded);
-        summary.setCurrentDayLinesRemoved(summary.getCurrentDayLinesRemoved() + aggregate.linesRemoved);
-
-        // save the file
-        FileUtilManager.writeData(FileUtilManager.getSessionDataSummaryFile(), summary);
-    }
-
     public static ElapsedTime getTimeBetweenLastPayload() {
         ElapsedTime eTime = new ElapsedTime();
 
@@ -156,6 +120,10 @@ public class SessionDataManager implements SessionSummaryHandler {
             StatusBarManager.updateStatusBar();
 
             statusUpdated = true;
+
+            ApplicationManager.getApplication().invokeLater(() -> {
+                CodeTimeWindowFactory.refresh(false);
+            });
         }
     }
 }

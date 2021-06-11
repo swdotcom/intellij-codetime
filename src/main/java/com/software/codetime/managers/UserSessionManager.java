@@ -3,11 +3,8 @@ package com.software.codetime.managers;
 import com.google.gson.JsonObject;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
-import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.http.ClientResponse;
 import swdc.java.ops.http.OpsHttpClient;
@@ -52,25 +49,6 @@ public class UserSessionManager {
             return true;
         }
         return false;
-    }
-
-    private Project getCurrentProject() {
-        Project[] projects = ProjectManager.getInstance().getOpenProjects();
-        if (projects != null && projects.length > 0) {
-            return projects[0];
-        }
-        return null;
-    }
-
-    public void statusBarClickHandler() {
-        UIElementEntity elementEntity = new UIElementEntity();
-        elementEntity.element_name = "ct_status_bar_metrics_btn";
-        elementEntity.element_location = "ct_status_bar";
-        elementEntity.color = null;
-        elementEntity.cta_text = "status bar metrics";
-        elementEntity.icon_name = "clock";
-        EventTrackerManager.getInstance().trackUIInteraction(UIInteractionType.click, elementEntity);
-        CodeTimeWindowFactory.openToolWindow();
     }
 
     public static void launchLogin(String loginType, UIInteractionType interactionType, boolean switching_account) {

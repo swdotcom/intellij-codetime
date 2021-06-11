@@ -21,29 +21,31 @@ public class ScreenManager {
     private static IdeRootPane rootPane;
 
     public static void init() {
-        Project p = ProjectActivateListener.getCurrentProject();
-        if (p == null) {
-            p = IntellijProjectManager.getFirstActiveProject();
-        }
-        rootPane = (IdeRootPane) WindowManager.getInstance().getFrame(p).getRootPane();
-        if (rootPane != null && ideFrame == null) {
-            ideFrame = (IdeFrameImpl) rootPane.getParent();
-            ideFrame.addWindowStateListener(new WindowStateListener() {
-                @Override
-                public void windowStateChanged(WindowEvent e) {
-                    ApplicationManager.getApplication().invokeLater(() -> {
-                        if (FlowManager.isFlowModeEnabled()) {
-                            // flow mode is enabled
-                            AsyncManager.getInstance().executeOnceInSeconds(() -> {
-                                if (!isFullScreen() && FlowManager.fullScreeConfigured()) {
-                                    // turn off flow mode
-                                    FlowManager.exitFlowMode();
-                                }
-                            }, 3);
-                        }
-                    });
-                }
-            });
+        if (rootPane == null && ideFrame == null) {
+            Project p = ProjectActivateListener.getCurrentProject();
+            if (p == null) {
+                p = IntellijProjectManager.getFirstActiveProject();
+            }
+            rootPane = (IdeRootPane) WindowManager.getInstance().getFrame(p).getRootPane();
+            if (rootPane != null && ideFrame == null) {
+                ideFrame = (IdeFrameImpl) rootPane.getParent();
+                ideFrame.addWindowStateListener(new WindowStateListener() {
+                    @Override
+                    public void windowStateChanged(WindowEvent e) {
+                        ApplicationManager.getApplication().invokeLater(() -> {
+                            if (FlowManager.isFlowModeEnabled() && FlowManager.fullScreeConfigured()) {
+                                // flow mode is enabled
+                                AsyncManager.getInstance().executeOnceInSeconds(() -> {
+                                    if (!isFullScreen()) {
+                                        // turn off flow mode
+                                        FlowManager.exitFlowMode();
+                                    }
+                                }, 5);
+                            }
+                        });
+                    }
+                });
+            }
         }
     }
 
