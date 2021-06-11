@@ -7,6 +7,8 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import com.software.codetime.listeners.ProjectActivateListener;
+import com.software.codetime.managers.IntellijProjectManager;
 import org.jetbrains.annotations.NotNull;
 
 public class DashboardWindowFactory implements ToolWindowFactory {
@@ -15,11 +17,29 @@ public class DashboardWindowFactory implements ToolWindowFactory {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+        init(project, toolWindow);
+    }
+
+    private static void init(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         dashboardToolWindow = new DashboardToolWindow(toolWindow);
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(dashboardToolWindow.getContent(), "", false);
         toolWindow.getContentManager().addContent(content);
         windowProject = project;
+    }
+
+    private static void initialize() {
+        if (dashboardToolWindow == null) {
+            // get the project
+            Project p = ProjectActivateListener.getCurrentProject();
+            if (p == null) {
+                p = IntellijProjectManager.getFirstActiveProject();
+            }
+            ToolWindow toolWindow = ToolWindowManager.getInstance(p).getToolWindow("Code Time Dashboard");
+            if (toolWindow != null) {
+                init(p, toolWindow);
+            }
+        }
     }
 
     public static void displayConfigSettings() {
@@ -33,6 +53,8 @@ public class DashboardWindowFactory implements ToolWindowFactory {
     }
 
     public static void refresh(boolean open) {
+        initialize();
+
         if (dashboardToolWindow != null) {
             dashboardToolWindow.refresh();
             if (open) {
