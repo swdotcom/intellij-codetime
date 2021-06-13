@@ -9,10 +9,10 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="com.software.codetime.main.PostStartupActivity"/>
-        <toolWindow id="Code Time" order="first" secondary="false" anchor="left"
+        <toolWindow id="Code Time" order="first" anchor="left"
                     icon="/assets/paw-grey-rotated.png"
                     factoryClass="com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory"/>
-        <toolWindow id="Code Time Dashboard" order="first" secondary="false" anchor="right"
+        <toolWindow id="Code Time Dashboard" order="first" anchor="right"
                     icon="/assets/paw-grey.png"
                     factoryClass="com.software.codetime.toolwindows.dashboard.DashboardWindowFactory"/>
     </extensions>

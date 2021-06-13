@@ -68,6 +68,10 @@ public class IconUtil {
         return "<i class=\"fas fa-plus-circle\" style=\"color: #00B4EE\"></i>\n";
     }
 
+    public static String getRefreshFaIcon() {
+        return "<i class=\"fas fa-sync\" style=\"color: #00B4EE\"></i>\n";
+    }
+
     public static String getMinusCircleFaIcon() {
         return "<i class=\"fas fa-minus-circle\" style=\"color: #00B4EE\"></i>\n";
     }

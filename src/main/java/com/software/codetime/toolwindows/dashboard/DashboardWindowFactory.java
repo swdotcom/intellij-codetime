@@ -18,6 +18,7 @@ public class DashboardWindowFactory implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         init(project, toolWindow);
+        toolWindow.hide();
     }
 
     private static void init(@NotNull Project project, @NotNull ToolWindow toolWindow) {

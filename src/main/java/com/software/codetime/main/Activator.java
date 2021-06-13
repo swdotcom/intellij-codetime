@@ -12,6 +12,7 @@ import com.software.codetime.managers.*;
 import com.software.codetime.models.IntellijProject;
 import com.software.codetime.models.KeystrokeWrapper;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.manager.*;
 import swdc.java.ops.snowplow.events.UIInteractionType;
@@ -72,11 +73,13 @@ public class Activator {
             log.warning("Websocket connect error: " + e.getMessage());
         }
 
-        // initialize the tracker
-        EventTrackerManager.getInstance().init(new IntellijProject());
+        ApplicationManager.getApplication().invokeLater(() -> {
+            // initialize the tracker
+            EventTrackerManager.getInstance().init(new IntellijProject());
 
-        // send the activate event
-        EventTrackerManager.getInstance().trackEditorAction("editor", "activate");
+            // send the activate event
+            EventTrackerManager.getInstance().trackEditorAction("editor", "activate");
+        });
 
         // show the readme on install
         readmeCheck();

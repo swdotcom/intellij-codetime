@@ -8,10 +8,7 @@ import org.cef.CefSettings;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefDisplayHandler;
-import swdc.java.ops.manager.ConfigManager;
-import swdc.java.ops.manager.FileUtilManager;
-import swdc.java.ops.manager.SlackManager;
-import swdc.java.ops.manager.UtilManager;
+import swdc.java.ops.manager.*;
 import swdc.java.ops.model.Integration;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 
@@ -128,6 +125,11 @@ public class CodeTimeDisplayHandler implements CefDisplayHandler {
                 ApplicationManager.getApplication().invokeLater(() -> {
                     FileUtilManager.setBooleanItem("intellij_CtskipSlackConnect", true);
                     CodeTimeWindowFactory.refresh(false);
+                });
+                break;
+            case "refresh_workspaces":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    AccountManager.getUser();
                 });
                 break;
             default:

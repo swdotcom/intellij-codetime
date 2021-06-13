@@ -305,6 +305,7 @@ public class DomBuilder {
             sb.append(getWorkspaceButtonListItem(workspace.team_name, workspace.team_domain, workspace.id));
         }
         sb.append(getCommandButtonItem(IconUtil.getPlusCircleFaIcon(), "Add workspace", "add_workspace"));
+        sb.append(getCommandButtonItem(IconUtil.getRefreshFaIcon(), "Refresh", "refresh_workspaces"));
         return getButtonListItemContainer(sb.toString());
     }
 

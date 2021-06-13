@@ -32,17 +32,7 @@ public class ScreenManager {
                 ideFrame.addWindowStateListener(new WindowStateListener() {
                     @Override
                     public void windowStateChanged(WindowEvent e) {
-                        ApplicationManager.getApplication().invokeLater(() -> {
-                            if (FlowManager.isFlowModeEnabled() && FlowManager.fullScreeConfigured()) {
-                                // flow mode is enabled
-                                AsyncManager.getInstance().executeOnceInSeconds(() -> {
-                                    if (!isFullScreen()) {
-                                        // turn off flow mode
-                                        FlowManager.exitFlowMode();
-                                    }
-                                }, 5);
-                            }
-                        });
+                        // handle any window state change actions here
                     }
                 });
             }
