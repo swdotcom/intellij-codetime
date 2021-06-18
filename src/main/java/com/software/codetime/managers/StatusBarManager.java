@@ -6,7 +6,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.StatusBar;
@@ -149,7 +148,7 @@ public class StatusBarManager {
     }
 
     public static StatusBarKpmIconWidget buildStatusBarIconWidget(String iconName, String tooltip, String id, Runnable callback) {
-        Icon icon = IconLoader.findIcon("/assets/" + iconName);
+        Icon icon = UtilManager.getResourceIcon(iconName, StatusBarManager.class.getClassLoader());
 
         StatusBarKpmIconWidget iconWidget =
                 new StatusBarKpmIconWidget(id, callback);

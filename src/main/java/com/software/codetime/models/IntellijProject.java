@@ -18,7 +18,7 @@ public class IntellijProject implements IdeProject {
         if (editors != null && editors.length > 0) {
             for (Editor editor : editors) {
                 if (editor != null && editor.getProject() != null) {
-                    String basePath = editor.getProject().getBaseDir().getPath();
+                    String basePath = editor.getProject().getBasePath();
                     if (path.indexOf(basePath) != -1) {
                         return buildKeystrokeProject(editor.getProject());
                     }
@@ -62,7 +62,7 @@ public class IntellijProject implements IdeProject {
             return new Project(UtilManager.unnamed_project_name, UtilManager.untitled_file_name);
         }
         com.intellij.openapi.project.Project intellijProj = (com.intellij.openapi.project.Project)p;
-        Project keystrokeProject = new Project(intellijProj.getName(), intellijProj.getBaseDir().getPath());
+        Project keystrokeProject = new Project(intellijProj.getName(), intellijProj.getBasePath());
         keystrokeProject.setIdeProject(p);
         return keystrokeProject;
     }

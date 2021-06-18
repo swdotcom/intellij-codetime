@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.IconLoader;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.http.ClientResponse;
 import swdc.java.ops.http.OpsHttpClient;
@@ -144,7 +143,7 @@ public class UserSessionManager {
                 String msg = "Sign up or log in to see more data visualizations.";
 
                 Object[] options = {"Sign up"};
-                Icon icon = IconLoader.getIcon("/assets/app-icon-blue.png");
+                Icon icon = UtilManager.getResourceIcon("app-icon-blue.png", UserSessionManager.class.getClassLoader());
                 int choice = JOptionPane.showOptionDialog(
                         null, msg, "Sign up", JOptionPane.OK_OPTION,
                         JOptionPane.QUESTION_MESSAGE, icon, options, options[0]);

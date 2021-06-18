@@ -4,12 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.IconLoader;
 import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
 import swdc.java.ops.http.ClientResponse;
 import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.manager.AsyncManager;
 import swdc.java.ops.manager.FileUtilManager;
+import swdc.java.ops.manager.UtilManager;
 
 import javax.swing.*;
 import java.text.SimpleDateFormat;
@@ -54,7 +54,8 @@ public class EndOfDayManager {
             String title = "Code Time Dashboard";
             String msg = "It's the end of your work day!\nWould you like to see your code time stats for today?";
 
-            Icon icon = IconLoader.getIcon("/assets/app-icon-blue.png");
+            Icon icon = UtilManager.getResourceIcon("app-icon-blue.png", EndOfDayManager.class.getClassLoader());
+
             int choice = JOptionPane.showOptionDialog(
                     null, msg, title, JOptionPane.OK_OPTION,
                     JOptionPane.QUESTION_MESSAGE, icon, options, options[0]);

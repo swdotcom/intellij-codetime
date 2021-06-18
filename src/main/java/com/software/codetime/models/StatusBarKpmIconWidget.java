@@ -1,12 +1,12 @@
 package com.software.codetime.models;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import swdc.java.ops.manager.UtilManager;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -42,7 +42,7 @@ public class StatusBarKpmIconWidget implements StatusBarWidget {
     }
 
     public void updateIcon(String iconName) {
-        Icon icon = IconLoader.findIcon("/assets/" + iconName);
+        Icon icon = UtilManager.getResourceIcon(iconName, this.getClass().getClassLoader());
         this.setIcon(icon);
     }
 

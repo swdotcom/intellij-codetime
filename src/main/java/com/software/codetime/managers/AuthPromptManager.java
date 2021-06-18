@@ -1,7 +1,7 @@
 package com.software.codetime.managers;
 
-import com.intellij.openapi.util.IconLoader;
 import org.apache.commons.lang.StringUtils;
+import swdc.java.ops.manager.UtilManager;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 
 import javax.swing.*;
@@ -22,7 +22,7 @@ public class AuthPromptManager {
 
     private static void initiateAuthFlow(String title, String message) {
         String[] options = new String[]{ "Google", "GitHub", "Email" };
-        Icon icon = IconLoader.getIcon("/assets/app-icon-blue.png");
+        Icon icon = UtilManager.getResourceIcon("app-icon-blue.png", AuthPromptManager.class.getClassLoader());
         String input = (String) JOptionPane.showInputDialog(
                 null,
                 message,

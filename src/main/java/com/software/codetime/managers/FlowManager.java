@@ -1,6 +1,5 @@
 package com.software.codetime.managers;
 
-import com.intellij.openapi.util.IconLoader;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import swdc.java.ops.event.SlackStateChangeModel;
 import swdc.java.ops.http.FlowModeClient;
@@ -38,7 +37,8 @@ public class FlowManager {
             String msg = "Connect a Slack workspace to pause\nnotifications and update your status?";
 
             Object[] options = {"Connect", "Skip"};
-            Icon icon = IconLoader.getIcon("/assets/app-icon-blue.png");
+            Icon icon = UtilManager.getResourceIcon("app-icon-blue.png", FlowManager.class.getClassLoader());
+
             SwingUtilities.invokeLater(() -> {
                 int choice = JOptionPane.showOptionDialog(
                         null, msg, "Slack connect", JOptionPane.OK_OPTION,
