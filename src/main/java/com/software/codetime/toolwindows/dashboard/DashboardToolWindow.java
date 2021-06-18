@@ -12,7 +12,7 @@ public class DashboardToolWindow {
 
     private JBCefBrowser browser;
 
-    public DashboardToolWindow(ToolWindow toolWindow) {
+    public DashboardToolWindow() {
         initBrowser();
     }
 
