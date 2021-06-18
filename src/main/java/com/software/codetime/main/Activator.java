@@ -12,7 +12,6 @@ import com.software.codetime.managers.*;
 import com.software.codetime.models.IntellijProject;
 import com.software.codetime.models.KeystrokeWrapper;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
-import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.manager.*;
 import swdc.java.ops.snowplow.events.UIInteractionType;
@@ -89,9 +88,6 @@ public class Activator {
 
         // set the end of the day notification
         EndOfDayManager.setEndOfDayNotification();
-
-        // screen manager init
-        ScreenManager.init();
     }
 
     private void anonCheck() {
