@@ -2,6 +2,7 @@ package com.software.codetime.toolwindows.dashboard;
 
 import com.google.gson.JsonObject;
 import com.intellij.openapi.application.ApplicationManager;
+import com.software.codetime.toolwindows.WebviewCommandHandler;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import org.cef.CefSettings;
 import org.cef.browser.CefBrowser;
@@ -31,47 +32,12 @@ public class SettingsDisplayHandler implements CefDisplayHandler {
     public void onStatusMessage(CefBrowser cefBrowser, String s) {
     }
 
-    @Override
-    public boolean onConsoleMessage(CefBrowser cefBrowser, CefSettings.LogSeverity logSeverity, String s, String s1, int i) {
-        try {
-            JsonObject jsonObject = UtilManager.gson.fromJson(s, JsonObject.class);
-            if (!jsonObject.isJsonNull() && jsonObject.has("cmd")) {
-                String cmd = jsonObject.get("cmd").getAsString();
-                jsonObject.remove("cmd");
-                executeJavascriptCommands(cmd, jsonObject);
-            }
-        } catch (Exception e) {
-            System.out.println("Console message error: " + e.getMessage());
-        }
+    public boolean onCursorChange(CefBrowser cefBrowser, int i) {
         return false;
     }
 
-    private void executeJavascriptCommands(String cmd, JsonObject data) {
-        switch (cmd) {
-            case "close_settings":
-                ApplicationManager.getApplication().invokeLater(() -> {
-                    DashboardWindowFactory.closeToolWindow();
-                });
-                break;
-            case "submit_settings":
-                // post to /users/me/preferences
-                // i.e. {notifications: {endOfDayNotification: true}, flowMode: {durationMinutes: 120, editor: {autoEnterFlowMode: true...}
-                ApplicationManager.getApplication().invokeLater(() -> {
-                    boolean updated = PreferencesClient.updatePreferences(data);
-                    if (updated) {
-                        AsyncManager.getInstance().executeOnceInSeconds(() -> {
-                            AccountManager.getUser();
-                        }, 0);
-
-                        // close the tool window
-                        AsyncManager.getInstance().executeOnceInSeconds(() -> {
-                            DashboardWindowFactory.closeToolWindow();
-                            }, 3);
-                    }
-                });
-                break;
-            default:
-                break;
-        }
+    @Override
+    public boolean onConsoleMessage(CefBrowser cefBrowser, CefSettings.LogSeverity logSeverity, String commandData, String s1, int i) {
+        return WebviewCommandHandler.onConsoleCommand(commandData);
     }
 }

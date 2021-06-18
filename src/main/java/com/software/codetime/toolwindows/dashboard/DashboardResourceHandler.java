@@ -10,6 +10,7 @@ import org.cef.callback.CefCallback;
 import org.cef.handler.CefResourceHandler;
 import org.cef.misc.IntRef;
 import org.cef.misc.StringRef;
+import org.cef.network.CefCookie;
 import org.cef.network.CefRequest;
 import org.cef.network.CefResponse;
 
@@ -31,8 +32,28 @@ public class DashboardResourceHandler implements CefResourceHandler {
 
     private static String html_api = dashboard_api;
 
+    private long ref = 0;
+
     public static void updateHtmlApi(String api) {
         html_api = api;
+    }
+
+    public long getNativeRef(String identifer) {
+        return ref;
+    }
+
+    public void setNativeRef(String identifer, long nativeRef) {
+        ref = nativeRef;
+    }
+
+    public boolean canSetCookie(CefCookie cookie)
+    {
+        return false;
+    }
+
+    public boolean canGetCookie(CefCookie cookie)
+    {
+        return false;
     }
 
     @Override
