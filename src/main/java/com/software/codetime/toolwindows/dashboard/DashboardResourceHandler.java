@@ -67,8 +67,8 @@ public class DashboardResourceHandler implements CefResourceHandler {
             File f = new File(FileUtilManager.getCodeTimeDashboardHtmlFile());
             String api = html_api;
             if (html_api.equals(config_settings_api)) {
-                // add the query string
-                api += "?isLightMode=" + !EditorColorsManager.getInstance().isDarkEditor();
+                // add the query string (isLightMode and editor)
+                api += "?isLightMode=" + !EditorColorsManager.getInstance().isDarkEditor() + "&editor=intellij";
                 f = new File(FileUtilManager.getCodeTimeSettingsHtmlFile());
             }
             resourceUrl = loadApiHtml(resourceUrl, f, api);
