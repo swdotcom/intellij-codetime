@@ -30,8 +30,8 @@ public class StatusBarManager {
 
     private final static String kpmmsgId = StatusBarKpmTextWidget.KPM_TEXT_ID + "_kpmmsg";
     private final static String kpmiconId = StatusBarKpmIconWidget.KPM_ICON_ID + "_kpmicon";
-    private final static String flowmsgId = StatusBarKpmTextWidget.FLOW_TEXT_ID + "_kpmmsg";
-    private final static String flowiconId = StatusBarKpmIconWidget.FLOW_ICON_ID + "_kpmicon";
+    private final static String flowmsgId = StatusBarKpmTextWidget.FLOW_TEXT_ID + "_flowmsg";
+    private final static String flowiconId = StatusBarKpmIconWidget.FLOW_ICON_ID + "_flowicon";
 
     public static boolean showingStatusText() {
         return showStatusText;
@@ -71,19 +71,19 @@ public class StatusBarManager {
 
                         String kpmMsgVal = currentDayTimeStr != null ? currentDayTimeStr : ConfigManager.plugin_name;
 
-                        // icon first
-                        String metricIconTooltip = "";
-                        String kpmIcon = "time-clock.png";
-                        updateIconWidget(statusBar, kpmiconId, kpmIcon, metricIconTooltip, () -> {
-                            CodeTimeWindowFactory.openToolWindow();
-                        });
-
                         StatusBarKpmTextWidget kpmMsgWidget = (StatusBarKpmTextWidget) statusBar.getWidget(kpmmsgId);
                         if (kpmMsgWidget == null) {
                             // remove the flow widgets so this doesn't appear out of order
                             try { statusBar.removeWidget(flowiconId); } catch (Exception e) {}
                             try { statusBar.removeWidget(flowmsgId); } catch (Exception e) {}
                         }
+
+                        // icon first
+                        String metricIconTooltip = "";
+                        String kpmIcon = "time-clock.png";
+                        updateIconWidget(statusBar, kpmiconId, kpmIcon, metricIconTooltip, () -> {
+                            CodeTimeWindowFactory.openToolWindow();
+                        });
 
                         // text next
                         String kpmTextTooltip = "Active code time today. Click to see more from Code Time.";
@@ -93,16 +93,23 @@ public class StatusBarManager {
 
                         // flow icon
                         String flowTooltip = "Enter Flow Mode";
-                        String flowIcon = "empty-circle.svg";
-                        if (FlowModeClient.isFlowModeOn()) {
-                            flowIcon = "closed-circle.svg";
-                            flowTooltip = "Exit Flow Mode";
+                        String flowIcon = "open-circle.png";
+                        try {
+                            if (FlowModeClient.isFlowModeOn()) {
+                                flowIcon = "closed-circle.png";
+                                flowTooltip = "Exit Flow Mode";
+                            }
+                            updateIconWidget(statusBar, flowiconId, flowIcon, flowTooltip, () -> {
+                                FlowManager.toggleFlowMode(false);
+                            });
+
+                            // flow text next
+                            updateTextWidget(statusBar, flowmsgId, "Flow", flowTooltip, () -> {
+                                FlowManager.toggleFlowMode(false);
+                            });
+                        } catch (Exception e) {
+                            System.out.println("status bar update error: " + e.getMessage());
                         }
-                        updateIconWidget(statusBar, flowiconId, flowIcon, flowTooltip, () -> {FlowManager.toggleFlowMode(false);});
-
-                        // flow text next
-                        updateTextWidget(statusBar, flowmsgId, "Flow", flowTooltip, () -> {FlowManager.toggleFlowMode(false);});
-
                     } catch(Exception e){
                         //
                     }
