@@ -17,9 +17,20 @@ public class PluginInfo {
     public static String IDE_VERSION = "";
 
     // sublime = 1, vs code = 2, eclipse = 3, intellij = 4, visual studio = 6, atom = 7
-    public static int pluginId = 4;
+    private static int pluginId = 4;
     public static String VERSION = null;
     public static String pluginName = null;
+
+    private static int ANDROID_STUDIO_ID = 20;
+    private static int APPCODE_ID = 22;
+    private static int CLION_ID = 24;
+    private static int DATAGRIP_ID = 26;
+    private static int GOLAND_ID = 28;
+    private static int PHPSTORM_ID = 30;
+    private static int PYCHARM_ID = 32;
+    private static int RIDER_ID = 34;
+    private static int RUBYMINE_ID = 36;
+    private static int WEBSTORM_ID = 38;
 
     static {
         try {
@@ -28,6 +39,33 @@ public class PluginInfo {
         } catch (Exception e) {
             System.out.println("Unable to retrieve IDE name and version info: " + e.getMessage());
         }
+    }
+
+    public static int getPluginId() {
+        if (PlatformUtils.isIntelliJ()) {
+            return pluginId;
+        } else if (PlatformUtils.isPyCharm()) {
+            return PYCHARM_ID;
+        } else if (PlatformUtils.isAppCode()) {
+            return APPCODE_ID;
+        } else if (PlatformUtils.isCLion()) {
+            return CLION_ID;
+        } else if (PlatformUtils.isDataGrip()) {
+            return DATAGRIP_ID;
+        } else if (PlatformUtils.isGoIde()) {
+            return GOLAND_ID;
+        } else if (PlatformUtils.isPhpStorm()) {
+            return PHPSTORM_ID;
+        } else if (PlatformUtils.isRubyMine()) {
+            return RUBYMINE_ID;
+        } else if (PlatformUtils.isRider()) {
+            return RIDER_ID;
+        } else if (PlatformUtils.isWebStorm()) {
+            return WEBSTORM_ID;
+        } else if (PlatformUtils.isMobileIde()) {
+            return ANDROID_STUDIO_ID;
+        }
+        return pluginId;
     }
 
     public static String getVersion() {

@@ -1,8 +1,7 @@
 package com.software.codetime.main;
 
-
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
@@ -42,7 +41,7 @@ public class Activator {
         ConfigManager.init(
                 PluginInfo.api_endpoint,
                 PluginInfo.launch_url,
-                PluginInfo.pluginId,
+                PluginInfo.getPluginId(),
                 PluginInfo.getPluginName(),
                 PluginInfo.getVersion(),
                 PluginInfo.IDE_NAME,
