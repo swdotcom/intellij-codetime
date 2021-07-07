@@ -159,6 +159,13 @@ public class Activator {
                 } catch (Exception e) {
                     log.log(Level.WARNING, "Error initializing git file listener: " + e.getMessage());
                 }
+
+                SessionSummaryManager sessionSummaryMgr = new SessionSummaryManager();
+                try {
+                    sessionSummaryMgr.setSessionSummaryChangeListener();
+                } catch (Exception e) {
+                    log.log(Level.WARNING, "Error initializing session summary change listener: " + e.getMessage());
+                }
             }
         });
     }
