@@ -1,9 +1,6 @@
 package com.software.codetime.toolwindows.dashboard;
 
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.jcef.JBCefBrowser;
-import com.software.codetime.toolwindows.codetime.CodeTimeDisplayHandler;
 import org.cef.CefApp;
 
 import javax.swing.*;

@@ -1,7 +1,5 @@
 package com.software.codetime.toolwindows.codetime.html;
 
-import com.software.codetime.managers.SessionDataManager;
-
 public class JsUtil {
 
     public static String getJsDependencies() {
