@@ -1,5 +1,7 @@
 package com.software.codetime.toolwindows.codetime.html;
 
+import swdc.java.ops.http.FlowModeClient;
+
 public class JsUtil {
 
     public static String getJsDependencies() {
@@ -23,7 +25,6 @@ public class JsUtil {
                 "       }\n" +
                 "       function onCmdClick(cmd) {\n" +
                 "         console.log(JSON.stringify({cmd}));\n" +
-                "         console.log('starting confetti');\n" +
                 "       }\n" +
                 "       function workspaceRemoveClickHandler(id) {\n" +
                 "         console.log(JSON.stringify({cmd: 'remove_workspace', id}));\n" +
