@@ -1,17 +1,10 @@
 package com.software.codetime.toolwindows.codetime;
 
-import com.google.gson.JsonObject;
-import com.intellij.openapi.application.ApplicationManager;
-import com.software.codetime.managers.*;
 import com.software.codetime.toolwindows.WebviewCommandHandler;
-import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
 import org.cef.CefSettings;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefDisplayHandler;
-import swdc.java.ops.manager.*;
-import swdc.java.ops.model.Integration;
-import swdc.java.ops.snowplow.events.UIInteractionType;
 
 public class CodeTimeDisplayHandler implements CefDisplayHandler {
     @Override

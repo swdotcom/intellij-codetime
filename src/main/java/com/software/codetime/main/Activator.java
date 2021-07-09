@@ -1,8 +1,7 @@
 package com.software.codetime.main;
 
-
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
@@ -42,7 +41,7 @@ public class Activator {
         ConfigManager.init(
                 PluginInfo.api_endpoint,
                 PluginInfo.launch_url,
-                PluginInfo.pluginId,
+                PluginInfo.getPluginId(),
                 PluginInfo.getPluginName(),
                 PluginInfo.getVersion(),
                 PluginInfo.IDE_NAME,
@@ -159,6 +158,13 @@ public class Activator {
                     gitEvtMgr.setUpGitFileListener(p.getBasePath());
                 } catch (Exception e) {
                     log.log(Level.WARNING, "Error initializing git file listener: " + e.getMessage());
+                }
+
+                SessionSummaryManager sessionSummaryMgr = new SessionSummaryManager();
+                try {
+                    sessionSummaryMgr.setSessionSummaryChangeListener();
+                } catch (Exception e) {
+                    log.log(Level.WARNING, "Error initializing session summary change listener: " + e.getMessage());
                 }
             }
         });
