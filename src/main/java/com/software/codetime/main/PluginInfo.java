@@ -21,7 +21,6 @@ public class PluginInfo {
     public static String VERSION = null;
     public static String pluginName = null;
 
-    private static int ANDROID_STUDIO_ID = 20;
     private static int APPCODE_ID = 22;
     private static int CLION_ID = 24;
     private static int DATAGRIP_ID = 26;
