@@ -2,84 +2,76 @@ package com.software.codetime.managers;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.impl.ProjectFrameHelper;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import swdc.java.ops.manager.AsyncManager;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ScreenManager {
 
-    private static IdeFrameImpl ideFrame = null;
-    private static double fullScreenHeight = 0;
-    private static double fullScreenWidth = 0;
+    private static boolean inFullScreenMode = false;
 
-    private static IdeFrameImpl getIdeWindow() {
+    private static Dimension getScreenSize() {
+        return Toolkit.getDefaultToolkit().getScreenSize();
+    }
+
+    private static JFrame getIdeWindow() {
         // Retrieve the AWT window
         Project p = IntellijProjectManager.getOpenProject();
         if (p == null) {
             return null;
-        }
-
-        return ideFrame;
-    }
-
-    public static boolean isFullScreen() {
-        IdeFrameImpl win = getIdeWindow();
-
-        if (win != null) {
-
-            // maximized both is actually maximized screen, which we
-            // consider full screen as well
-            if (win.getExtendedState() == JFrame.MAXIMIZED_BOTH || win.getState() == JFrame.MAXIMIZED_BOTH) {
-                fullScreenHeight = win.getBounds().getHeight();
-                fullScreenWidth = win.getBounds().getWidth();
-                return true;
-            } else if (win.getX() > 0) {
-                return false;
-            }
-
-            // it may be full screen
-            if (win.getBounds().getHeight() >= fullScreenHeight && win.getBounds().getWidth() >= fullScreenWidth) {
-                return true;
+        } else {
+            try {
+                return ((ProjectFrameHelper)WindowManager.getInstance().getIdeFrame(p)).getFrame();
+            } catch (Exception e) {
+                //
             }
         }
-        return false;
+        return null;
     }
 
     public static boolean enterFullScreen() {
-        IdeFrameImpl win = getIdeWindow();
+        JFrame win = getIdeWindow();
         if (win == null) {
             return false;
         }
-        if (!isFullScreen()) {
-            ApplicationManager.getApplication().invokeLater(() -> {
-                try {
-                    win.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                    win.setBounds(win.getGraphicsConfiguration().getBounds());
-                    win.setVisible(true);
-                } catch (Exception e) {}
 
-                AsyncManager.getInstance().executeOnceInSeconds(
-                        () -> {
-                            CodeTimeWindowFactory.refresh(false);}, 1);
-            });
-            return true;
-        }
-        return false;
+        ApplicationManager.getApplication().invokeLater(() -> {
+            Dimension screenSize = getScreenSize();
+            int w = (int) screenSize.getWidth();
+            int h = (int) screenSize.getHeight();
+            try {
+                win.setBounds(0, 0, w, h);
+                inFullScreenMode = true;
+            } catch (Exception e) {
+                //
+            }
+
+            AsyncManager.getInstance().executeOnceInSeconds(
+                    () -> {
+                        CodeTimeWindowFactory.refresh(false);}, 1);
+        });
+        return true;
     }
 
     public static boolean exitFullScreen() {
-        IdeFrameImpl win = getIdeWindow();
+        JFrame win = getIdeWindow();
         if (win == null) {
             return false;
         }
-        if (isFullScreen()) {
+
+        if (inFullScreenMode) {
             ApplicationManager.getApplication().invokeLater(() -> {
+                Dimension screenSize = getScreenSize();
                 try {
-                    win.setExtendedState(JFrame.NORMAL);
-                    win.setBounds(win.getGraphicsConfiguration().getBounds());
-                    win.setVisible(true);
+                    int w = (int) (screenSize.getWidth() - 200);
+                    int h = (int) (screenSize.getHeight() - 100);
+                    int x = Long.valueOf(Math.round((screenSize.getWidth() - w) / 2)).intValue();
+                    int y = Long.valueOf(Math.round((screenSize.getHeight() - h) / 2)).intValue();
+                    win.setBounds(x, y, w, h);
                 } catch (Exception e) {}
                 AsyncManager.getInstance().executeOnceInSeconds(
                         () -> {CodeTimeWindowFactory.refresh(false);}, 1);

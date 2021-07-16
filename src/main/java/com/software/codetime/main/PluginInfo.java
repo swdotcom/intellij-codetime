@@ -62,8 +62,6 @@ public class PluginInfo {
             return RIDER_ID;
         } else if (PlatformUtils.isWebStorm()) {
             return WEBSTORM_ID;
-        } else if (PlatformUtils.isMobileIde()) {
-            return ANDROID_STUDIO_ID;
         }
         return pluginId;
     }
