@@ -9,11 +9,8 @@ import swdc.java.ops.snowplow.events.UIInteractionType;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Logger;
 
 public class ReadmeManager {
-
-    public static final Logger log = Logger.getLogger("FileManager");
 
     public static void openReadmeFile(UIInteractionType interactionType) {
         ApplicationManager.getApplication().invokeLater(() -> {

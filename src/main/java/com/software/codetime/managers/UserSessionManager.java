@@ -22,7 +22,6 @@ public class UserSessionManager {
 
     private static UserSessionManager instance = null;
     public static final Logger log = Logger.getLogger("SoftwareCoSessionManager");
-    private static long lastAppAvailableCheck = 0;
 
     public static UserSessionManager getInstance() {
         if (instance == null) {
@@ -50,11 +49,11 @@ public class UserSessionManager {
         return false;
     }
 
-    public static void launchLogin(String loginType, UIInteractionType interactionType, boolean switching_account) {
+    public static void launchLogin(String loginType, UIInteractionType interactionType, boolean isSignUp) {
 
         String auth_callback_state = FileUtilManager.getAuthCallbackState(true);
 
-        FileUtilManager.setBooleanItem("switching_account", switching_account);
+        FileUtilManager.setBooleanItem("switching_account", !isSignUp);
 
         String plugin_uuid = FileUtilManager.getPluginUuid();
 
@@ -77,7 +76,13 @@ public class UserSessionManager {
             cta_text = "Sign up with email";
             icon_name = "envelope";
             icon_color = "gray";
-            url = ConfigManager.app_url + "/email-signup";
+            obj.addProperty("token", FileUtilManager.getItem("jwt"));
+            obj.addProperty("auth", "software");
+            if (isSignUp) {
+                url = ConfigManager.app_url + "/email-signup";
+            } else {
+                url = ConfigManager.app_url + "/onboarding";
+            }
         } else if (loginType.equals("google")) {
             url = ConfigManager.app_endpoint + "/auth/google";
         } else if (loginType.equals("github")) {
