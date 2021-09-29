@@ -9,18 +9,18 @@ import javax.swing.*;
 public class AuthPromptManager {
 
     public static void initiateSwitchAccountFlow() {
-        initiateAuthFlow("Switch account", "Switch to a different account?");
+        initiateAuthFlow("Switch account", "Switch to a different account?", false);
     }
 
     public static void initiateSignupFlow() {
-        initiateAuthFlow("Sign up", "Sign up using...");
+        initiateAuthFlow("Sign up", "Sign up using...", true);
     }
 
     public static void initiateLoginFlow() {
-        initiateAuthFlow("Log in", "Log in using...");
+        initiateAuthFlow("Log in", "Log in using...", false);
     }
 
-    private static void initiateAuthFlow(String title, String message) {
+    private static void initiateAuthFlow(String title, String message, boolean isSignup) {
         String[] options = new String[]{ "Google", "GitHub", "Email" };
         Icon icon = UtilManager.getResourceIcon("app-icon-blue.png", AuthPromptManager.class.getClassLoader());
         String input = (String) JOptionPane.showInputDialog(
@@ -32,7 +32,7 @@ public class AuthPromptManager {
                 options, // Array of choices
                 options[0]); // Initial choice
         if (StringUtils.isNotBlank(input)) {
-            UserSessionManager.launchLogin(input.toLowerCase(), UIInteractionType.click, true);
+            UserSessionManager.launchLogin(input.toLowerCase(), UIInteractionType.click, isSignup);
         }
 
     }

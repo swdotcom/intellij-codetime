@@ -14,8 +14,12 @@ import swdc.java.ops.model.SessionSummary;
 import swdc.java.ops.websockets.SessionSummaryHandler;
 
 import java.lang.reflect.Type;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SessionDataManager implements SessionSummaryHandler {
+
+    public static final Logger log = Logger.getLogger("SessionDataManager");
 
     public static void clearSessionSummaryData() {
         SessionSummary summary = new SessionSummary();
@@ -33,7 +37,7 @@ public class SessionDataManager implements SessionSummaryHandler {
                 Type type = new TypeToken<SessionSummary>() {}.getType();
                 summary = UtilManager.gson.fromJson(resp.getJsonObj(), type);
             } catch (Exception e) {
-                //
+                log.log(Level.WARNING, "[CodeTime] error reading session summary: " + e.getMessage());
             }
         }
 
