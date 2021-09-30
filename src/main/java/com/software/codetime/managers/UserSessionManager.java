@@ -84,12 +84,12 @@ public class UserSessionManager {
                 url = ConfigManager.app_url + "/onboarding";
             }
         } else if (loginType.equals("google")) {
-            url = ConfigManager.app_endpoint + "/auth/google";
+            url = ConfigManager.metrics_endpoint + "/auth/google";
         } else if (loginType.equals("github")) {
             element_name = "ct_sign_up_github_btn";
             cta_text = "Sign up with GitHub";
             icon_name = "github";
-            url = ConfigManager.app_endpoint + "/auth/github";
+            url = ConfigManager.metrics_endpoint + "/auth/github";
         }
 
         StringBuffer sb = new StringBuffer();

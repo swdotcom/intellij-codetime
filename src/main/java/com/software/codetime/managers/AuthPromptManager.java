@@ -34,6 +34,5 @@ public class AuthPromptManager {
         if (StringUtils.isNotBlank(input)) {
             UserSessionManager.launchLogin(input.toLowerCase(), UIInteractionType.click, isSignup);
         }
-
     }
 }

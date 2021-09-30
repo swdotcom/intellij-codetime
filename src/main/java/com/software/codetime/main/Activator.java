@@ -13,6 +13,7 @@ import com.software.codetime.models.KeystrokeWrapper;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.manager.*;
+import swdc.java.ops.model.ConfigOptions;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 import swdc.java.ops.websockets.WebsocketClient;
 
@@ -38,15 +39,19 @@ public class Activator {
     }
 
     private void init() {
+        ConfigOptions options = new ConfigOptions();
+        options.ideName = PluginInfo.IDE_NAME;
+        options.pluginType = "codetime";
+        options.pluginEditor = "intellij";
+        options.appUrl = PluginInfo.launch_url;
+        options.ideVersion = PluginInfo.IDE_VERSION;
+        options.metricsEndpoint = PluginInfo.api_endpoint;
+        options.pluginId = PluginInfo.getPluginId();
+        options.pluginName = PluginInfo.getPluginName();
+        options.pluginVersion = PluginInfo.getVersion();
+        options.softwareDir = PluginInfo.software_dir;
         ConfigManager.init(
-                PluginInfo.api_endpoint,
-                PluginInfo.launch_url,
-                PluginInfo.getPluginId(),
-                PluginInfo.getPluginName(),
-                PluginInfo.getVersion(),
-                PluginInfo.IDE_NAME,
-                PluginInfo.IDE_VERSION,
-                PluginInfo.software_dir,
+                options,
                 () -> CodeTimeWindowFactory.refresh(false),
                 new SessionDataManager(),
                 ConfigManager.IdeType.intellij);

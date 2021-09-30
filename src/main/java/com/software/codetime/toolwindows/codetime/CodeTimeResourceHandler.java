@@ -1,5 +1,8 @@
 package com.software.codetime.toolwindows.codetime;
 
+import com.google.gson.JsonObject;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.software.codetime.managers.StatusBarManager;
 import com.software.codetime.toolwindows.WebviewClosedConnection;
 import com.software.codetime.toolwindows.WebviewOpenedConnection;
 import com.software.codetime.toolwindows.WebviewResourceState;
@@ -13,7 +16,10 @@ import org.cef.network.CefCookie;
 import org.cef.network.CefRequest;
 import org.cef.network.CefResponse;
 
+import swdc.java.ops.http.ClientResponse;
+import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.manager.FileUtilManager;
+import swdc.java.ops.manager.UtilManager;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -106,7 +112,17 @@ public class CodeTimeResourceHandler implements CefResourceHandler {
     }
 
     private String buildHtml() {
-        return DomBuilder.getMainHtml();
+        JsonObject obj = new JsonObject();
+        obj.addProperty("showing_statusbar", StatusBarManager.showingStatusText());
+        obj.addProperty("skip_slack_connect", FileUtilManager.getBooleanItem("intellij_CtskipSlackConnect"));
+        obj.addProperty("is_light_mode", !EditorColorsManager.getInstance().isDarkEditor());
+        String qStr = UtilManager.buildQueryString(obj, true);
+        String api = "/plugin/sidebar" + qStr;
+        ClientResponse resp = OpsHttpClient.appGet(api);
+        if (resp.isOk()) {
+            return resp.getJsonStr();
+        }
+        return LoadError.get404Html();
     }
 
 }

@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.software.codetime.toolwindows.WebviewClosedConnection;
 import com.software.codetime.toolwindows.WebviewOpenedConnection;
 import com.software.codetime.toolwindows.WebviewResourceState;
+import com.software.codetime.toolwindows.codetime.html.LoadError;
 import org.apache.commons.lang.StringUtils;
 import org.cef.callback.CefCallback;
 import org.cef.handler.CefResourceHandler;
@@ -104,10 +105,13 @@ public class DashboardResourceHandler implements CefResourceHandler {
     private URL loadApiHtml(URL resourceUrl, File htmlFile, String api) {
         Writer writer = null;
         try {
+            String html = "";
             ClientResponse resp = OpsHttpClient.softwareGet(api, FileUtilManager.getItem("jwt"));
-            String html = resp.getJsonObj().get("html").getAsString();
-
-            html = html.replaceAll("backgound", "background");
+            if (resp.isOk()) {
+                html = resp.getJsonObj().get("html").getAsString();
+            } else {
+                html = LoadError.get404Html();
+            }
 
             writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(htmlFile), StandardCharsets.UTF_8));
