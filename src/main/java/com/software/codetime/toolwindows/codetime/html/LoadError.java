@@ -37,28 +37,17 @@ public class LoadError {
                 "              margin: 0;\n" +
                 "              padding: 0;\n" +
                 "            }\n" +
-                "\n" +
                 "            .wrapper {\n" +
                 "              display: flex;\n" +
+                "              text-align: center;\n" +
                 "              flex-direction: column;\n" +
                 "              justify-content: center;\n" +
                 "              align-items: center;\n" +
-                "              padding-top: 8px;\n" +
-                "              padding-bottom: 8px;\n" +
+                "              padding: 20px;\n" +
                 "            }\n" +
-                "\n" +
                 "            .header {\n" +
                 "              margin-bottom: 1rem;\n" +
                 "            }\n" +
-                "\n" +
-                "            .dialog {\n" +
-                "              margin-bottom: 2rem;\n" +
-                "            }\n" +
-                "\n" +
-                "            .body-text {\n" +
-                "              margin-bottom: 1rem;\n" +
-                "            }\n" +
-                "\n" +
                 "            img {\n" +
                 "              border-radius: 10px;\n" +
                 "              margin-bottom: 1rem;\n" +
@@ -70,17 +59,15 @@ public class LoadError {
                 "          </style>\n" +
                 "    <script language=\"javascript\">\n" +
                 "        function onCmdClick(action, payload = {}) {\n" +
-                "            console.log(JSON.stringify({cmd: action, ...payload}));\n" +
+                "            console.log(JSON.stringify({cmd: action, payload}));\n" +
                 "        }\n" +
                 "    </script>\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "<div class=\"wrapper\">\n" +
                 "    <h4 class=\"header\">Oops! Something went wrong.</h4>\n" +
-                "    <div class=\"dialog\">\n" +
-                "        <p class=\"body-text\" style=\"margin-top: 10px\">\n" +
-                "            Please check your connection and try again later.\n" +
-                "        </p>\n" +
+                "    <div class=\"wrapper\" style=\"margin-top: 10px\">\n" +
+                "        Our service is temporarily unavailable. Please try again later.\n" +
                 "    </div>\n" +
                 "    <div style=\"margin-bottom: 10px\">\n" +
                 "        <a href=\"#\" class=\"link\" onclick=\"onCmdClick('refreshCodeTimeView')\">Refresh</a>\n" +

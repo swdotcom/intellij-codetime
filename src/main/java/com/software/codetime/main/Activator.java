@@ -98,13 +98,7 @@ public class Activator {
         // create anon user if no user exists
         String jwt = FileUtilManager.getItem("jwt");
         if (StringUtils.isBlank(jwt)) {
-            jwt = AccountManager.createAnonymousUser(false);
-            if (StringUtils.isBlank(jwt)) {
-                boolean serverIsOnline = UserSessionManager.isServerOnline();
-                if (!serverIsOnline) {
-                    UserSessionManager.showOfflinePrompt(true);
-                }
-            }
+            AccountManager.createAnonymousUser(false);
         }
     }
 

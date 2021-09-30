@@ -171,16 +171,5 @@ public class UserSessionManager {
         elementEntity.icon_name = interactionType == UIInteractionType.click ? "paw" : null;
         EventTrackerManager.getInstance().trackUIInteraction(interactionType, elementEntity);
     }
-
-    public static void showOfflinePrompt(boolean isTenMinuteReconnect) {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            public void run() {
-                String infoMsg = "Our service is temporarily unavailable.\n" +
-                        "Your status bar will not update at this time.";
-                // ask to download the PM
-                Messages.showInfoMessage(infoMsg, ConfigManager.plugin_name);
-            }
-        });
-    }
 }
 
