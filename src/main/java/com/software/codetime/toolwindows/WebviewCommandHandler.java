@@ -30,7 +30,7 @@ public class WebviewCommandHandler {
         switch (cmd) {
             case "showOrgDashboard":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    UtilManager.launchUrl(ConfigManager.app_url + "/dashboard?org_name=" + data.get("payload").getAsString());
+                    UtilManager.launchUrl(ConfigManager.app_url + "/dashboard/code_time?organization_slug=" + data.get("payload").getAsString());
                 });
                 break;
             case "switchAccount":
@@ -102,7 +102,7 @@ public class WebviewCommandHandler {
                     SlackManager.disconnectSlackAuth(integration, () -> {CodeTimeWindowFactory.refresh(false);});
                 });
                 break;
-            case "register":
+            case "registerAccount":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     AuthPromptManager.initiateSignupFlow();
                 });
@@ -138,7 +138,7 @@ public class WebviewCommandHandler {
                     DashboardWindowFactory.closeToolWindow();
                 });
                 break;
-            case "submit_settings":
+            case "save_settings":
                 // post to /users/me/preferences
                 // i.e. {notifications: {endOfDayNotification: true}, flowMode: {durationMinutes: 120, editor: {autoEnterFlowMode: true...}
                 ApplicationManager.getApplication().invokeLater(() -> {
