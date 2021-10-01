@@ -32,7 +32,6 @@ public class WallClockManager {
         if (UtilManager.isNewDay()) {
             // clear the wc time and the session summary and the file change info summary
             SessionDataManager.clearSessionSummaryData();
-            TimeDataManager.clearTimeDataSummary();
             FileAggregateDataManager.clearFileChangeInfoSummaryData();
 
             // update the current day

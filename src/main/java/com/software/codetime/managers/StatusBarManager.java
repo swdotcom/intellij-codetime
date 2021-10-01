@@ -17,7 +17,7 @@ import swdc.java.ops.http.FlowModeClient;
 import swdc.java.ops.manager.ConfigManager;
 import swdc.java.ops.manager.EventTrackerManager;
 import swdc.java.ops.manager.UtilManager;
-import swdc.java.ops.model.CodeTimeSummary;
+import swdc.java.ops.model.SessionSummary;
 import swdc.java.ops.snowplow.entities.UIElementEntity;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 
@@ -56,9 +56,8 @@ public class StatusBarManager {
     }
 
     public static void updateStatusBar() {
-
-        CodeTimeSummary ctSummary = TimeDataManager.getCodeTimeSummary();
-        String currentDayTimeStr = UtilManager.humanizeMinutes(ctSummary.activeCodeTimeMinutes);
+        SessionSummary summary = SessionDataManager.getSessionSummaryData();
+        String currentDayTimeStr = UtilManager.humanizeMinutes(summary.getCurrentDayMinutes());
 
         // build the status bar text information
         ApplicationManager.getApplication().invokeLater(new Runnable() {

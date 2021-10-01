@@ -53,7 +53,7 @@ public class Activator {
         ConfigManager.init(
                 options,
                 () -> CodeTimeWindowFactory.refresh(false),
-                new SessionDataManager(),
+                new WebsocketMessageManager(),
                 ConfigManager.IdeType.intellij);
 
         log.log(Level.INFO, ConfigManager.plugin_name + ": Loaded v" + ConfigManager.plugin_id);

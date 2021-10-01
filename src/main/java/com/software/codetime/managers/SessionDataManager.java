@@ -11,13 +11,12 @@ import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.manager.UtilManager;
 import swdc.java.ops.model.ElapsedTime;
 import swdc.java.ops.model.SessionSummary;
-import swdc.java.ops.websockets.SessionSummaryHandler;
 
 import java.lang.reflect.Type;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SessionDataManager implements SessionSummaryHandler {
+public class SessionDataManager {
 
     public static final Logger log = Logger.getLogger("SessionDataManager");
 
@@ -97,14 +96,8 @@ public class SessionDataManager implements SessionSummaryHandler {
         return eTime;
     }
 
-    @Override
-    public void updateEditorStatus(SessionSummary sessionSummary) {
-        updateFileSummaryAndStatsBar(sessionSummary);
-    }
-
-    private static void updateFileSummaryAndStatsBar(SessionSummary sessionSummary) {
+    public static void updateFileSummaryAndStatsBar(SessionSummary sessionSummary) {
         if (sessionSummary != null) {
-            TimeDataManager.updateSessionFromSummaryApi(sessionSummary.getCurrentDayMinutes());
 
             // save the file
             FileUtilManager.writeData(FileUtilManager.getSessionDataSummaryFile(), sessionSummary);
@@ -120,8 +113,7 @@ public class SessionDataManager implements SessionSummaryHandler {
     public static boolean isCloseToOrAboveAverage() {
         SessionSummary summary = SessionDataManager.getSessionSummaryData();
         double threshold = summary.getAverageDailyMinutes() - (summary.getAverageDailyMinutes() * .15);
-        if (summary.getCurrentDayKeystrokes() > 0 && threshold > 0 &&
-                (summary.getCurrentDayMinutes() >= threshold || summary.getCurrentDayKeystrokes() >= summary.getAverageDailyKeystrokes())) {
+        if (summary.getCurrentDayMinutes() >= threshold) {
             return true;
         }
         return false;
