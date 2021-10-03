@@ -43,9 +43,9 @@ public class Activator {
         options.ideName = PluginInfo.IDE_NAME;
         options.pluginType = "codetime";
         options.pluginEditor = "intellij";
-        options.appUrl = PluginInfo.app_endpoint;
+        options.appUrl = PluginInfo.app_url;
         options.ideVersion = PluginInfo.IDE_VERSION;
-        options.metricsEndpoint = PluginInfo.api_endpoint;
+        options.metricsEndpoint = PluginInfo.metrics_endpoint;
         options.pluginId = PluginInfo.getPluginId();
         options.pluginName = PluginInfo.getPluginName();
         options.pluginVersion = PluginInfo.getVersion();
