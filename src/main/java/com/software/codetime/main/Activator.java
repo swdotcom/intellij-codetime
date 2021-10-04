@@ -92,6 +92,8 @@ public class Activator {
 
         // set the end of the day notification
         EndOfDayManager.setEndOfDayNotification();
+
+        FlowManager.initFlowStatus();
     }
 
     private void anonCheck() {

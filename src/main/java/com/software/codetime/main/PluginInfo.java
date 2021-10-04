@@ -85,7 +85,7 @@ public class PluginInfo {
             if (pluginDescriptor != null) {
                 VERSION = pluginDescriptor.getVersion();
             } else {
-                return "2.6.9";
+                return "2.7.0";
             }
         }
         return VERSION;
