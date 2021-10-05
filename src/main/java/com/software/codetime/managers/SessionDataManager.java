@@ -26,21 +26,23 @@ public class SessionDataManager {
     }
 
     public static void updateSessionSummaryFromServer() {
-        SessionSummary summary = SessionDataManager.getSessionSummaryData();
+        SessionSummary summary = fetchSessionSummary();
+        updateFileSummaryAndStatsBar(summary);
+    }
 
+    public static SessionSummary fetchSessionSummary() {
         String jwt = FileUtilManager.getItem("jwt");
         String api = "/sessions/summary";
         ClientResponse resp = OpsHttpClient.softwareGet(api, jwt);
         if (resp.isOk()) {
             try {
                 Type type = new TypeToken<SessionSummary>() {}.getType();
-                summary = UtilManager.gson.fromJson(resp.getJsonObj(), type);
+                return UtilManager.gson.fromJson(resp.getJsonObj(), type);
             } catch (Exception e) {
                 log.log(Level.WARNING, "[CodeTime] error reading session summary: " + e.getMessage());
             }
         }
-
-        updateFileSummaryAndStatsBar(summary);
+        return new SessionSummary();
     }
 
     public static SessionSummary getSessionSummaryData() {
@@ -98,11 +100,7 @@ public class SessionDataManager {
 
     public static void updateFileSummaryAndStatsBar(SessionSummary sessionSummary) {
         if (sessionSummary != null) {
-
-            // save the file
-            FileUtilManager.writeData(FileUtilManager.getSessionDataSummaryFile(), sessionSummary);
-
-            StatusBarManager.updateStatusBar();
+            StatusBarManager.updateStatusBar(sessionSummary);
 
             ApplicationManager.getApplication().invokeLater(() -> {
                 CodeTimeWindowFactory.refresh(false);
@@ -112,8 +110,8 @@ public class SessionDataManager {
 
     public static boolean isCloseToOrAboveAverage() {
         SessionSummary summary = SessionDataManager.getSessionSummaryData();
-        double threshold = summary.getAverageDailyMinutes() - (summary.getAverageDailyMinutes() * .15);
-        if (summary.getCurrentDayMinutes() >= threshold) {
+        double threshold = summary.averageDailyMinutes - (summary.averageDailyMinutes * .15);
+        if (summary.currentDayMinutes >= threshold) {
             return true;
         }
         return false;

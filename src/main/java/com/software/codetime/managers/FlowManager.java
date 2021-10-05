@@ -109,7 +109,7 @@ public class FlowManager {
     private static void updateFlowStateDisplay() {
         // at least update the status bar
         CodeTimeWindowFactory.refresh(false);
-        StatusBarManager.updateStatusBar();
+        StatusBarManager.updateStatusBar(null);
     }
 
     public static boolean isFlowModeEnabled() {

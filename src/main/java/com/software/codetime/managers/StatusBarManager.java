@@ -16,6 +16,7 @@ import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import swdc.java.ops.http.FlowModeClient;
 import swdc.java.ops.manager.ConfigManager;
 import swdc.java.ops.manager.EventTrackerManager;
+import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.manager.UtilManager;
 import swdc.java.ops.model.SessionSummary;
 import swdc.java.ops.snowplow.entities.UIElementEntity;
@@ -33,6 +34,8 @@ public class StatusBarManager {
     private final static String flowmsgId = StatusBarKpmTextWidget.FLOW_TEXT_ID + "_flowmsg";
     private final static String flowiconId = StatusBarKpmIconWidget.FLOW_ICON_ID + "_flowicon";
 
+    private static SessionSummary summary = null;
+
     public static boolean showingStatusText() {
         return showStatusText;
     }
@@ -41,7 +44,7 @@ public class StatusBarManager {
         String cta_text = !showStatusText ? "Show status bar metrics" : "Hide status bar metrics";
         showStatusText = !showStatusText;
 
-        updateStatusBar();
+        updateStatusBar(null);
 
         // refresh the tree
         CodeTimeWindowFactory.refresh(false);
@@ -55,9 +58,14 @@ public class StatusBarManager {
         EventTrackerManager.getInstance().trackUIInteraction(interactionType, elementEntity);
     }
 
-    public static void updateStatusBar() {
-        SessionSummary summary = SessionDataManager.getSessionSummaryData();
-        String currentDayTimeStr = UtilManager.humanizeMinutes(summary.getCurrentDayMinutes());
+    public static void updateStatusBar(SessionSummary sessionSummary) {
+        if (sessionSummary == null) {
+            sessionSummary = SessionDataManager.fetchSessionSummary();
+        }
+
+        FileUtilManager.writeData(FileUtilManager.getSessionDataSummaryFile(), sessionSummary);
+
+        String currentDayTimeStr = UtilManager.humanizeMinutes(sessionSummary.currentDayMinutes);
 
         // build the status bar text information
         ApplicationManager.getApplication().invokeLater(new Runnable() {
