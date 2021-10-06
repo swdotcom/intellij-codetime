@@ -1,6 +1,7 @@
 package com.software.codetime.managers;
 
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.event.SlackStateChangeModel;
 import swdc.java.ops.http.FlowModeClient;
 import swdc.java.ops.manager.*;
@@ -13,6 +14,7 @@ public class FlowManager {
 
     public static void initFlowStatus() {
         enabledFlow = FlowModeClient.isFlowModeOn();
+        updateFlowStateDisplay();
     }
 
     public static void toggleFlowMode(boolean automated) {
@@ -25,14 +27,8 @@ public class FlowManager {
 
     public static void enterFlowMode(boolean automated) {
         if (enabledFlow) {
+            updateFlowStateDisplay();
             return;
-        } else {
-            // check if its enabled via the api in case another editor has performed this request
-            enabledFlow = FlowModeClient.isFlowModeOn();
-            if (enabledFlow) {
-                updateFlowStateDisplay();
-                return;
-            }
         }
 
         boolean isRegistered = AccountManager.checkRegistration(false, null);
@@ -78,21 +74,15 @@ public class FlowManager {
 
         SlackManager.clearSlackCache();
 
-        updateFlowStateDisplay();
-
         enabledFlow = true;
+
+        updateFlowStateDisplay();
     }
 
     public static void exitFlowMode() {
         if (!enabledFlow) {
+            updateFlowStateDisplay();
             return;
-        } else {
-            // check if its disabled via the api in case another editor has performed this request
-            enabledFlow = FlowModeClient.isFlowModeOn();
-            if (!enabledFlow) {
-                updateFlowStateDisplay();
-                return;
-            }
         }
 
         FlowModeClient.exitFlowMode();
@@ -101,9 +91,9 @@ public class FlowManager {
 
         SlackManager.clearSlackCache();
 
-        updateFlowStateDisplay();
-
         enabledFlow = false;
+
+        updateFlowStateDisplay();
     }
 
     private static void updateFlowStateDisplay() {
@@ -117,8 +107,12 @@ public class FlowManager {
     }
 
     public static boolean fullScreeConfigured() {
-        FlowMode flowMode = UtilManager.gson.fromJson(FileUtilManager.getItem("flowMode"), FlowMode.class);
+        String flowModePreferences = FileUtilManager.getItem("flowMode");
+        if (StringUtils.isNotBlank(flowModePreferences)) {
+            FlowMode flowMode = UtilManager.gson.fromJson(flowModePreferences, FlowMode.class);
 
-        return flowMode.editor.intellij.screenMode.contains("Full Screen") ? true : false;
+            return flowMode.editor.intellij.screenMode.contains("Full Screen") ? true : false;
+        }
+        return false;
     }
 }

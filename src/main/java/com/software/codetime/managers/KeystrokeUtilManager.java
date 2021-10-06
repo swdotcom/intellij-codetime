@@ -13,9 +13,6 @@ import java.util.*;
 
 public class KeystrokeUtilManager {
 
-    public static long elapsed_seconds = 0;
-    public static String project_null_error = "";
-
     public static void processKeystrokes(CodeTime keystrokeCountInfo) {
         try {
             if (keystrokeCountInfo.hasData()) {
@@ -47,10 +44,8 @@ public class KeystrokeUtilManager {
                     }
                 }
 
-                ElapsedTime eTime = SessionDataManager.getTimeBetweenLastPayload();
-
                 // end the file end times.
-                preProcessKeystrokeData(keystrokeCountInfo, eTime.sessionSeconds, eTime.elapsedSeconds);
+                preProcessKeystrokeData(keystrokeCountInfo);
 
                 // send the event to the event tracker
                 EventTrackerManager.getInstance().trackCodeTimeEvent(keystrokeCountInfo);
@@ -71,10 +66,7 @@ public class KeystrokeUtilManager {
     }
 
     // end unended file payloads and add the cumulative editor seconds
-    public static void preProcessKeystrokeData(CodeTime keystrokeCountInfo, long sessionSeconds, long elapsedSeconds) {
-
-        // set the elapsed seconds (last end time to this end time)
-        elapsed_seconds = elapsedSeconds;
+    public static void preProcessKeystrokeData(CodeTime keystrokeCountInfo) {
 
         UtilManager.TimesData timesData = UtilManager.getTimesData();
         Map<String, CodeTime.FileInfo> fileInfoDataSet = keystrokeCountInfo.getSource();
