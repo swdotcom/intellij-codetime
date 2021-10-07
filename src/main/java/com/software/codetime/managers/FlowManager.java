@@ -1,5 +1,6 @@
 package com.software.codetime.managers;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.event.SlackStateChangeModel;
@@ -13,8 +14,11 @@ public class FlowManager {
     public static boolean enabledFlow = false;
 
     public static void initFlowStatus() {
+        boolean originalState = enabledFlow;
         enabledFlow = FlowModeClient.isFlowModeOn();
-        updateFlowStateDisplay();
+        if (originalState != enabledFlow) {
+            updateFlowStateDisplay();
+        }
     }
 
     public static void toggleFlowMode(boolean automated) {
@@ -97,9 +101,13 @@ public class FlowManager {
     }
 
     private static void updateFlowStateDisplay() {
-        // at least update the status bar
-        CodeTimeWindowFactory.refresh(false);
-        StatusBarManager.updateStatusBar(null);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            // at least update the status bar
+            AsyncManager.getInstance().executeOnceInSeconds(() -> {
+                CodeTimeWindowFactory.refresh(false);
+            }, 2);
+            StatusBarManager.updateStatusBar(null);
+        });
     }
 
     public static boolean isFlowModeEnabled() {

@@ -102,7 +102,7 @@ public class StatusBarManager {
                         String flowTooltip = "Enter Flow Mode";
                         String flowIcon = "open-circle.png";
                         try {
-                            if (FlowModeClient.isFlowModeOn()) {
+                            if (FlowManager.isFlowModeEnabled()) {
                                 flowIcon = "closed-circle.png";
                                 flowTooltip = "Exit Flow Mode";
                             }
