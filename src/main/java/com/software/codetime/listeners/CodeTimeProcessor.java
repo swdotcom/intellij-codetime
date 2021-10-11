@@ -27,7 +27,6 @@ public class CodeTimeProcessor {
     private static CodeTimeProcessor instance = null;
 
     private static final int FOCUS_STATE_INTERVAL_SECONDS = 10;
-    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\n");
     private static final Pattern NEW_LINE_TAB_PATTERN = Pattern.compile("\n\t");
     private static final Pattern TAB_PATTERN = Pattern.compile("\t");
 
@@ -68,6 +67,9 @@ public class CodeTimeProcessor {
                 } else {
                     // just set the process keystrokes payload to false since we're focused again
                     EventTrackerManager.getInstance().trackEditorAction("editor", "focus");
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                        UtilManager.isNewDay();
+                    });
                 }
 
                 // update the currently active flag
@@ -293,16 +295,5 @@ public class CodeTimeProcessor {
         // Update the manager with the newly created KeystrokeCount object
         //
         keystrokeMgr.setKeystrokeCount(projectName, keystrokeCount);
-    }
-
-
-    private String getProjectDirectory(String projectName, String fileName) {
-        String projectDirectory = "";
-        if ( projectName != null && projectName.length() > 0 &&
-                fileName != null && fileName.length() > 0 &&
-                fileName.indexOf(projectName) > 0 ) {
-            projectDirectory = fileName.substring( 0, fileName.indexOf( projectName ) - 1 );
-        }
-        return projectDirectory;
     }
 }

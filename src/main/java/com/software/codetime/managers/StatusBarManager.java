@@ -13,11 +13,7 @@ import com.intellij.openapi.wm.WindowManager;
 import com.software.codetime.models.StatusBarKpmIconWidget;
 import com.software.codetime.models.StatusBarKpmTextWidget;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
-import swdc.java.ops.http.FlowModeClient;
-import swdc.java.ops.manager.ConfigManager;
-import swdc.java.ops.manager.EventTrackerManager;
-import swdc.java.ops.manager.FileUtilManager;
-import swdc.java.ops.manager.UtilManager;
+import swdc.java.ops.manager.*;
 import swdc.java.ops.model.SessionSummary;
 import swdc.java.ops.snowplow.entities.UIElementEntity;
 import swdc.java.ops.snowplow.events.UIInteractionType;
@@ -60,7 +56,7 @@ public class StatusBarManager {
 
     public static void updateStatusBar(SessionSummary sessionSummary) {
         if (sessionSummary == null) {
-            sessionSummary = SessionDataManager.fetchSessionSummary();
+            sessionSummary = SessionSummaryManager.fetchSessionSummary();
         }
 
         FileUtilManager.writeData(FileUtilManager.getSessionDataSummaryFile(), sessionSummary);
@@ -218,5 +214,4 @@ public class StatusBarManager {
             });
         }
     }
-
 }

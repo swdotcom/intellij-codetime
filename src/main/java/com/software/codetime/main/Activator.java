@@ -1,5 +1,6 @@
 package com.software.codetime.main;
 
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -54,6 +55,7 @@ public class Activator {
                 options,
                 () -> CodeTimeWindowFactory.refresh(false),
                 new WebsocketMessageManager(),
+                new SessionStatusUpdateManager(),
                 ConfigManager.IdeType.intellij);
 
         log.log(Level.INFO, ConfigManager.plugin_name + ": Loaded v" + ConfigManager.plugin_id);
@@ -64,19 +66,23 @@ public class Activator {
         // fetch the user and preferences
         AccountManager.getUser();
 
-        ApplicationManager.getApplication().invokeLater(() -> {
+        Application app = ApplicationManager.getApplication();
+
+        app.invokeLater(() -> {
             // update the session summary and status bar
-            SessionDataManager.updateSessionSummaryFromServer();
+            SessionSummaryManager.updateSessionSummaryFromServer();
         });
 
         // connect the websocket
-        try {
-            WebsocketClient.connect();
-        } catch (Exception e) {
-            log.warning("Websocket connect error: " + e.getMessage());
-        }
+        app.invokeLater(() -> {
+            try {
+                WebsocketClient.connect();
+            } catch (Exception e) {
+                log.warning("Websocket connect error: " + e.getMessage());
+            }
+        });
 
-        ApplicationManager.getApplication().invokeLater(() -> {
+        app.invokeLater(() -> {
             // initialize the tracker
             EventTrackerManager.getInstance().init(new IntellijProject());
 
@@ -85,7 +91,9 @@ public class Activator {
         });
 
         // show the readme on install
-        readmeCheck();
+        app.invokeLater(() -> {
+            readmeCheck();
+        });
 
         // add the editor listeners
         setupEditorListeners();
@@ -93,7 +101,9 @@ public class Activator {
         // set the end of the day notification
         EndOfDayManager.setEndOfDayNotification();
 
-        FlowManager.initFlowStatus();
+        app.invokeLater(() -> {
+            FlowManager.initFlowStatus();
+        });
     }
 
     private void anonCheck() {

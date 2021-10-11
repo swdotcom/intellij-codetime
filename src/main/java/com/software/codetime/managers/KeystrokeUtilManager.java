@@ -53,11 +53,6 @@ public class KeystrokeUtilManager {
                 UtilManager.TimesData timesData = UtilManager.getTimesData();
                 // set the latest payload timestamp utc so help with session time calculations
                 FileUtilManager.setNumericItem("latestPayloadTimestampEndUtc", timesData.now);
-
-                if (UtilManager.isNewDay()) {
-                    // clear out data from the previous day
-                    WallClockManager.getInstance().newDayChecker();
-                }
             }
         } catch (Exception e) {
         }
@@ -65,7 +60,7 @@ public class KeystrokeUtilManager {
         keystrokeCountInfo.resetData();
     }
 
-    // end unended file payloads and add the cumulative editor seconds
+    // end un-ended file payloads and add the cumulative editor seconds
     public static void preProcessKeystrokeData(CodeTime keystrokeCountInfo) {
 
         UtilManager.TimesData timesData = UtilManager.getTimesData();
