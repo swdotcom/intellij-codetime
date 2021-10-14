@@ -56,6 +56,7 @@ public class Activator {
                 () -> CodeTimeWindowFactory.refresh(false),
                 new WebsocketMessageManager(),
                 new SessionStatusUpdateManager(),
+                new ThemeModeInfoManager(),
                 ConfigManager.IdeType.intellij);
 
         log.log(Level.INFO, ConfigManager.plugin_name + ": Loaded v" + ConfigManager.plugin_id);
@@ -95,11 +96,13 @@ public class Activator {
             readmeCheck();
         });
 
-        // add the editor listeners
-        setupEditorListeners();
+        app.invokeLater(() -> {
+            // add the editor listeners
+            setupEditorListeners();
 
-        // set the end of the day notification
-        EndOfDayManager.setEndOfDayNotification();
+            // set the end of the day notification
+            EndOfDayManager.setEndOfDayNotification();
+        });
 
         app.invokeLater(() -> {
             FlowManager.initFlowStatus();

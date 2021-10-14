@@ -115,7 +115,6 @@ public class CodeTimeResourceHandler implements CefResourceHandler {
         JsonObject obj = new JsonObject();
         obj.addProperty("showing_statusbar", StatusBarManager.showingStatusText());
         obj.addProperty("skip_slack_connect", FileUtilManager.getBooleanItem("intellij_CtskipSlackConnect"));
-        obj.addProperty("is_light_mode", !EditorColorsManager.getInstance().isDarkEditor());
         String qStr = UtilManager.buildQueryString(obj, true);
         String api = "/plugin/sidebar" + qStr;
         ClientResponse resp = OpsHttpClient.appGet(api);
