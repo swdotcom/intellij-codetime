@@ -7,9 +7,7 @@ import com.intellij.util.PlatformUtils;
 
 public class PluginInfo {
 
-    // set the api endpoint to use
     public static String metrics_endpoint = "https://api.software.com";
-    // set the launch url to use
     public static String app_url = "https://app.software.com";
     public static String software_dir = ".software";
 

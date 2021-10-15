@@ -30,7 +30,7 @@ public class WebviewCommandHandler {
         switch (cmd) {
             case "showOrgDashboard":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    UtilManager.launchUrl(ConfigManager.app_url + "/dashboard/code_time?organization_slug=" + data.get("payload").getAsString());
+                    UtilManager.launchUrl(ConfigManager.app_url + "/dashboard/devops_performance?organization_slug=" + data.get("payload").getAsString());
                 });
                 break;
             case "switchAccount":
@@ -41,6 +41,11 @@ public class WebviewCommandHandler {
             case "displayReadme":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     ReadmeManager.openReadmeFile(UIInteractionType.click);
+                });
+                break;
+            case "viewProjectReports":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    UtilManager.launchUrl(ConfigManager.app_url + "/reports");
                 });
                 break;
             case "configureSettings":
