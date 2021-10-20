@@ -14,11 +14,8 @@ public class FlowManager {
     public static boolean enabledFlow = false;
 
     public static void initFlowStatus() {
-        boolean originalState = enabledFlow;
         enabledFlow = FlowModeClient.isFlowModeOn();
-        if (originalState != enabledFlow) {
-            updateFlowStateDisplay();
-        }
+        updateFlowStateDisplay();
     }
 
     public static void toggleFlowMode(boolean automated) {
@@ -68,7 +65,11 @@ public class FlowManager {
             return;
         }
 
-        FlowModeClient.enterFlowMode(automated);
+        boolean inFlow = FileUtilManager.getFlowChangeState();
+        if (!inFlow) {
+            // go ahead and make the api call to enter flow mode
+            FlowModeClient.enterFlowMode(automated);
+        }
 
         if (fullScreeConfigured()) {
             ScreenManager.enterFullScreen();

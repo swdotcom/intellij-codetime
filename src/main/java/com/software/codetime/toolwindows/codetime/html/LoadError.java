@@ -65,11 +65,14 @@ public class LoadError {
                 "</head>\n" +
                 "<body>\n" +
                 "<div class=\"wrapper\">\n" +
-                "    <h4 class=\"header\">Oops! Something went wrong.</h4>\n" +
-                "    <div class=\"wrapper\" style=\"margin-top: 10px\">\n" +
-                "        Our service is temporarily unavailable. Please try again later.\n" +
+                "    <h4 class=\"header\" style=\"margin-bottom: 10px\">Oops! Something went wrong.</h4>\n" +
+                "    <div style=\"padding: 5px; margin-bottom: 10px\">\n" +
+                "        It looks like this view is temporarily unavailable, but we’re working to fix the problem.\n" +
                 "    </div>\n" +
-                "    <div style=\"margin-bottom: 10px\">\n" +
+                "    <div style=\"padding: 5px; margin-bottom: 10px\">\n" +
+                "        Keep an eye on our <a href=\"https://status.software.com/\" class=\"link\">status page</a> or reach out to us at <a href=\"mailto:support@software.com\" class=\"link\">support@software.com</a> if you need help.\n" +
+                "    </div>\n" +
+                "    <div style=\"padding: 5px; margin-top: 20px\">\n" +
                 "        <a href=\"#\" class=\"link\" onclick=\"onCmdClick('refreshCodeTimeView')\">Refresh</a>\n" +
                 "    </div>\n" +
                 "</div>\n" +
