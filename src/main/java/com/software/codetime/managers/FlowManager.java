@@ -1,6 +1,8 @@
 package com.software.codetime.managers;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.event.SlackStateChangeModel;
 import swdc.java.ops.http.FlowModeClient;
 import swdc.java.ops.manager.*;
@@ -11,8 +13,9 @@ import javax.swing.*;
 public class FlowManager {
     public static boolean enabledFlow = false;
 
-    public static void initFlowStatus(boolean enabled) {
-        enabledFlow = enabled;
+    public static void initFlowStatus() {
+        enabledFlow = FlowModeClient.isFlowModeOn();
+        updateFlowStateDisplay();
     }
 
     public static void toggleFlowMode(boolean automated) {
@@ -24,6 +27,11 @@ public class FlowManager {
     }
 
     public static void enterFlowMode(boolean automated) {
+        if (enabledFlow) {
+            updateFlowStateDisplay();
+            return;
+        }
+
         boolean isRegistered = AccountManager.checkRegistration(false, null);
         if (!isRegistered) {
             // show the flow mode prompt
@@ -57,7 +65,11 @@ public class FlowManager {
             return;
         }
 
-        FlowModeClient.enterFlowMode(automated);
+        boolean inFlow = FileUtilManager.getFlowChangeState();
+        if (!inFlow) {
+            // go ahead and make the api call to enter flow mode
+            FlowModeClient.enterFlowMode(automated);
+        }
 
         if (fullScreeConfigured()) {
             ScreenManager.enterFullScreen();
@@ -67,23 +79,36 @@ public class FlowManager {
 
         SlackManager.clearSlackCache();
 
-        CodeTimeWindowFactory.refresh(false);
-        StatusBarManager.updateStatusBar();
-
         enabledFlow = true;
+
+        updateFlowStateDisplay();
     }
 
     public static void exitFlowMode() {
+        if (!enabledFlow) {
+            updateFlowStateDisplay();
+            return;
+        }
+
         FlowModeClient.exitFlowMode();
 
         ScreenManager.exitFullScreen();
 
         SlackManager.clearSlackCache();
 
-        CodeTimeWindowFactory.refresh(false);
-        StatusBarManager.updateStatusBar();
-
         enabledFlow = false;
+
+        updateFlowStateDisplay();
+    }
+
+    private static void updateFlowStateDisplay() {
+        ApplicationManager.getApplication().invokeLater(() -> {
+            // at least update the status bar
+            AsyncManager.getInstance().executeOnceInSeconds(() -> {
+                CodeTimeWindowFactory.refresh(false);
+            }, 2);
+            StatusBarManager.updateStatusBar(null);
+        });
     }
 
     public static boolean isFlowModeEnabled() {
@@ -91,8 +116,12 @@ public class FlowManager {
     }
 
     public static boolean fullScreeConfigured() {
-        FlowMode flowMode = UtilManager.gson.fromJson(FileUtilManager.getItem("flowMode"), FlowMode.class);
+        String flowModePreferences = FileUtilManager.getItem("flowMode");
+        if (StringUtils.isNotBlank(flowModePreferences)) {
+            FlowMode flowMode = UtilManager.gson.fromJson(flowModePreferences, FlowMode.class);
 
-        return flowMode.editor.intellij.screenMode.contains("Full Screen") ? true : false;
+            return flowMode.editor.intellij.screenMode.contains("Full Screen") ? true : false;
+        }
+        return false;
     }
 }

@@ -17,14 +17,16 @@ public class DashboardWindowFactory implements ToolWindowFactory {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        init(project, toolWindow);
+        init(project, toolWindow, true);
     }
 
-    private static void init(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+    private static void init(@NotNull Project project, @NotNull ToolWindow toolWindow, boolean addContent) {
         dashboardToolWindow = new DashboardToolWindow();
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(dashboardToolWindow.getContent(), "", false);
-        toolWindow.getContentManager().addContent(content);
+        if (addContent) {
+            toolWindow.getContentManager().addContent(content);
+        }
         windowProject = project;
     }
 
@@ -37,7 +39,7 @@ public class DashboardWindowFactory implements ToolWindowFactory {
             }
             ToolWindow toolWindow = ToolWindowManager.getInstance(p).getToolWindow("Code Time Dashboard");
             if (toolWindow != null) {
-                init(p, toolWindow);
+                init(p, toolWindow, false);
             }
         }
     }

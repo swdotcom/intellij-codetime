@@ -84,12 +84,12 @@ public class UserSessionManager {
                 url = ConfigManager.app_url + "/onboarding";
             }
         } else if (loginType.equals("google")) {
-            url = ConfigManager.app_endpoint + "/auth/google";
+            url = ConfigManager.metrics_endpoint + "/auth/google";
         } else if (loginType.equals("github")) {
             element_name = "ct_sign_up_github_btn";
             cta_text = "Sign up with GitHub";
             icon_name = "github";
-            url = ConfigManager.app_endpoint + "/auth/github";
+            url = ConfigManager.metrics_endpoint + "/auth/github";
         }
 
         StringBuffer sb = new StringBuffer();
@@ -170,17 +170,6 @@ public class UserSessionManager {
         elementEntity.cta_text = "See advanced metrics";
         elementEntity.icon_name = interactionType == UIInteractionType.click ? "paw" : null;
         EventTrackerManager.getInstance().trackUIInteraction(interactionType, elementEntity);
-    }
-
-    public static void showOfflinePrompt(boolean isTenMinuteReconnect) {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            public void run() {
-                String infoMsg = "Our service is temporarily unavailable.\n" +
-                        "Your status bar will not update at this time.";
-                // ask to download the PM
-                Messages.showInfoMessage(infoMsg, ConfigManager.plugin_name);
-            }
-        });
     }
 }
 

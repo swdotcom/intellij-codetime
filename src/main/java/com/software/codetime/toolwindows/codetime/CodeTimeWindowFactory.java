@@ -19,14 +19,16 @@ public class CodeTimeWindowFactory implements ToolWindowFactory {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        init(project, toolWindow);
+        init(project, toolWindow, true);
     }
 
-    private static void init(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+    private static void init(@NotNull Project project, @NotNull ToolWindow toolWindow, boolean addContent) {
         ctWindow = new CodeTimeToolWindow(toolWindow, project);
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(ctWindow.getContent(), "", false);
-        toolWindow.getContentManager().addContent(content);
+        if (addContent) {
+            toolWindow.getContentManager().addContent(content);
+        }
         windowProject = project;
     }
 
@@ -39,7 +41,7 @@ public class CodeTimeWindowFactory implements ToolWindowFactory {
             }
             ToolWindow toolWindow = ToolWindowManager.getInstance(p).getToolWindow("Code Time");
             if (toolWindow != null) {
-                init(p, toolWindow);
+                init(p, toolWindow, false);
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.software.codetime.main;
 
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -13,6 +14,7 @@ import com.software.codetime.models.KeystrokeWrapper;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.manager.*;
+import swdc.java.ops.model.ConfigOptions;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 import swdc.java.ops.websockets.WebsocketClient;
 
@@ -38,17 +40,23 @@ public class Activator {
     }
 
     private void init() {
+        ConfigOptions options = new ConfigOptions();
+        options.ideName = PluginInfo.IDE_NAME;
+        options.pluginType = "codetime";
+        options.pluginEditor = "intellij";
+        options.appUrl = PluginInfo.app_url;
+        options.ideVersion = PluginInfo.IDE_VERSION;
+        options.metricsEndpoint = PluginInfo.metrics_endpoint;
+        options.pluginId = PluginInfo.getPluginId();
+        options.pluginName = PluginInfo.getPluginName();
+        options.pluginVersion = PluginInfo.getVersion();
+        options.softwareDir = PluginInfo.software_dir;
         ConfigManager.init(
-                PluginInfo.api_endpoint,
-                PluginInfo.launch_url,
-                PluginInfo.getPluginId(),
-                PluginInfo.getPluginName(),
-                PluginInfo.getVersion(),
-                PluginInfo.IDE_NAME,
-                PluginInfo.IDE_VERSION,
-                PluginInfo.software_dir,
+                options,
                 () -> CodeTimeWindowFactory.refresh(false),
-                new SessionDataManager(),
+                new WebsocketMessageManager(),
+                new SessionStatusUpdateManager(),
+                new ThemeModeInfoManager(),
                 ConfigManager.IdeType.intellij);
 
         log.log(Level.INFO, ConfigManager.plugin_name + ": Loaded v" + ConfigManager.plugin_id);
@@ -59,19 +67,23 @@ public class Activator {
         // fetch the user and preferences
         AccountManager.getUser();
 
-        ApplicationManager.getApplication().invokeLater(() -> {
+        Application app = ApplicationManager.getApplication();
+
+        app.invokeLater(() -> {
             // update the session summary and status bar
-            SessionDataManager.updateSessionSummaryFromServer();
+            SessionSummaryManager.updateSessionSummaryFromServer();
         });
 
         // connect the websocket
-        try {
-            WebsocketClient.connect();
-        } catch (Exception e) {
-            log.warning("Websocket connect error: " + e.getMessage());
-        }
+        app.invokeLater(() -> {
+            try {
+                WebsocketClient.connect();
+            } catch (Exception e) {
+                log.warning("Websocket connect error: " + e.getMessage());
+            }
+        });
 
-        ApplicationManager.getApplication().invokeLater(() -> {
+        app.invokeLater(() -> {
             // initialize the tracker
             EventTrackerManager.getInstance().init(new IntellijProject());
 
@@ -80,26 +92,28 @@ public class Activator {
         });
 
         // show the readme on install
-        readmeCheck();
+        app.invokeLater(() -> {
+            readmeCheck();
+        });
 
-        // add the editor listeners
-        setupEditorListeners();
+        app.invokeLater(() -> {
+            // add the editor listeners
+            setupEditorListeners();
 
-        // set the end of the day notification
-        EndOfDayManager.setEndOfDayNotification();
+            // set the end of the day notification
+            EndOfDayManager.setEndOfDayNotification();
+        });
+
+        app.invokeLater(() -> {
+            FlowManager.initFlowStatus();
+        });
     }
 
     private void anonCheck() {
         // create anon user if no user exists
         String jwt = FileUtilManager.getItem("jwt");
         if (StringUtils.isBlank(jwt)) {
-            jwt = AccountManager.createAnonymousUser(false);
-            if (StringUtils.isBlank(jwt)) {
-                boolean serverIsOnline = UserSessionManager.isServerOnline();
-                if (!serverIsOnline) {
-                    UserSessionManager.showOfflinePrompt(true);
-                }
-            }
+            AccountManager.createAnonymousUser(false);
         }
     }
 

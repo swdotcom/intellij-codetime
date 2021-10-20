@@ -7,7 +7,7 @@ import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
 import swdc.java.ops.http.PreferencesClient;
 import swdc.java.ops.manager.*;
-import swdc.java.ops.model.Integration;
+import swdc.java.ops.model.IntegrationConnection;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 
 public class WebviewCommandHandler {
@@ -28,44 +28,59 @@ public class WebviewCommandHandler {
 
     private static void executeJavascriptCommands(String cmd, JsonObject data) {
         switch (cmd) {
-            case "launch_team":
+            case "showOrgDashboard":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    UtilManager.launchUrl(ConfigManager.app_url + "/dashboard?org_name=" + data.get("org_name").getAsString() + "&team_id=" + data.get("team_id").getAsInt());
+                    UtilManager.launchUrl(ConfigManager.app_url + "/dashboard/devops_performance?organization_slug=" + data.get("payload").getAsString());
                 });
                 break;
-            case "switch_account":
+            case "switchAccount":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     AuthPromptManager.initiateSwitchAccountFlow();
                 });
                 break;
-            case "readme":
+            case "displayReadme":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     ReadmeManager.openReadmeFile(UIInteractionType.click);
                 });
                 break;
-            case "configure":
+            case "viewProjectReports":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    UtilManager.launchUrl(ConfigManager.app_url + "/reports");
+                });
+                break;
+            case "configureSettings":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     DashboardWindowFactory.displayConfigSettings();
                 });
                 break;
-            case "submit_issue":
+            case "submitAnIssue":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     UtilManager.submitIntellijIssue();
                 });
                 break;
-            case "toggle_status":
+            case "toggleStatusBar":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     StatusBarManager.toggleStatusBar(UIInteractionType.click);
                 });
                 break;
-            case "dashboard":
+            case "viewDashboard":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     DashboardWindowFactory.displayDashboard();
                 });
                 break;
-            case "web_dashboard":
+            case "softwareKpmDashboard":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     UserSessionManager.launchWebDashboard(UIInteractionType.click);
+                });
+                break;
+            case "enableFlowMode":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    FlowManager.enterFlowMode(false);
+                });
+                break;
+            case "exitFlowMode":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    FlowManager.exitFlowMode();
                 });
                 break;
             case "toggle_flow":
@@ -73,21 +88,26 @@ public class WebviewCommandHandler {
                     FlowManager.toggleFlowMode(false);
                 });
                 break;
-            case "add_workspace":
+            case "manageSlackConnection":
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    SlackManager.manageSlackConnections();
+                });
+                break;
+            case "connectSlack":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     SlackManager.connectSlackWorkspace(() -> {
                         CodeTimeWindowFactory.refresh(false);
                     });
                 });
                 break;
-            case "remove_workspace":
+            case "disconnectSlackWorkspace":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    long id = data.get("id").getAsLong();
-                    Integration integration = SlackManager.getSlackWorkspaceById(id);
+                    long id = data.get("payload").getAsLong();
+                    IntegrationConnection integration = SlackManager.getSlackWorkspaceById(id);
                     SlackManager.disconnectSlackAuth(integration, () -> {CodeTimeWindowFactory.refresh(false);});
                 });
                 break;
-            case "register":
+            case "registerAccount":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     AuthPromptManager.initiateSignupFlow();
                 });
@@ -97,14 +117,19 @@ public class WebviewCommandHandler {
                     AuthPromptManager.initiateLoginFlow();
                 });
                 break;
-            case "create_team":
+            case "createOrg":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    UtilManager.launchUrl(ConfigManager.create_team_url);
+                    UtilManager.launchUrl(ConfigManager.create_org_url);
                 });
                 break;
-            case "skip_slack_connect":
+            case "skipSlackConnect":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     FileUtilManager.setBooleanItem("intellij_CtskipSlackConnect", true);
+                    CodeTimeWindowFactory.refresh(false);
+                });
+                break;
+            case "refreshCodeTimeView":
+                ApplicationManager.getApplication().invokeLater(() -> {
                     CodeTimeWindowFactory.refresh(false);
                 });
                 break;
@@ -118,7 +143,7 @@ public class WebviewCommandHandler {
                     DashboardWindowFactory.closeToolWindow();
                 });
                 break;
-            case "submit_settings":
+            case "save_settings":
                 // post to /users/me/preferences
                 // i.e. {notifications: {endOfDayNotification: true}, flowMode: {durationMinutes: 120, editor: {autoEnterFlowMode: true...}
                 ApplicationManager.getApplication().invokeLater(() -> {
