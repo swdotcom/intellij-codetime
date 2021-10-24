@@ -5,14 +5,14 @@ import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.util.PlatformUtils;
 
+import java.util.Arrays;
+
 public class PluginInfo {
 
     public static String metrics_endpoint = "https://api.software.com";
     public static String app_url = "https://app.software.com";
     public static String software_dir = ".software";
 
-    // prod, dev, local
-    private static String env = "prod";
     public static String IDE_NAME = "";
     public static String IDE_VERSION = "";
 
@@ -37,18 +37,6 @@ public class PluginInfo {
             IDE_VERSION = ApplicationInfo.getInstance().getFullVersion();
         } catch (Exception e) {
             System.out.println("Unable to retrieve IDE name and version info: " + e.getMessage());
-        }
-        switch (env) {
-            case "dev":
-                metrics_endpoint = "https://stagingapi.software.com";
-                app_url = "https://staging.software.com";
-                software_dir = ".software-staging";
-                break;
-            case "local":
-                metrics_endpoint = "http://localhost:5000";
-                app_url = "http://localhost:3000";
-                software_dir = ".software-local";
-                break;
         }
     }
 
@@ -99,6 +87,18 @@ public class PluginInfo {
             }
         }
         return pluginName;
+    }
+
+    public static boolean isEditorOpsInstalled() {
+        IdeaPluginDescriptor[] descriptors = PluginManager.getPlugins();
+        if (descriptors != null && descriptors.length > 0) {
+            IdeaPluginDescriptor editorOps = Arrays.asList(descriptors).stream()
+                    .filter(d -> d.getPluginId().getIdString().equals("com.softwareco.intellij.ops.plugin"))
+                    .findAny()
+                    .orElse(null);
+            return editorOps != null ? true : false;
+        }
+        return false;
     }
 
     private static IdeaPluginDescriptor getIdeaPluginDescriptor() {

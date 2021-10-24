@@ -1,6 +1,7 @@
 package com.software.codetime.managers;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.software.codetime.main.PluginInfo;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.event.SlackStateChangeModel;
@@ -66,7 +67,7 @@ public class FlowManager {
         }
 
         boolean inFlow = FileUtilManager.getFlowChangeState();
-        if (!inFlow) {
+        if ((automated || allowAutoFlowMode()) && !inFlow) {
             // go ahead and make the api call to enter flow mode
             FlowModeClient.enterFlowMode(automated);
         }
@@ -90,7 +91,9 @@ public class FlowManager {
             return;
         }
 
-        FlowModeClient.exitFlowMode();
+        if (allowAutoFlowModeDisable()) {
+            FlowModeClient.exitFlowMode();
+        }
 
         ScreenManager.exitFullScreen();
 
@@ -123,5 +126,13 @@ public class FlowManager {
             return flowMode.editor.intellij.screenMode.contains("Full Screen") ? true : false;
         }
         return false;
+    }
+
+    private static boolean allowAutoFlowMode() {
+        return ( !PluginInfo.isEditorOpsInstalled() || !AutomationTriggerManager.hasEditorOpsAutoFlowModeTrigger() );
+    }
+
+    private static boolean allowAutoFlowModeDisable() {
+        return ( !PluginInfo.isEditorOpsInstalled() || !AutomationTriggerManager.hasEditorOpsAutoFlowModeDisabledTrigger() );
     }
 }

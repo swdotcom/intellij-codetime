@@ -26,8 +26,8 @@ import java.net.URL;
 
 public class DashboardResourceHandler implements CefResourceHandler {
 
-    public final static String config_settings_api = "/users/me/edit_preferences";
-    public final static String dashboard_api = "/v1/plugin_dashboard";
+    public final static String config_settings_api = "/plugin/settings";
+    public final static String dashboard_api = "/plugin/dashboard";
 
     private WebviewResourceState state = new WebviewClosedConnection();
 
@@ -66,10 +66,8 @@ public class DashboardResourceHandler implements CefResourceHandler {
 
             // load the fetched html
             File f = new File(FileUtilManager.getCodeTimeDashboardHtmlFile());
-            String api = html_api;
+            String api = html_api + "?editor=intellij";
             if (html_api.equals(config_settings_api)) {
-                // add the query string (isLightMode and editor)
-                api += "?isLightMode=" + !EditorColorsManager.getInstance().isDarkEditor() + "&editor=intellij";
                 f = new File(FileUtilManager.getCodeTimeSettingsHtmlFile());
             }
             resourceUrl = loadApiHtml(resourceUrl, f, api);
@@ -106,7 +104,7 @@ public class DashboardResourceHandler implements CefResourceHandler {
         Writer writer = null;
         try {
             String html = "";
-            ClientResponse resp = OpsHttpClient.softwareGet(api, FileUtilManager.getItem("jwt"));
+            ClientResponse resp = OpsHttpClient.appGet(api);
             if (resp.isOk()) {
                 html = resp.getJsonObj().get("html").getAsString();
             } else {
