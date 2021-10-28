@@ -41,7 +41,7 @@ public class WebviewCommandHandler {
                 break;
             case "displayReadme":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    ReadmeManager.openReadmeFile(UIInteractionType.click);
+                    UtilManager.launchUrl("https://github.com/swdotcom/intellij-codetime");
                 });
                 break;
             case "viewProjectReports":
