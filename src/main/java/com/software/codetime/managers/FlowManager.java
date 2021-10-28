@@ -1,25 +1,24 @@
 package com.software.codetime.managers;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.software.codetime.main.PluginInfo;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
-import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.event.SlackStateChangeModel;
 import swdc.java.ops.http.FlowModeClient;
 import swdc.java.ops.manager.*;
-import swdc.java.ops.model.*;
 
 import javax.swing.*;
 
 public class FlowManager {
-    public static boolean enabledFlow = false;
 
     public static void initFlowStatus() {
-        enabledFlow = FlowModeClient.isFlowModeOn();
+        boolean enabledFlow = FlowModeClient.isFlowModeOn();
+        FileUtilManager.updateFlowChangeState(enabledFlow);
         updateFlowStateDisplay();
     }
 
     public static void toggleFlowMode(boolean automated) {
-        if (!enabledFlow) {
+        if (!FileUtilManager.getFlowChangeState()) {
             enterFlowMode(automated);
         } else {
             exitFlowMode();
@@ -27,7 +26,7 @@ public class FlowManager {
     }
 
     public static void enterFlowMode(boolean automated) {
-        if (enabledFlow) {
+        if (FileUtilManager.getFlowChangeState()) {
             updateFlowStateDisplay();
             return;
         }
@@ -41,7 +40,7 @@ public class FlowManager {
 
         boolean intellij_CtskipSlackConnect = FileUtilManager.getBooleanItem("intellij_CtskipSlackConnect");
         boolean workspaces = SlackManager.hasSlackWorkspaces();
-        if (!workspaces && !intellij_CtskipSlackConnect) {
+        if (!workspaces && !intellij_CtskipSlackConnect && !automated) {
             String msg = "Connect a Slack workspace to pause\nnotifications and update your status?";
 
             Object[] options = {"Connect", "Skip"};
@@ -60,43 +59,29 @@ public class FlowManager {
                 } else {
                     FileUtilManager.setBooleanItem("intellij_CtskipSlackConnect", true);
                     FlowManager.enterFlowMode(automated);
+                    FileUtilManager.updateFlowChangeState(true);
                 }
             });
             return;
-        }
-
-        boolean inFlow = FileUtilManager.getFlowChangeState();
-        if (!inFlow) {
+        } else if (automated || allowAutoFlowMode()) {
             // go ahead and make the api call to enter flow mode
             FlowModeClient.enterFlowMode(automated);
+            FileUtilManager.updateFlowChangeState(true);
         }
-
-        if (fullScreeConfigured()) {
-            ScreenManager.enterFullScreen();
-        } else {
-            ScreenManager.exitFullScreen();
-        }
-
-        SlackManager.clearSlackCache();
-
-        enabledFlow = true;
 
         updateFlowStateDisplay();
     }
 
     public static void exitFlowMode() {
-        if (!enabledFlow) {
+        if (!FileUtilManager.getFlowChangeState()) {
             updateFlowStateDisplay();
             return;
         }
 
-        FlowModeClient.exitFlowMode();
-
-        ScreenManager.exitFullScreen();
-
-        SlackManager.clearSlackCache();
-
-        enabledFlow = false;
+        if (allowAutoFlowModeDisable()) {
+            FlowModeClient.exitFlowMode();
+            FileUtilManager.updateFlowChangeState(false);
+        }
 
         updateFlowStateDisplay();
     }
@@ -111,17 +96,11 @@ public class FlowManager {
         });
     }
 
-    public static boolean isFlowModeEnabled() {
-        return enabledFlow;
+    private static boolean allowAutoFlowMode() {
+        return ( !PluginInfo.isEditorOpsInstalled() || !AutomationTriggerManager.hasEditorOpsAutoFlowModeTrigger() );
     }
 
-    public static boolean fullScreeConfigured() {
-        String flowModePreferences = FileUtilManager.getItem("flowMode");
-        if (StringUtils.isNotBlank(flowModePreferences)) {
-            FlowMode flowMode = UtilManager.gson.fromJson(flowModePreferences, FlowMode.class);
-
-            return flowMode.editor.intellij.screenMode.contains("Full Screen") ? true : false;
-        }
-        return false;
+    private static boolean allowAutoFlowModeDisable() {
+        return ( !PluginInfo.isEditorOpsInstalled() || !AutomationTriggerManager.hasEditorOpsAutoFlowModeDisabledTrigger() );
     }
 }

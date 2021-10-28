@@ -5,7 +5,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.software.codetime.managers.*;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
-import swdc.java.ops.http.PreferencesClient;
+import swdc.java.ops.http.ClientResponse;
+import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.manager.*;
 import swdc.java.ops.model.IntegrationConnection;
 import swdc.java.ops.snowplow.events.UIInteractionType;
@@ -40,7 +41,7 @@ public class WebviewCommandHandler {
                 break;
             case "displayReadme":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    ReadmeManager.openReadmeFile(UIInteractionType.click);
+                    UtilManager.launchUrl("https://github.com/swdotcom/intellij-codetime");
                 });
                 break;
             case "viewProjectReports":
@@ -133,31 +134,24 @@ public class WebviewCommandHandler {
                     CodeTimeWindowFactory.refresh(false);
                 });
                 break;
-            case "refresh_workspaces":
-                ApplicationManager.getApplication().invokeLater(() -> {
-                    AccountManager.getUser();
-                });
-                break;
-            case "close_settings":
+            case "closeSettings":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     DashboardWindowFactory.closeToolWindow();
                 });
                 break;
-            case "save_settings":
-                // post to /users/me/preferences
-                // i.e. {notifications: {endOfDayNotification: true}, flowMode: {durationMinutes: 120, editor: {autoEnterFlowMode: true...}
+            case "updateSettings":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    boolean updated = PreferencesClient.updatePreferences(data);
-                    if (updated) {
-                        AsyncManager.getInstance().executeOnceInSeconds(() -> {
-                            AccountManager.getUser();
-                        }, 0);
-
-                        // close the tool window
-                        AsyncManager.getInstance().executeOnceInSeconds(() -> {
-                            DashboardWindowFactory.closeToolWindow();
-                        }, 3);
-                    }
+                    try {
+                        JsonObject payload = data.get("payload").getAsJsonObject();
+                        String path = payload.get("path").getAsString();
+                        JsonObject json = payload.get("json").getAsJsonObject();
+                        ClientResponse resp = OpsHttpClient.appPut(path, json);
+                        if (resp.isOk()) {
+                            AsyncManager.getInstance().executeOnceInSeconds(() -> {
+                                AccountManager.getUser();
+                            }, 0);
+                        }
+                    } catch (Exception e) {}
                 });
                 break;
             default:
