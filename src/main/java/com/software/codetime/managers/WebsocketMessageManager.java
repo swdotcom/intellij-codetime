@@ -13,9 +13,7 @@ public class WebsocketMessageManager implements WebsocketMessageHandler {
 
     @Override
     public void handleFlowState(boolean enable_flow) {
-        if (enable_flow) {
-            FlowManager.enterFlowMode(true);
-        } else {
+        if (!enable_flow) {
             FlowManager.exitFlowMode();
         }
     }

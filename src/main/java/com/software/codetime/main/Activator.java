@@ -64,10 +64,12 @@ public class Activator {
         // create anon user if no user exists
         anonCheck();
 
-        // fetch the user and preferences
-        AccountManager.getUser();
-
         Application app = ApplicationManager.getApplication();
+
+        // fetch the user and preferences
+        app.invokeLater(() -> {
+            AccountManager.getUser();
+        });
 
         app.invokeLater(() -> {
             // update the session summary and status bar

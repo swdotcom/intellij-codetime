@@ -1,7 +1,6 @@
 package com.software.codetime.managers;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.software.codetime.main.PluginInfo;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import swdc.java.ops.event.SlackStateChangeModel;
 import swdc.java.ops.http.FlowModeClient;
@@ -26,10 +25,6 @@ public class FlowManager {
     }
 
     public static void enterFlowMode(boolean automated) {
-        if (FileUtilManager.getFlowChangeState()) {
-            updateFlowStateDisplay();
-            return;
-        }
 
         boolean isRegistered = AccountManager.checkRegistration(false, null);
         if (!isRegistered) {
@@ -40,7 +35,8 @@ public class FlowManager {
 
         boolean intellij_CtskipSlackConnect = FileUtilManager.getBooleanItem("intellij_CtskipSlackConnect");
         boolean workspaces = SlackManager.hasSlackWorkspaces();
-        if (!workspaces && !intellij_CtskipSlackConnect && !automated) {
+        boolean isInFlow = FileUtilManager.getFlowChangeState();
+        if (!workspaces && !intellij_CtskipSlackConnect && !isInFlow) {
             String msg = "Connect a Slack workspace to pause\nnotifications and update your status?";
 
             Object[] options = {"Connect", "Skip"};
@@ -63,7 +59,7 @@ public class FlowManager {
                 }
             });
             return;
-        } else if (automated || allowAutoFlowMode()) {
+        } else if (!isInFlow) {
             // go ahead and make the api call to enter flow mode
             FlowModeClient.enterFlowMode(automated);
             FileUtilManager.updateFlowChangeState(true);
@@ -73,12 +69,8 @@ public class FlowManager {
     }
 
     public static void exitFlowMode() {
-        if (!FileUtilManager.getFlowChangeState()) {
-            updateFlowStateDisplay();
-            return;
-        }
-
-        if (allowAutoFlowModeDisable()) {
+        boolean isInFlow = FileUtilManager.getFlowChangeState();
+        if (isInFlow) {
             FlowModeClient.exitFlowMode();
             FileUtilManager.updateFlowChangeState(false);
         }
@@ -94,13 +86,5 @@ public class FlowManager {
             }, 2);
             StatusBarManager.updateStatusBar(null);
         });
-    }
-
-    private static boolean allowAutoFlowMode() {
-        return ( !PluginInfo.isEditorOpsInstalled() || !AutomationTriggerManager.hasEditorOpsAutoFlowModeTrigger() );
-    }
-
-    private static boolean allowAutoFlowModeDisable() {
-        return ( !PluginInfo.isEditorOpsInstalled() || !AutomationTriggerManager.hasEditorOpsAutoFlowModeDisabledTrigger() );
     }
 }
