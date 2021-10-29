@@ -160,7 +160,7 @@ public class UserSessionManager {
             return;
         }
 
-        String url = ConfigManager.app_url + "/login";
+        String url = ConfigManager.app_url;
         BrowserUtil.browse(url);
 
         UIElementEntity elementEntity = new UIElementEntity();

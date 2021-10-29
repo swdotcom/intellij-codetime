@@ -4,10 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.intellij.openapi.application.ApplicationManager;
-import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
 import swdc.java.ops.http.ClientResponse;
 import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.manager.AsyncManager;
+import swdc.java.ops.manager.ConfigManager;
 import swdc.java.ops.manager.FileUtilManager;
 import swdc.java.ops.manager.UtilManager;
 
@@ -61,9 +61,13 @@ public class EndOfDayManager {
                     JOptionPane.QUESTION_MESSAGE, icon, options, options[0]);
 
             if (choice == 1) {
-                DashboardWindowFactory.displayConfigSettings();
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    UtilManager.launchUrl(ConfigManager.app_url + "/preferences");
+                });
             } else if (choice == 0) {
-                DashboardWindowFactory.displayDashboard();
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    UtilManager.launchUrl(ConfigManager.app_url + "/dashboard/code_time?view=summary");
+                });
             }
         });
     }

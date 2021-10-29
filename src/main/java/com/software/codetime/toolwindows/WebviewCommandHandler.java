@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.intellij.openapi.application.ApplicationManager;
 import com.software.codetime.managers.*;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
-import com.software.codetime.toolwindows.dashboard.DashboardWindowFactory;
 import swdc.java.ops.http.ClientResponse;
 import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.manager.*;
@@ -51,7 +50,7 @@ public class WebviewCommandHandler {
                 break;
             case "configureSettings":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    DashboardWindowFactory.displayConfigSettings();
+                    UtilManager.launchUrl(ConfigManager.app_url + "/preferences");
                 });
                 break;
             case "submitAnIssue":
@@ -66,7 +65,7 @@ public class WebviewCommandHandler {
                 break;
             case "viewDashboard":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    DashboardWindowFactory.displayDashboard();
+                    UtilManager.launchUrl(ConfigManager.app_url + "/dashboard/code_time?view=summary");
                 });
                 break;
             case "softwareKpmDashboard":
@@ -132,11 +131,6 @@ public class WebviewCommandHandler {
             case "refreshCodeTimeView":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     CodeTimeWindowFactory.refresh(false);
-                });
-                break;
-            case "closeSettings":
-                ApplicationManager.getApplication().invokeLater(() -> {
-                    DashboardWindowFactory.closeToolWindow();
                 });
                 break;
             case "updateSettings":

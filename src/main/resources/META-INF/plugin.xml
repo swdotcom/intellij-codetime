@@ -12,9 +12,6 @@
         <toolWindow id="Code Time" order="first" anchor="left"
                     icon="/assets/paw-grey-rotated.png"
                     factoryClass="com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory"/>
-        <toolWindow id="Code Time Dashboard" order="first" anchor="right"
-                    icon="/assets/paw-grey.png"
-                    factoryClass="com.software.codetime.toolwindows.dashboard.DashboardWindowFactory"/>
     </extensions>
 
     <applicationListeners>
@@ -25,10 +22,9 @@
     <actions>
         <group class="com.software.codetime.actions.CustomDefaultActionGroup" description="Code Time menu actions" id="CustomDefaultActionGroup" text="Code Time">
             <add-to-group anchor="before" group-id="MainMenu" relative-to-action="HelpMenu"/>
-            <action class="com.software.codetime.actions.EditorDashboardMenuAction" description="View your latest coding metrics" id="EditorDashboardMenuAction" text="Editor Dashboard"/>
+            <action class="com.software.codetime.actions.DashboardMenuAction" description="View your latest coding metrics" id="SettingsMenuAction" text="Settings"/>
+            <action class="com.software.codetime.actions.DashboardMenuAction" description="View your latest coding metrics" id="DashboardMenuAction" text="Dashboard"/>
             <action class="com.software.codetime.actions.WebDashboardMenuAction" description="View your coding metrics at Software.com" id="WebDashboardMenuAction" text="More data at Software.com"/>
-            <action class="com.software.codetime.actions.SlackDisconnectMenuAction" description="Disconnect a Slack workspace" id="SlackDisconnectMenuAction" text="Disconnect Slack workspace"/>
-            <action class="com.software.codetime.actions.SlackConnectMenuAction" description="Connect a Slack workspace" id="SlackConnectMenuAction" text="Connect Slack workspace"/>
         </group>
     </actions>
 </idea-plugin>

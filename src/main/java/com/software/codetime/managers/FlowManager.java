@@ -27,7 +27,7 @@ public class FlowManager {
     public static void enterFlowMode(boolean automated) {
 
         boolean isRegistered = AccountManager.checkRegistration(false, null);
-        if (!isRegistered) {
+        if (!automated && !isRegistered) {
             // show the flow mode prompt
             AccountManager.showModalSignupPrompt("To use Flow Mode, please first sign up or login.", () -> { CodeTimeWindowFactory.refresh(true);});
             return;
@@ -36,7 +36,7 @@ public class FlowManager {
         boolean intellij_CtskipSlackConnect = FileUtilManager.getBooleanItem("intellij_CtskipSlackConnect");
         boolean workspaces = SlackManager.hasSlackWorkspaces();
         boolean isInFlow = FileUtilManager.getFlowChangeState();
-        if (!workspaces && !intellij_CtskipSlackConnect && !isInFlow) {
+        if (!automated && !workspaces && !intellij_CtskipSlackConnect && !isInFlow) {
             String msg = "Connect a Slack workspace to pause\nnotifications and update your status?";
 
             Object[] options = {"Connect", "Skip"};
