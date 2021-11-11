@@ -30,7 +30,7 @@ public class StatusBarManager {
     private final static String flowmsgId = StatusBarKpmTextWidget.FLOW_TEXT_ID + "_flowmsg";
     private final static String flowiconId = StatusBarKpmIconWidget.FLOW_ICON_ID + "_flowicon";
 
-    private static SessionSummary summary = null;
+    private static final SessionSummary summary = null;
 
     public static boolean showingStatusText() {
         return showStatusText;

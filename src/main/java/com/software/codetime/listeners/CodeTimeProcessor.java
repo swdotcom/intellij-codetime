@@ -32,9 +32,9 @@ public class CodeTimeProcessor {
 
     public static boolean isCurrentlyActive = true;
 
-    private EventTrackerManager tracker;
-    private KeystrokeWrapper keystrokeMgr;
-    private AsyncManager asyncManager;
+    private final EventTrackerManager tracker;
+    private final KeystrokeWrapper keystrokeMgr;
+    private final AsyncManager asyncManager;
 
     public static CodeTimeProcessor getInstance() {
         if (instance == null) {
@@ -114,8 +114,8 @@ public class CodeTimeProcessor {
         int numDeleteKeystrokes = documentEvent.getOldLength();
 
         // count the newline chars
-        int linesAdded = this.getNewlineCount(text);
-        int linesRemoved = this.getNewlineCount(oldText);
+        int linesAdded = getNewlineCount(text);
+        int linesRemoved = getNewlineCount(oldText);
 
         // check if its an auto indent
         boolean hasAutoIndent = text.matches("^\\s{2,4}$") || TAB_PATTERN.matcher(text).find();
@@ -256,7 +256,7 @@ public class CodeTimeProcessor {
 
                             // check whether it's a code time file or not
                             // .*\.software.*(data\.json|session\.json|latestKeystrokes\.json|ProjectContributorCodeSummary\.txt|CodeTime\.txt|SummaryInfo\.txt|events\.json|fileChangeSummary\.json)
-                            boolean skip = (file == null || file.equals("") || fileName.matches(".*\\.software.*(data\\.json|session\\.json|latestKeystrokes\\.json|ProjectContributorCodeSummary\\.txt|CodeTime\\.txt|SummaryInfo\\.txt|events\\.json|fileChangeSummary\\.json)")) ? true : false;
+                            boolean skip = file == null || file.equals("") || fileName.matches(".*\\.software.*(data\\.json|session\\.json|latestKeystrokes\\.json|ProjectContributorCodeSummary\\.txt|CodeTime\\.txt|SummaryInfo\\.txt|events\\.json|fileChangeSummary\\.json)");
 
                             if (!skip && keystrokeCount != null) {
 

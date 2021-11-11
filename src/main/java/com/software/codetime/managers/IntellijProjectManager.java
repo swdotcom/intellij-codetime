@@ -7,7 +7,7 @@ import java.io.File;
 
 public class IntellijProjectManager {
 
-    private static IntellijProject intellijProject = new IntellijProject();
+    private static final IntellijProject intellijProject = new IntellijProject();
 
     public static Project getOpenProject() {
         swdc.java.ops.model.Project ctProject = intellijProject.getOpenProject();

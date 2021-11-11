@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 public class DocumentSaveListener implements BulkFileListener {
-    private static GitEventsManager gitEvtMgr = new GitEventsManager();
-    private static Map<String, Long> lastChangeMap = new HashMap<>();
+    private static final GitEventsManager gitEvtMgr = new GitEventsManager();
+    private static final Map<String, Long> lastChangeMap = new HashMap<>();
 
     @Override
     public void before(@NotNull List<? extends VFileEvent > events) {

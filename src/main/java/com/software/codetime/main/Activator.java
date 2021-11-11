@@ -109,10 +109,6 @@ public class Activator {
         app.invokeLater(() -> {
             FlowManager.initFlowStatus();
         });
-
-        app.invokeLater(() -> {
-            AutomationTriggerManager.refreshEditorOpsAutomations();
-        });
     }
 
     private void anonCheck() {

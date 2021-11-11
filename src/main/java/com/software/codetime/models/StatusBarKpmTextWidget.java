@@ -17,9 +17,9 @@ public class StatusBarKpmTextWidget implements StatusBarWidget {
 
     private String msg = "";
     private String tooltip = "";
-    private String id;
+    private final String id;
 
-    private Consumer<MouseEvent> eventHandler;
+    private final Consumer<MouseEvent> eventHandler;
 
     private final TextPresentation presentation = new StatusPresentation();
 

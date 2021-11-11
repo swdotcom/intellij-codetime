@@ -11,7 +11,7 @@ import javax.swing.*;
 
 public class CodeTimeToolWindow {
 
-    private JBCefBrowser browser;
+    private final JBCefBrowser browser;
 
     public CodeTimeToolWindow(@NotNull ToolWindow toolWindow, @NotNull Project project) {
         browser = new JBCefBrowser();

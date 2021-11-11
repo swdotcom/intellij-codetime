@@ -11,7 +11,7 @@ import java.net.URLConnection;
 
 public class WebviewOpenedConnection implements WebviewResourceState {
 
-    private URLConnection connection;
+    private final URLConnection connection;
     private InputStream inputStream;
 
     public WebviewOpenedConnection(URLConnection connection) {
