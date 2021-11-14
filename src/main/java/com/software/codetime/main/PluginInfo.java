@@ -17,19 +17,19 @@ public class PluginInfo {
     public static String IDE_VERSION = "";
 
     // sublime = 1, vs code = 2, eclipse = 3, intellij = 4, visual studio = 6, atom = 7
-    private static int pluginId = 4;
+    private static final int pluginId = 4;
     public static String VERSION = null;
     public static String pluginName = null;
 
-    private static int APPCODE_ID = 22;
-    private static int CLION_ID = 24;
-    private static int DATAGRIP_ID = 26;
-    private static int GOLAND_ID = 28;
-    private static int PHPSTORM_ID = 30;
-    private static int PYCHARM_ID = 32;
-    private static int RIDER_ID = 34;
-    private static int RUBYMINE_ID = 36;
-    private static int WEBSTORM_ID = 38;
+    private static final int APPCODE_ID = 22;
+    private static final int CLION_ID = 24;
+    private static final int DATAGRIP_ID = 26;
+    private static final int GOLAND_ID = 28;
+    private static final int PHPSTORM_ID = 30;
+    private static final int PYCHARM_ID = 32;
+    private static final int RIDER_ID = 34;
+    private static final int RUBYMINE_ID = 36;
+    private static final int WEBSTORM_ID = 38;
 
     static {
         try {
@@ -71,7 +71,7 @@ public class PluginInfo {
             if (pluginDescriptor != null) {
                 VERSION = pluginDescriptor.getVersion();
             } else {
-                return "2.7.4";
+                return "latest";
             }
         }
         return VERSION;
@@ -96,7 +96,7 @@ public class PluginInfo {
                     .filter(d -> d.getPluginId().getIdString().equals("com.softwareco.intellij.ops.plugin"))
                     .findAny()
                     .orElse(null);
-            return editorOps != null ? true : false;
+            return editorOps != null;
         }
         return false;
     }

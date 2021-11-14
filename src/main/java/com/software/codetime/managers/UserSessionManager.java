@@ -3,7 +3,6 @@ package com.software.codetime.managers;
 import com.google.gson.JsonObject;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.ui.Messages;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.http.ClientResponse;
 import swdc.java.ops.http.OpsHttpClient;
@@ -15,6 +14,7 @@ import swdc.java.ops.websockets.handlers.AuthenticatedPluginUser;
 
 import javax.swing.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -43,10 +43,7 @@ public class UserSessionManager {
 
     public synchronized static boolean isServerOnline() {
         ClientResponse resp = OpsHttpClient.softwareGet("/ping", null);
-        if (resp != null && resp.isOk()) {
-            return true;
-        }
-        return false;
+        return resp != null && resp.isOk();
     }
 
     public static void launchLogin(String loginType, UIInteractionType interactionType, boolean isSignUp) {
@@ -101,13 +98,13 @@ public class UserSessionManager {
             String key = keys.next();
             String val = obj.get(key).getAsString();
             try {
-                val = URLEncoder.encode(val, "UTF-8");
+                val = URLEncoder.encode(val, StandardCharsets.UTF_8);
             } catch (Exception e) {
                 log.info("Unable to url encode value, error: " + e.getMessage());
             }
             sb.append(key).append("=").append(val);
         }
-        url += "?" + sb.toString();
+        url += "?" + sb;
 
         FileUtilManager.setItem("authType", loginType);
 

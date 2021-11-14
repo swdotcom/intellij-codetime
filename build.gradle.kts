@@ -31,7 +31,7 @@ repositories {
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.1")
-    implementation(files("lib/swdc-java-ops-1.1.3.jar"))
+    implementation(files("lib/swdc-java-ops-1.1.4.jar"))
 }
 
 // Configure gradle-intellij-plugin plugin.
@@ -68,7 +68,7 @@ detekt {
 }
 
 tasks {
-    // Set the compatibility versions to 1.8
+    // Set the compatibility versions to 11
     withType<JavaCompile> {
         sourceCompatibility = "11"
         targetCompatibility = "11"

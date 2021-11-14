@@ -18,10 +18,10 @@ public class StatusBarKpmIconWidget implements StatusBarWidget {
 
     private Icon icon = null;
     private String tooltip = "";
-    private String id;
+    private final String id;
 
     private final IconPresentation presentation = new IconPresentation();
-    private Consumer<MouseEvent> eventHandler;
+    private final Consumer<MouseEvent> eventHandler;
 
     public StatusBarKpmIconWidget(String id, final Runnable callback) {
         this.id = id;
