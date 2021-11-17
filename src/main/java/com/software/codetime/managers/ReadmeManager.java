@@ -29,7 +29,7 @@ public class ReadmeManager {
 
             ClassLoader classLoader = ReadmeManager.class.getClassLoader();
             String readmeFile = UserSessionManager.getReadmeFile();
-            try (InputStream inputStream = classLoader.getResourceAsStream("/assets/README.md")) {
+            try (InputStream inputStream = classLoader.getResourceAsStream("assets/README.md")) {
 
                 String fileContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
                 File f = new File(readmeFile);
