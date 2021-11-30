@@ -15,7 +15,6 @@ import com.software.codetime.models.StatusBarKpmTextWidget;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import swdc.java.ops.manager.*;
 import swdc.java.ops.model.SessionSummary;
-import swdc.java.ops.snowplow.entities.UIElementEntity;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 
 import javax.swing.*;
@@ -44,14 +43,6 @@ public class StatusBarManager {
 
         // refresh the tree
         CodeTimeWindowFactory.refresh(false);
-
-        UIElementEntity elementEntity = new UIElementEntity();
-        elementEntity.element_name = interactionType == UIInteractionType.click ? "ct_toggle_status_bar_metrics_btn" : "ct_toggle_status_bar_metrics_cmd";
-        elementEntity.element_location = interactionType == UIInteractionType.click ? "ct_menu_tree" : "ct_command_palette";
-        elementEntity.color = interactionType == UIInteractionType.click ? "blue" : null;
-        elementEntity.cta_text = cta_text;
-        elementEntity.icon_name = interactionType == UIInteractionType.click ? "slash-eye" : null;
-        EventTrackerManager.getInstance().trackUIInteraction(interactionType, elementEntity);
     }
 
     public static void updateStatusBar(SessionSummary sessionSummary) {
@@ -177,14 +168,6 @@ public class StatusBarManager {
 
     public static void submitFeedback(UIInteractionType interactionType) {
         BrowserUtil.browse("mailto:cody@software.com");
-
-        UIElementEntity elementEntity = new UIElementEntity();
-        elementEntity.element_name = interactionType == UIInteractionType.click ? "ct_submit_feedback_btn" : "ct_submit_feedback_cmd";
-        elementEntity.element_location = interactionType == UIInteractionType.click ? "ct_menu_tree" : "ct_command_palette";
-        elementEntity.color = null;
-        elementEntity.cta_text = "Submit feedback";
-        elementEntity.icon_name = interactionType == UIInteractionType.click ? "text-bubble" : null;
-        EventTrackerManager.getInstance().trackUIInteraction(interactionType, elementEntity);
     }
 
     public static void launchFile(String fsPath) {
