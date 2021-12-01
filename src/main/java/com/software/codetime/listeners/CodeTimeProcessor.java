@@ -67,9 +67,6 @@ public class CodeTimeProcessor {
                 } else {
                     // just set the process keystrokes payload to false since we're focused again
                     EventTrackerManager.getInstance().trackEditorAction("editor", "focus");
-                    ApplicationManager.getApplication().invokeLater(() -> {
-                        UtilManager.isNewDay();
-                    });
                 }
 
                 // update the currently active flag
