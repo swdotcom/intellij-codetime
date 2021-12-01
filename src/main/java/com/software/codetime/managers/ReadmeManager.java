@@ -3,7 +3,6 @@ package com.software.codetime.managers;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import org.apache.commons.io.IOUtils;
-import swdc.java.ops.manager.EventTrackerManager;
 import swdc.java.ops.snowplow.entities.UIElementEntity;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 
@@ -18,14 +17,6 @@ public class ReadmeManager {
             if (p == null) {
                 return;
             }
-
-            UIElementEntity elementEntity = new UIElementEntity();
-            elementEntity.element_name = interactionType == UIInteractionType.click ? "ct_learn_more_btn" : "ct_learn_more_cmd";
-            elementEntity.element_location = interactionType == UIInteractionType.click ? "ct_menu_tree" : "ct_command_palette";
-            elementEntity.color = interactionType == UIInteractionType.click ? "yellow" : null;
-            elementEntity.cta_text = "Learn more";
-            elementEntity.icon_name = interactionType == UIInteractionType.click ? "document" : null;
-            EventTrackerManager.getInstance().trackUIInteraction(interactionType, elementEntity);
 
             ClassLoader classLoader = ReadmeManager.class.getClassLoader();
             String readmeFile = UserSessionManager.getReadmeFile();

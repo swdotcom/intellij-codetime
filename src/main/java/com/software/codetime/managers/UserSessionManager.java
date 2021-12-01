@@ -8,7 +8,6 @@ import swdc.java.ops.http.ClientResponse;
 import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.manager.*;
 import swdc.java.ops.model.UserState;
-import swdc.java.ops.snowplow.entities.UIElementEntity;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 import swdc.java.ops.websockets.handlers.AuthenticatedPluginUser;
 
@@ -110,14 +109,6 @@ public class UserSessionManager {
 
         BrowserUtil.browse(url);
 
-        UIElementEntity elementEntity = new UIElementEntity();
-        elementEntity.element_name = element_name;
-        elementEntity.element_location = interactionType == UIInteractionType.click ? "ct_menu_tree" : "ct_command_palette";
-        elementEntity.color = icon_color;
-        elementEntity.cta_text = cta_text;
-        elementEntity.icon_name = icon_name;
-        EventTrackerManager.getInstance().trackUIInteraction(interactionType, elementEntity);
-
         AsyncManager.getInstance().executeOnceInSeconds(() -> {
             checkAuthCompletion(10);}, 20);
     }
@@ -159,14 +150,6 @@ public class UserSessionManager {
 
         String url = ConfigManager.app_url;
         BrowserUtil.browse(url);
-
-        UIElementEntity elementEntity = new UIElementEntity();
-        elementEntity.element_name = interactionType == UIInteractionType.click ? "ct_web_metrics_btn" : "ct_web_metrics_cmd";
-        elementEntity.element_location = interactionType == UIInteractionType.click ? "ct_menu_tree" : "ct_command_palette";
-        elementEntity.color = interactionType == UIInteractionType.click ? "gray" : null;
-        elementEntity.cta_text = "See advanced metrics";
-        elementEntity.icon_name = interactionType == UIInteractionType.click ? "paw" : null;
-        EventTrackerManager.getInstance().trackUIInteraction(interactionType, elementEntity);
     }
 }
 
