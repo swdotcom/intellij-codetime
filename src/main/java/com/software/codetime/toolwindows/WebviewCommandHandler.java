@@ -90,7 +90,7 @@ public class WebviewCommandHandler {
                 break;
             case "manageSlackConnection":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    SlackManager.manageSlackConnections();
+                    UtilManager.launchUrl(ConfigManager.app_url + "/data_sources/integration_types/slack");
                 });
                 break;
             case "connectSlack":
