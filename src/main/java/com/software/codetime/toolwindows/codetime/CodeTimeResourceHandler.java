@@ -119,7 +119,7 @@ public class CodeTimeResourceHandler implements CefResourceHandler {
         String api = "/plugin/sidebar" + qStr;
         ClientResponse resp = OpsHttpClient.appGet(api);
         if (resp.isOk()) {
-            return resp.getJsonStr();
+            return CssUtil.updateBodyCss(resp.getJsonStr());
         }
         return LoadError.get404Html();
     }
