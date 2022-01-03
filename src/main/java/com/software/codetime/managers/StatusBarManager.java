@@ -13,6 +13,7 @@ import com.intellij.openapi.wm.WindowManager;
 import com.software.codetime.models.StatusBarKpmIconWidget;
 import com.software.codetime.models.StatusBarKpmTextWidget;
 import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import org.apache.commons.lang3.StringUtils;
 import swdc.java.ops.manager.*;
 import swdc.java.ops.model.SessionSummary;
 import swdc.java.ops.snowplow.events.UIInteractionType;
@@ -60,10 +61,12 @@ public class StatusBarManager {
                 ProjectManager pm = ProjectManager.getInstance();
                 if (pm != null && pm.getOpenProjects() != null && pm.getOpenProjects().length > 0) {
                     try {
+                        String email = FileUtilManager.getItem("name");
                         Project p = pm.getOpenProjects()[0];
                         final StatusBar statusBar = WindowManager.getInstance().getStatusBar(p);
 
-                        String kpmMsgVal = currentDayTimeStr != null ? currentDayTimeStr : ConfigManager.plugin_name;
+                        // show Code Time if the current day time is null or the user is not registered
+                        String kpmMsgVal = StringUtils.isNotBlank(email) && currentDayTimeStr != null ? currentDayTimeStr : ConfigManager.plugin_name;
 
                         StatusBarKpmTextWidget kpmMsgWidget = (StatusBarKpmTextWidget) statusBar.getWidget(kpmmsgId);
                         if (kpmMsgWidget == null) {
@@ -85,24 +88,27 @@ public class StatusBarManager {
                             CodeTimeWindowFactory.openToolWindow();
                         });
 
-                        // flow icon
-                        String flowTooltip = "Enter Flow Mode";
-                        String flowIcon = "open-circle.png";
-                        try {
-                            if (FileUtilManager.getFlowChangeState()) {
-                                flowIcon = "closed-circle.png";
-                                flowTooltip = "Exit Flow Mode";
-                            }
-                            updateIconWidget(statusBar, flowiconId, flowIcon, flowTooltip, () -> {
-                                FlowManager.toggleFlowMode(false);
-                            });
+                        // don't show the flow mode icon if the user is not logged in
+                        if (StringUtils.isNotBlank(email)) {
+                            // flow icon
+                            String flowTooltip = "Enter Flow Mode";
+                            String flowIcon = "open-circle.png";
+                            try {
+                                if (FileUtilManager.getFlowChangeState()) {
+                                    flowIcon = "closed-circle.png";
+                                    flowTooltip = "Exit Flow Mode";
+                                }
+                                updateIconWidget(statusBar, flowiconId, flowIcon, flowTooltip, () -> {
+                                    FlowManager.toggleFlowMode(false);
+                                });
 
-                            // flow text next
-                            updateTextWidget(statusBar, flowmsgId, "Flow", flowTooltip, () -> {
-                                FlowManager.toggleFlowMode(false);
-                            });
-                        } catch (Exception e) {
-                            System.out.println("status bar update error: " + e.getMessage());
+                                // flow text next
+                                updateTextWidget(statusBar, flowmsgId, "Flow", flowTooltip, () -> {
+                                    FlowManager.toggleFlowMode(false);
+                                });
+                            } catch (Exception e) {
+                                System.out.println("status bar update error: " + e.getMessage());
+                            }
                         }
                     } catch(Exception e){
                         //
