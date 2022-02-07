@@ -117,12 +117,12 @@ public class UserSessionManager {
     public static void launchWebDashboard(UIInteractionType interactionType) {
         if (StringUtils.isBlank(FileUtilManager.getItem("name"))) {
             ApplicationManager.getApplication().invokeLater(() -> {
-                String msg = "Sign up or log in to see more data visualizations.";
+                String msg = "\nSign up or log in to see more data visualizations.\n";
 
                 Object[] options = {"Sign up"};
                 Icon icon = UtilManager.getResourceIcon("app-icon-blue.png", UserSessionManager.class.getClassLoader());
                 int choice = JOptionPane.showOptionDialog(
-                        null, msg, "Sign up", JOptionPane.OK_OPTION,
+                        null, msg, "\n Sign up \n", JOptionPane.OK_OPTION,
                         JOptionPane.QUESTION_MESSAGE, icon, options, options[0]);
 
                 if (choice == 0) {

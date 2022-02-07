@@ -22,6 +22,7 @@ public class AuthPromptManager {
 
     private static void initiateAuthFlow(String title, String message, boolean isSignup) {
         String[] options = new String[]{ "Google", "GitHub", "Email" };
+        message = "\n " + message + " \n";
         Icon icon = UtilManager.getResourceIcon("app-icon-blue.png", AuthPromptManager.class.getClassLoader());
         String input = (String) JOptionPane.showInputDialog(
                 null,
