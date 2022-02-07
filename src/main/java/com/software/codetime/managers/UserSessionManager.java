@@ -46,7 +46,6 @@ public class UserSessionManager {
     }
 
     public static void launchLogin(String loginType, UIInteractionType interactionType, boolean isSignUp) {
-
         String auth_callback_state = FileUtilManager.getAuthCallbackState(true);
 
         FileUtilManager.setBooleanItem("switching_account", !isSignUp);
@@ -54,24 +53,12 @@ public class UserSessionManager {
         String plugin_uuid = FileUtilManager.getPluginUuid();
 
         JsonObject obj = new JsonObject();
-        obj.addProperty("plugin", "codetime");
         obj.addProperty("plugin_uuid", plugin_uuid);
-
-        obj.addProperty("pluginVersion", ConfigManager.plugin_version);
         obj.addProperty("plugin_id", ConfigManager.plugin_id);
         obj.addProperty("auth_callback_state", auth_callback_state);
-        obj.addProperty("redirect", ConfigManager.app_url);
 
         String url = "";
-        String element_name = "ct_sign_up_google_btn";
-        String icon_name = "google";
-        String cta_text = "Sign up with Google";
-        String icon_color = null;
         if (loginType == null || loginType.equals("software") || loginType.equals("email")) {
-            element_name = "ct_sign_up_email_btn";
-            cta_text = "Sign up with email";
-            icon_name = "envelope";
-            icon_color = "gray";
             obj.addProperty("token", FileUtilManager.getItem("jwt"));
             obj.addProperty("auth", "software");
             if (isSignUp) {
@@ -80,12 +67,9 @@ public class UserSessionManager {
                 url = ConfigManager.app_url + "/onboarding";
             }
         } else if (loginType.equals("google")) {
-            url = ConfigManager.metrics_endpoint + "/auth/google";
+            url = ConfigManager.app_url + "/auth/google";
         } else if (loginType.equals("github")) {
-            element_name = "ct_sign_up_github_btn";
-            cta_text = "Sign up with GitHub";
-            icon_name = "github";
-            url = ConfigManager.metrics_endpoint + "/auth/github";
+            url = ConfigManager.app_url + "/auth/github";
         }
 
         StringBuffer sb = new StringBuffer();

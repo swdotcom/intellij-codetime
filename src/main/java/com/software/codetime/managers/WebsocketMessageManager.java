@@ -22,4 +22,7 @@ public class WebsocketMessageManager implements WebsocketMessageHandler {
     public void updateEditorStatus(SessionSummary sessionSummary) {
         SessionSummaryManager.updateFileSummaryAndStatsBar(sessionSummary);
     }
+
+    @Override
+    public void handleBillingPlanUpdateMessage(JsonObject jsonObject) {}
 }
