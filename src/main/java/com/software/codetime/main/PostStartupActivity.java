@@ -6,9 +6,6 @@ import com.intellij.ide.plugins.PluginStateListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import org.jetbrains.annotations.NotNull;
-import swdc.java.ops.http.OpsHttpClient;
-import swdc.java.ops.manager.ConfigManager;
-import swdc.java.ops.manager.FileUtilManager;
 
 import java.util.logging.Logger;
 
@@ -29,7 +26,7 @@ public class PostStartupActivity implements StartupActivity {
             @Override
             public void uninstall(@NotNull IdeaPluginDescriptor ideaPluginDescriptor) {
                 // send a quick update to the app to delete the integration
-                OpsHttpClient.softwareDelete("/integrations/" + ConfigManager.plugin_id, FileUtilManager.getItem("jwt"), null);
+                log.info("Uninstalling Code Time");
             }
         });
     }
