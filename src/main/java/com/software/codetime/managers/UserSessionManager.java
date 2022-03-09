@@ -40,11 +40,6 @@ public class UserSessionManager {
         return file;
     }
 
-    public synchronized static boolean isServerOnline() {
-        ClientResponse resp = OpsHttpClient.softwareGet("/ping", null);
-        return resp != null && resp.isOk();
-    }
-
     public static void launchLogin(String loginType, UIInteractionType interactionType, boolean isSignUp) {
         String auth_callback_state = FileUtilManager.getAuthCallbackState(true);
 

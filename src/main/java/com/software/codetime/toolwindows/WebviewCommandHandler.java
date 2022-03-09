@@ -7,7 +7,6 @@ import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
 import swdc.java.ops.http.ClientResponse;
 import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.manager.*;
-import swdc.java.ops.model.IntegrationConnection;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 
 public class WebviewCommandHandler {
@@ -89,22 +88,10 @@ public class WebviewCommandHandler {
                 });
                 break;
             case "manageSlackConnection":
-                ApplicationManager.getApplication().invokeLater(() -> {
-                    UtilManager.launchUrl(ConfigManager.app_url + "/data_sources/integration_types/slack");
-                });
-                break;
             case "connectSlack":
-                ApplicationManager.getApplication().invokeLater(() -> {
-                    SlackManager.connectSlackWorkspace(() -> {
-                        CodeTimeWindowFactory.refresh(false);
-                    });
-                });
-                break;
             case "disconnectSlackWorkspace":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    long id = data.get("payload").getAsLong();
-                    IntegrationConnection integration = SlackManager.getSlackWorkspaceById(id);
-                    SlackManager.disconnectSlackAuth(integration, () -> {CodeTimeWindowFactory.refresh(false);});
+                    UtilManager.launchUrl(ConfigManager.app_url + "/data_sources/integration_types/slack");
                 });
                 break;
             case "registerAccount":
