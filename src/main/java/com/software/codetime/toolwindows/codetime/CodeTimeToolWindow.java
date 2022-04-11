@@ -2,7 +2,6 @@ package com.software.codetime.toolwindows.codetime;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.jcef.JBCefBrowser;
 import org.cef.CefApp;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +12,7 @@ public class CodeTimeToolWindow {
 
     private final JBCefBrowser browser;
 
-    public CodeTimeToolWindow(@NotNull ToolWindow toolWindow, @NotNull Project project) {
+    public CodeTimeToolWindow(@NotNull Project project) {
         browser = new JBCefBrowser();
         browser.getJBCefClient().addDisplayHandler(new CodeTimeDisplayHandler(), browser.getCefBrowser());
         registerAppSchemeHandler();

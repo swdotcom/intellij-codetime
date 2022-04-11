@@ -12,7 +12,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import com.software.codetime.models.StatusBarKpmIconWidget;
 import com.software.codetime.models.StatusBarKpmTextWidget;
-import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import com.software.codetime.toolwindows.codetime.SidebarToolWindow;
 import org.apache.commons.lang3.StringUtils;
 import swdc.java.ops.manager.*;
 import swdc.java.ops.model.SessionSummary;
@@ -43,7 +43,7 @@ public class StatusBarManager {
         updateStatusBar(null);
 
         // refresh the tree
-        CodeTimeWindowFactory.refresh(false);
+        SidebarToolWindow.refresh(false);
     }
 
     public static void updateStatusBar(SessionSummary sessionSummary) {
@@ -79,13 +79,13 @@ public class StatusBarManager {
                         String metricIconTooltip = "";
                         String kpmIcon = "time-clock.png";
                         updateIconWidget(statusBar, kpmiconId, kpmIcon, metricIconTooltip, () -> {
-                            CodeTimeWindowFactory.openToolWindow();
+                            SidebarToolWindow.openToolWindow();
                         });
 
                         // text next
                         String kpmTextTooltip = "Active code time today. Click to see more from Code Time.";
                         updateTextWidget(statusBar, kpmmsgId, kpmMsgVal, kpmTextTooltip, () -> {
-                            CodeTimeWindowFactory.openToolWindow();
+                            SidebarToolWindow.openToolWindow();
                         });
 
                         // don't show the flow mode icon if the user is not logged in

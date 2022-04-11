@@ -4,7 +4,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.ProjectFrameHelper;
-import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import com.software.codetime.toolwindows.codetime.SidebarToolWindow;
 import swdc.java.ops.manager.AsyncManager;
 
 import javax.swing.*;
@@ -52,7 +52,7 @@ public class ScreenManager {
 
             AsyncManager.getInstance().executeOnceInSeconds(
                     () -> {
-                        CodeTimeWindowFactory.refresh(false);}, 1);
+                        SidebarToolWindow.refresh(false);}, 1);
         });
         return true;
     }
@@ -74,7 +74,8 @@ public class ScreenManager {
                     win.setBounds(x, y, w, h);
                 } catch (Exception e) {}
                 AsyncManager.getInstance().executeOnceInSeconds(
-                        () -> {CodeTimeWindowFactory.refresh(false);}, 1);
+                        () -> {
+                            SidebarToolWindow.refresh(false);}, 1);
             });
             return true;
         }

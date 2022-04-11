@@ -13,9 +13,7 @@ public class SettingsMenuAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
         ApplicationManager.getApplication().invokeLater(() -> {
-            ApplicationManager.getApplication().invokeLater(() -> {
-                UtilManager.launchUrl(ConfigManager.app_url + "/preferences");
-            });
+            UtilManager.launchUrl(ConfigManager.app_url + "/preferences");
         });
     }
 

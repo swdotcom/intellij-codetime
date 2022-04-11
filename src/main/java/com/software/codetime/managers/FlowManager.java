@@ -1,7 +1,7 @@
 package com.software.codetime.managers;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import com.software.codetime.toolwindows.codetime.SidebarToolWindow;
 import swdc.java.ops.http.FlowModeClient;
 import swdc.java.ops.manager.*;
 
@@ -25,7 +25,7 @@ public class FlowManager {
         boolean isRegistered = AccountManager.checkRegistration(false, null);
         if (!automated && !isRegistered) {
             // show the flow mode prompt
-            AccountManager.showModalSignupPrompt("To use Flow Mode, please first sign up or login.", () -> { CodeTimeWindowFactory.refresh(true);});
+            AccountManager.showModalSignupPrompt("To use Flow Mode, please first sign up or login.", () -> { SidebarToolWindow.refresh(true);});
             return;
         }
 
@@ -52,7 +52,7 @@ public class FlowManager {
         ApplicationManager.getApplication().invokeLater(() -> {
             // at least update the status bar
             AsyncManager.getInstance().executeOnceInSeconds(() -> {
-                CodeTimeWindowFactory.refresh(false);
+                SidebarToolWindow.refresh(false);
             }, 2);
             StatusBarManager.updateStatusBar(null);
         });
