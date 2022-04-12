@@ -3,7 +3,7 @@ package com.software.codetime.toolwindows;
 import com.google.gson.JsonObject;
 import com.intellij.openapi.application.ApplicationManager;
 import com.software.codetime.managers.*;
-import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import com.software.codetime.toolwindows.codetime.SidebarToolWindow;
 import swdc.java.ops.http.ClientResponse;
 import swdc.java.ops.http.OpsHttpClient;
 import swdc.java.ops.manager.*;
@@ -112,12 +112,12 @@ public class WebviewCommandHandler {
             case "skipSlackConnect":
                 ApplicationManager.getApplication().invokeLater(() -> {
                     FileUtilManager.setBooleanItem("intellij_CtskipSlackConnect", true);
-                    CodeTimeWindowFactory.refresh(false);
+                    SidebarToolWindow.refresh(false);
                 });
                 break;
             case "refreshCodeTimeView":
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    CodeTimeWindowFactory.refresh(false);
+                    SidebarToolWindow.refresh(false);
                 });
                 break;
             case "updateSettings":

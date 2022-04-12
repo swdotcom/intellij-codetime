@@ -11,7 +11,7 @@ import com.software.codetime.listeners.*;
 import com.software.codetime.managers.*;
 import com.software.codetime.models.IntellijProject;
 import com.software.codetime.models.KeystrokeWrapper;
-import com.software.codetime.toolwindows.codetime.CodeTimeWindowFactory;
+import com.software.codetime.toolwindows.codetime.SidebarToolWindow;
 import org.apache.commons.lang.StringUtils;
 import swdc.java.ops.manager.*;
 import swdc.java.ops.model.ConfigOptions;
@@ -53,7 +53,7 @@ public class Activator {
         options.softwareDir = PluginInfo.software_dir;
         ConfigManager.init(
                 options,
-                () -> CodeTimeWindowFactory.refresh(false),
+                () -> SidebarToolWindow.refresh(false),
                 new WebsocketMessageManager(),
                 new SessionStatusUpdateManager(),
                 new ThemeModeInfoManager(),
