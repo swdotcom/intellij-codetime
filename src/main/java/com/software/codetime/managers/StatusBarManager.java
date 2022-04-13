@@ -1,6 +1,6 @@
 package com.software.codetime.managers;
 
-import com.intellij.ide.BrowserUtil;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -18,26 +18,22 @@ import swdc.java.ops.manager.*;
 import swdc.java.ops.model.SessionSummary;
 import swdc.java.ops.snowplow.events.UIInteractionType;
 
-import javax.swing.*;
 import java.io.*;
 
 public class StatusBarManager {
 
     private static boolean showStatusText = true;
 
-    private final static String kpmmsgId = StatusBarKpmTextWidget.KPM_TEXT_ID + "_kpmmsg";
-    private final static String kpmiconId = StatusBarKpmIconWidget.KPM_ICON_ID + "_kpmicon";
-    private final static String flowmsgId = StatusBarKpmTextWidget.FLOW_TEXT_ID + "_flowmsg";
-    private final static String flowiconId = StatusBarKpmIconWidget.FLOW_ICON_ID + "_flowicon";
-
-    private static final SessionSummary summary = null;
+    private final static String kpmmsgId = StatusBarKpmTextWidget.KPM_TEXT_ID;
+    private final static String kpmiconId = StatusBarKpmIconWidget.KPM_ICON_ID;
+    private final static String flowmsgId = StatusBarKpmTextWidget.FLOW_TEXT_ID;
+    private final static String flowiconId = StatusBarKpmIconWidget.FLOW_ICON_ID;
 
     public static boolean showingStatusText() {
         return showStatusText;
     }
 
     public static void toggleStatusBar(UIInteractionType interactionType) {
-        String cta_text = !showStatusText ? "Show status bar metrics" : "Hide status bar metrics";
         showStatusText = !showStatusText;
 
         updateStatusBar(null);
@@ -68,25 +64,14 @@ public class StatusBarManager {
                         // show Code Time if the current day time is null or the user is not registered
                         String kpmMsgVal = StringUtils.isNotBlank(email) && currentDayTimeStr != null ? currentDayTimeStr : ConfigManager.plugin_name;
 
-                        StatusBarKpmTextWidget kpmMsgWidget = (StatusBarKpmTextWidget) statusBar.getWidget(kpmmsgId);
-                        if (kpmMsgWidget == null) {
-                            // remove the flow widgets so this doesn't appear out of order
-                            try { statusBar.removeWidget(flowiconId); } catch (Exception e) {}
-                            try { statusBar.removeWidget(flowmsgId); } catch (Exception e) {}
-                        }
-
                         // icon first
                         String metricIconTooltip = "";
                         String kpmIcon = "time-clock.png";
-                        updateIconWidget(statusBar, kpmiconId, kpmIcon, metricIconTooltip, () -> {
-                            SidebarToolWindow.openToolWindow();
-                        });
+                        updateIconWidget(statusBar, kpmiconId, kpmIcon, metricIconTooltip);
 
                         // text next
                         String kpmTextTooltip = "Active code time today. Click to see more from Code Time.";
-                        updateTextWidget(statusBar, kpmmsgId, kpmMsgVal, kpmTextTooltip, () -> {
-                            SidebarToolWindow.openToolWindow();
-                        });
+                        updateTextWidget(statusBar, kpmmsgId, kpmMsgVal, kpmTextTooltip);
 
                         // don't show the flow mode icon if the user is not logged in
                         if (StringUtils.isNotBlank(email)) {
@@ -98,14 +83,10 @@ public class StatusBarManager {
                                     flowIcon = "closed-circle.png";
                                     flowTooltip = "Exit Flow Mode";
                                 }
-                                updateIconWidget(statusBar, flowiconId, flowIcon, flowTooltip, () -> {
-                                    FlowManager.toggleFlowMode(false);
-                                });
+                                updateIconWidget(statusBar, flowiconId, flowIcon, flowTooltip);
 
                                 // flow text next
-                                updateTextWidget(statusBar, flowmsgId, "Flow", flowTooltip, () -> {
-                                    FlowManager.toggleFlowMode(false);
-                                });
+                                updateTextWidget(statusBar, flowmsgId, "Flow", flowTooltip);
                             } catch (Exception e) {
                                 System.out.println("status bar update error: " + e.getMessage());
                             }
@@ -118,62 +99,22 @@ public class StatusBarManager {
         });
     }
 
-    private static void updateIconWidget(StatusBar statusBar, String widgetId, String icon, String tooltip, Runnable callback) {
+    private static void updateIconWidget(StatusBar statusBar, String widgetId, String icon, String tooltip) {
         StatusBarKpmIconWidget kpmIconWidget = (StatusBarKpmIconWidget) statusBar.getWidget(widgetId);
-        if (kpmIconWidget == null) {
-            kpmIconWidget = buildStatusBarIconWidget(icon, tooltip, widgetId, callback);
-            statusBar.addWidget(kpmIconWidget, widgetId, statusBar);
-        } else {
+        if (kpmIconWidget != null) {
             kpmIconWidget.updateIcon(icon);
             kpmIconWidget.setTooltip(tooltip);
-        }
-        statusBar.updateWidget(widgetId);
-    }
-
-    private static void updateTextWidget(StatusBar statusBar, String widgetId, String msg, String tooltip, Runnable callback) {
-        StatusBarKpmTextWidget kpmMsgWidget = (StatusBarKpmTextWidget) statusBar.getWidget(widgetId);
-        if (showStatusText || widgetId.equals(flowmsgId)) {
-            if (kpmMsgWidget == null) {
-                kpmMsgWidget = buildStatusBarTextWidget(msg, tooltip, widgetId, callback);
-                statusBar.addWidget(kpmMsgWidget, widgetId, statusBar);
-            } else {
-                kpmMsgWidget.setText(msg);
-                kpmMsgWidget.setTooltip(tooltip);
-            }
             statusBar.updateWidget(widgetId);
-        } else if (kpmMsgWidget != null) {
-            statusBar.removeWidget(widgetId);
         }
     }
 
-    public static StatusBarKpmTextWidget buildStatusBarTextWidget(String msg, String tooltip, String id, Runnable callback) {
-        StatusBarKpmTextWidget textWidget =
-                new StatusBarKpmTextWidget(id, callback);
-        textWidget.setText(msg);
-        textWidget.setTooltip(tooltip);
-        return textWidget;
-    }
-
-    public static StatusBarKpmIconWidget buildStatusBarIconWidget(String iconName, String tooltip, String id, Runnable callback) {
-        Icon icon = UtilManager.getResourceIcon(iconName, StatusBarManager.class.getClassLoader());
-
-        StatusBarKpmIconWidget iconWidget =
-                new StatusBarKpmIconWidget(id, callback);
-        iconWidget.setIcon(icon);
-        iconWidget.setTooltip(tooltip);
-        return iconWidget;
-    }
-
-    public static void launchSoftwareTopForty() {
-        BrowserUtil.browse("http://api.software.com/music/top40");
-    }
-
-    public static void submitGitIssue() {
-        BrowserUtil.browse("https://github.com/swdotcom/swdc-intellij/issues");
-    }
-
-    public static void submitFeedback(UIInteractionType interactionType) {
-        BrowserUtil.browse("mailto:cody@software.com");
+    private static void updateTextWidget(StatusBar statusBar, String widgetId, String msg, String tooltip) {
+        StatusBarKpmTextWidget kpmMsgWidget = (StatusBarKpmTextWidget) statusBar.getWidget(widgetId);
+        if (kpmMsgWidget != null) {
+            kpmMsgWidget.setText(msg);
+            kpmMsgWidget.setTooltip(tooltip);
+            statusBar.updateWidget(widgetId);
+        }
     }
 
     public static void launchFile(String fsPath) {

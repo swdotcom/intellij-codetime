@@ -37,7 +37,6 @@ public class SidebarToolWindow implements ToolWindowFactory {
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(ctWindow.getContent(), "", false);
         toolWindow.getContentManager().addContent(content);
-        ctWindow.refresh();
         windowProject = project;
     }
 
@@ -46,7 +45,6 @@ public class SidebarToolWindow implements ToolWindowFactory {
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(tv.getContent(), "", false);
         toolWindow.getContentManager().addContent(content);
-        tv.refresh();
         windowProject = project;
     }
 

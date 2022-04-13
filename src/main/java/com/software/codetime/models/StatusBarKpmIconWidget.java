@@ -23,8 +23,10 @@ public class StatusBarKpmIconWidget implements StatusBarWidget {
     private final IconPresentation presentation = new IconPresentation();
     private final Consumer<MouseEvent> eventHandler;
 
-    public StatusBarKpmIconWidget(String id, final Runnable callback) {
+    public StatusBarKpmIconWidget(String id, String defaultIcon, final Runnable callback) {
         this.id = id;
+        // set the default icon
+        this.icon = UtilManager.getResourceIcon(defaultIcon, this.getClass().getClassLoader());
         eventHandler = new Consumer<MouseEvent>() {
             @Override
             public void consume(MouseEvent mouseEvent) {

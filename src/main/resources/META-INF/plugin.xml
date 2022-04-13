@@ -12,6 +12,18 @@
         <toolWindow id="Code Time" order="first" anchor="left"
                     icon="/assets/paw-grey-rotated.png"
                     factoryClass="com.software.codetime.toolwindows.codetime.SidebarToolWindow"/>
+        <statusBarWidgetFactory id="buildCodeTimeIcon"
+                                implementation="com.software.codetime.models.StatusBarIconWidgetFactory"
+                                order="after writeActionWidget"/>
+        <statusBarWidgetFactory id="buildCodeTimeText"
+                                implementation="com.software.codetime.models.StatusBarTextWidgetFactory"
+                                order="after buildCodeTimeIcon"/>
+        <statusBarWidgetFactory id="buildFlowIcon"
+                                implementation="com.software.codetime.models.StatusBarFlowIconWidgetFactory"
+                                order="after buildCodeTimeText"/>
+        <statusBarWidgetFactory id="buildFlowText"
+                                implementation="com.software.codetime.models.StatusBarFlowTextWidgetFactory"
+                                order="after buildFlowIcon"/>
     </extensions>
 
     <applicationListeners>
