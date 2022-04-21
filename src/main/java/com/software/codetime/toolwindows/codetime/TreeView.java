@@ -47,23 +47,19 @@ public class TreeView {
 
     private TreeViewState state = TreeViewState.REGISTER;
 
-    private final Object lock = new Object();
-
     public enum TreeViewState {
         REGISTER, CONNECT_SLACK, CONNECTED
     }
 
     public TreeView() {
-        synchronized (lock) {
-            windowContent.setFocusable(true);
+        windowContent.setFocusable(true);
 
-            this.init();
-            this.showView();
+        this.init();
+        this.showView();
 
-            windowContent.updateUI();
-            windowContent.setVisible(true);
-            windowContent.revalidate();
-        }
+        windowContent.updateUI();
+        windowContent.setVisible(true);
+        windowContent.revalidate();
     }
 
     public JPanel getContent() {
@@ -71,9 +67,7 @@ public class TreeView {
     }
 
     public void refresh() {
-        synchronized (lock) {
-            this.showView();
-        }
+        this.showView();
     }
 
     public void showView() {
