@@ -16,14 +16,15 @@ public class SidebarToolWindow implements ToolWindowFactory {
     private static CodeTimeToolWindow ctWindow;
     private static TreeView tv;
     public static Project windowProject;
-    private static boolean JcefSupported = JBCefApp.isSupported();
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull com.intellij.openapi.wm.ToolWindow toolWindow) {
-        if (JcefSupported) {
+        if (SidebarToolWindow.isJcefSupported()) {
             initWebView(project, toolWindow);
+            ctWindow.refresh();
         } else {
             initTreeView(project, toolWindow);
+            tv.refresh();
         }
     }
 
@@ -32,8 +33,20 @@ public class SidebarToolWindow implements ToolWindowFactory {
         ToolWindowFactory.super.init(toolWindow);
     }
 
+    private static boolean isJcefSupported() {
+        try {
+            // Throws: IllegalStateException – when JCEF initialization is not possible in current env
+            JBCefApp.getInstance();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private static void initWebView(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        ctWindow = new CodeTimeToolWindow(project);
+        if (ctWindow == null) {
+            ctWindow = new CodeTimeToolWindow(project);
+        }
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(ctWindow.getContent(), "", false);
         toolWindow.getContentManager().addContent(content);
@@ -41,7 +54,9 @@ public class SidebarToolWindow implements ToolWindowFactory {
     }
 
     private static void initTreeView(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        tv = new TreeView();
+        if (tv == null) {
+            tv = new TreeView();
+        }
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(tv.getContent(), "", false);
         toolWindow.getContentManager().addContent(content);
@@ -49,7 +64,7 @@ public class SidebarToolWindow implements ToolWindowFactory {
     }
 
     private static void initialize() {
-        if (JcefSupported) {
+        if (SidebarToolWindow.isJcefSupported()) {
             if (ctWindow == null) {
                 // get the project
                 Project p = ProjectActivateListener.getCurrentProject();
@@ -77,7 +92,7 @@ public class SidebarToolWindow implements ToolWindowFactory {
 
     public static void refresh(boolean open) {
         initialize();
-        if (JcefSupported) {
+        if (SidebarToolWindow.isJcefSupported()) {
             if (ctWindow != null) {
                 ctWindow.refresh();
             }
