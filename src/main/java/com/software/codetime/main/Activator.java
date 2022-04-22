@@ -109,6 +109,10 @@ public class Activator {
         app.invokeLater(() -> {
             FlowManager.initFlowStatus();
         });
+
+        app.invokeLater(() -> {
+            SidebarToolWindow.refresh(false);
+        });
     }
 
     private void anonCheck() {
